@@ -1,6 +1,5 @@
 """ Unet Architecture """
 
-import torch.nn as nn
 
 # TODO: Implement Unet model
 def unet(in_channels: int, out_channels: int) -> nn.Module:
