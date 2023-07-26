@@ -67,8 +67,8 @@ if __name__ == "__main__":
 
     # load a mat file
 
-    # cube = sio.loadmat(os.path.join('examples', 'data', 'spectral_image.mat'))['img']
-    cube = sio.loadmat('C:\Roman\HDSP_Activities\DeepOptix\deepoptix\examples\data\spectral_image.mat')['img']
+    cube = sio.loadmat('deepoptix/examples/data/spectral_image.mat')['img']
+
     # load optical encoder
     cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
     print(cube_tf.shape)
