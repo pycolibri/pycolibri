@@ -7,25 +7,28 @@ class Unet(tf.keras.layers.Layer):
     """
     Unet Layer
 
-    :param out_channels: number of output channels
-    :param in_features: number of input features
-    :param levels: number of levels in the Unet
-    :param last_activation: activation function for the last layer
-
-    :return: Unet model
-    :rtype: tf.keras.Layer
     """
-
 
     def __init__(self, 
                  out_channels, 
-                 in_features=32, 
-                 levels=4, 
+                 features=[32, 64, 128, 256],
                  last_activation='sigmoid'):
+        """ Unet Layer
+
+        :param out_channels: number of output channels
+        :type out_channels: int
+        :param features: number of features in each level of the Unet
+        :type features: list
+        :param last_activation: activation function for the last layer
+        :type last_activation: str
+
+        :return: Unet model
+        :rtype: tf.keras.Layer
+        """
         
         super(Unet, self).__init__()
 
-        features = [in_features * 2**i for i in range(levels)]
+        levels = len(features)
 
         self.inc = custom_layers.convBlock(features[0], mode='CBRCBR') 
 
