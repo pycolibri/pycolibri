@@ -27,7 +27,7 @@ class Unet(tf.keras.layers.Layer):
 
         features = [in_features * 2**i for i in range(levels)]
 
-        self.inc = custom_layers.convBlock(features[0]) 
+        self.inc = custom_layers.convBlock(features[0], mode='CBRCBR') 
 
         self.downs = [
             custom_layers.downBlock(features[i+1]) for i in range(levels-2)

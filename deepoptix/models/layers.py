@@ -5,28 +5,62 @@ import tensorflow.keras.layers as layers
 
 
 class convBlock(layers.Layer):
-    """(Conv2D => Batchnom => ReLU) * 2"""
+    """ Convolutional Block
 
-    def __init__(self, out_channels, mid_channels=None):
+    default configuration: (Conv2D => Batchnorm => ReLU) * 2
+
+    """
+
+    def __init__(self, out_channels=1, kernel_size=3, bias=False, mode='CBR'):
+        """ Convolutional Block
+
+        :param out_channels: number of output channels
+        :type out_channels: int
+        :param kernel_size: size of the kernel
+        :type kernel_size: int
+        :param bias: whether to use bias or not
+        :type bias: bool
+        :param mode: mode of the convBlock, posible values are: ['C', 'B', 'R', 'U', 'M', 'A']
+        :type mode: str
+        """
+
+
         super(convBlock, self).__init__()
 
-        if not mid_channels:
-            mid_channels = out_channels
+        self.layers = []
+        conv_kwargs = dict(filters=out_channels, 
+                           kernel_size=kernel_size, 
+                           padding='same', 
+                           use_bias=bias)
 
-        conv_kwargs = dict(kernel_size=3, padding='same', use_bias=False)
-
-        self.conv_block = tf.keras.Sequential([
-            layers.Conv2D(mid_channels, **conv_kwargs),
-            layers.BatchNormalization(),
-            layers.ReLU(),
-            layers.Conv2D(out_channels, **conv_kwargs),
-            layers.BatchNormalization(),
-            layers.ReLU(),
-        ])
-
+        for c in mode:
+            layer = self.build_layer(c, conv_kwargs)
+            self.layers.append(layer)
+        
     def call(self, x):
-        return self.conv_block(x)
+        for layer in self.layers:
+            x = layer(x)
+        return x
     
+    def build_layer(self, c, params):
+
+        params_mapping = {
+            'C': (layers.Conv2D, params),
+            'B': (layers.BatchNormalization, None),
+            'R': (layers.ReLU, None),
+            'U': (layers.UpSampling2D, dict(size=(2,2))),
+            'M': (layers.MaxPool2D, dict(pool_size=(2,2))),
+            'A': (layers.AveragePooling2D, dict(pool_size=(2,2))),
+        }
+
+        if c in params_mapping.keys():
+            layer, params = params_mapping[c]
+            return layer(**params) if params else layer()
+        else:
+            raise ValueError(f'Unknown layer type: {c}')
+
+
+
 
 class downBlock(layers.Layer):
     """Spatial downsampling and then convBlock"""
@@ -36,7 +70,7 @@ class downBlock(layers.Layer):
 
         self.pool_conv = tf.keras.Sequential([
             layers.MaxPool2D(2),
-            convBlock(out_channels)
+            convBlock(out_channels, mode='CBRCBR')
         ])
 
     def call(self, x):
@@ -50,7 +84,10 @@ class upBlock(layers.Layer):
         super(upBlock, self).__init__()
 
         self.up = layers.UpSampling2D(size=2, interpolation='bilinear')
-        self.conv_block = convBlock(out_channels, out_channels // 2)
+        self.conv_block = tf.keras.Sequential([
+            convBlock(out_channels // 2),
+            convBlock(out_channels)
+        ])
 
 
     def call(self, x1, x2):
