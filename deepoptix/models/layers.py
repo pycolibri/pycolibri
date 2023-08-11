@@ -104,6 +104,8 @@ class upBlock(layers.Layer):
 
 
 class outBlock(layers.Layer):
+    """Convolutional Block with 1x1 kernel and without activation"""
+
     def __init__(self, out_channels, activation=None):
         super(outBlock, self).__init__()
 
