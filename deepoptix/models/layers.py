@@ -68,10 +68,7 @@ class downBlock(layers.Layer):
     def __init__(self, out_channels):
         super(downBlock, self).__init__()
 
-        self.pool_conv = tf.keras.Sequential([
-            layers.MaxPool2D(2),
-            convBlock(out_channels, mode='CBRCBR')
-        ])
+        self.pool_conv = convBlock(out_channels, mode='MCBRCBR')
 
     def call(self, x):
         return self.pool_conv(x)
@@ -109,9 +106,7 @@ class outBlock(layers.Layer):
     def __init__(self, out_channels, activation=None):
         super(outBlock, self).__init__()
 
-        conv_kwargs = dict(kernel_size=1, padding='same', use_bias=False)
-
-        self.conv = layers.Conv2D(out_channels, **conv_kwargs)
+        self.conv = convBlock(out_channels, kernel_size=1, mode='C')
         self.act  = layers.Activation(activation) if activation else None
 
     def call(self, x):
