@@ -31,9 +31,12 @@ def backward_cassi(y, ca):
     return tf.multiply(x, ca)
 
 class CASSI(tf.keras.layers.Layer):
+    """
+    Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+
+    """
     def __init__(self, trainable=False, ca_regularizer = None, initial_ca = None, seed=None):
         """
-        Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
         :param trainable: Boolean, if True the coded aperture is trainable
         :param ca_regularizer: Regularizer function applied to the coded aperture
         :param initial_ca: Initial coded aperture with shape (1, M, N, 1)
@@ -71,6 +74,8 @@ class CASSI(tf.keras.layers.Layer):
         Call method of the layer, it performs the forward or backward operator according to the type_calculation
         :param x: Input tensor with shape (1, M, N, L)
         :param type_calculation: String, it can be "forward", "backward" or "forward_backward"
+        :return: Output tensor with shape (1, M, N + L - 1, 1) if type_calculation is "forward", (1, M, N, L) if type_calculation is "backward, or (1, M, N, L) if type_calculation is "forward_backward
+        :raises ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
         if type_calculation =="forward":
             return self.forward(x, self.ca)
