@@ -6,11 +6,28 @@ def forward_color_cassi(x, ca):
     """
     Forward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
     :param x: Spectral image with shape (1, M, N, L)
-    :param ca: Coded aperture with shape (1, M, N, 1)
-    :return: Measurement with shape (1, M, N + L - 1, 1)
+    :param ca: Coded aperture with shape (1, M, N, L)
+    :return: Measurement with shape (1, M, N, 1)
     """
     y = tf.multiply(x, ca)
-    return tf.reduce_sum(y, dim=-1, keepdim=True)
+    return tf.reduce_sum(y, axis=-1, keepdims=True)
+
+def backward_color_cassi(y, ca):
+    """
+    Backward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    :param y: Measurement with shape (1, M, N + L - 1, 1)
+    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
+    :return: Spectral image with shape (1, M, N, L)
+    """
+    _, M, N, _ = y.shape  # Extract spectral image shape
+    L = ca.shape[-2] - ca.shape[-3] + 1  # Number of shifts
+    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
+
+    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
+    Hn = tf.divide(H, tf.add(tf.reduce_sum(H, axis=-1, keepdims=True), 1e-12))
+    x = tf.multiply(y, Hn)
+
+    return x
 
 
 def forward_dd_cassi(x, ca):
@@ -106,7 +123,7 @@ class CASSI(tf.keras.layers.Layer):
             self.backward = backward_dd_cassi
         elif mode == "color":
             self.forward = forward_color_cassi
-            self.backward = None
+            self.backward = backward_color_cassi
 
         self.mode = mode
 
@@ -124,7 +141,9 @@ class CASSI(tf.keras.layers.Layer):
         elif self.mode == 'dd':
             shape = (1, self.M, self.N + self.L - 1, 1)
         elif self.mode == 'color':
-            shape = (1, self.M, self.N, self.L, 1)
+            shape = (1, self.M, self.N, self.L)
+        else:
+            raise ValueError(f"the mode {self.mode} is not valid")
 
         if self.initial_ca is None:
             initializer = tf.random_uniform_initializer(minval=0, maxval=1, seed=self.seed)
@@ -167,7 +186,7 @@ if __name__ == "__main__":
 
     # load optical encoder
 
-    mode = 'dd'
+    mode = 'color'
     cassi = CASSI(mode)
     cassi.build(cube.shape)  # this is only for the demo
 
