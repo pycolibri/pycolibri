@@ -1,5 +1,11 @@
 import tensorflow as tf
 
+"""
+metrics.py
+====================================
+The metrics
+"""
+
 def psnr(y_true, y_pred, max_val):
   """Calcula el Peak Signal to Noise Ratio entre y_true y y_pred.
 
