@@ -1,28 +1,30 @@
 import tensorflow as tf
 
-def psnr(y_true, y_pred):
+def psnr(y_true, y_pred, max_val):
   """Calcula el Peak Signal to Noise Ratio entre y_true y y_pred.
 
   Args:
     y_true: Tensor de valores reales.
     y_pred: Tensor de valores predichos.  
+    max_val: Valor máximo de los tensores.
 
   Returns:
     PSNR entre y_true y y_pred.
   """
-  return tf.image.psnr(y_true, y_pred, max_val=1.0)
+  return tf.image.psnr(y_true, y_pred, max_val)
 
-def ssim(y_true, y_pred):
+def ssim(y_true, y_pred, max_val):
   """Calcula el Structural Similarity Index entre y_true y y_pred.
 
   Args:
     y_true: Tensor de valores reales.
     y_pred: Tensor de valores predichos.
+    max_val: Valor máximo de los tensores.
 
   Returns:
     SSIM entre y_true y y_pred.
   """
-  return tf.image.ssim(y_true, y_pred, max_val=1.0)
+  return tf.image.ssim(y_true, y_pred, max_val)
 
 def mse(y_true, y_pred):
   """Calcula el Mean Squared Error entre y_true y y_pred.
