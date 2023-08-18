@@ -11,7 +11,7 @@ class convBlock(layers.Layer):
 
     """
 
-    def __init__(self, out_channels=1, kernel_size=3, bias=False, mode='CBR'):
+    def __init__(self, out_channels=1, kernel_size=3, bias=False, mode='CBR', factor=2):
         """ Convolutional Block
 
         Args:
@@ -19,9 +19,9 @@ class convBlock(layers.Layer):
             kernel_size (int, optional): size of the kernel. Defaults to 3.
             bias (bool, optional): whether to use bias or not. Defaults to False.
             mode (str, optional): mode of the convBlock, posible values are: ['C', 'B', 'R', 'U', 'M', 'A']. Defaults to 'CBR'.
+            factor (int, optional): factor for upsampling/downsampling. Defaults to 2.
             
         """
-
 
         super(convBlock, self).__init__()
 
@@ -32,7 +32,7 @@ class convBlock(layers.Layer):
                            use_bias=bias)
 
         for c in mode:
-            layer = self.build_layer(c, conv_kwargs)
+            layer = self.build_layer(c, conv_kwargs, factor)
             self.layers.append(layer)
         
     def call(self, x):
@@ -40,15 +40,15 @@ class convBlock(layers.Layer):
             x = layer(x)
         return x
     
-    def build_layer(self, c, params):
+    def build_layer(self, c, params, factor):
 
         params_mapping = {
             'C': (layers.Conv2D, params),
             'B': (layers.BatchNormalization, None),
             'R': (layers.ReLU, None),
-            'U': (layers.UpSampling2D, dict(size=(2,2))),
-            'M': (layers.MaxPool2D, dict(pool_size=(2,2))),
-            'A': (layers.AveragePooling2D, dict(pool_size=(2,2))),
+            'U': (layers.UpSampling2D, dict(size=(factor,factor))),
+            'M': (layers.MaxPool2D, dict(pool_size=(factor,factor))),
+            'A': (layers.AveragePooling2D, dict(pool_size=(factor,factor))),
         }
 
         if c in params_mapping.keys():
