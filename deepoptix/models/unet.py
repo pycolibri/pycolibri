@@ -15,15 +15,14 @@ class Unet(tf.keras.layers.Layer):
                  last_activation='sigmoid'):
         """ Unet Layer
 
-        :param out_channels: number of output channels
-        :type out_channels: int
-        :param features: number of features in each level of the Unet
-        :type features: list
-        :param last_activation: activation function for the last layer
-        :type last_activation: str
-
-        :return: Unet model
-        :rtype: tf.keras.Layer
+        Args:
+            out_channels (int): number of output channels
+            features (list, optional): number of features in each level of the Unet. Defaults to [32, 64, 128, 256].
+            last_activation (str, optional): activation function for the last layer. Defaults to 'sigmoid'.
+        
+        Returns:
+            tf.keras.Layer: Unet model
+            
         """
         
         super(Unet, self).__init__()

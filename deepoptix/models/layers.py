@@ -14,14 +14,12 @@ class convBlock(layers.Layer):
     def __init__(self, out_channels=1, kernel_size=3, bias=False, mode='CBR'):
         """ Convolutional Block
 
-        :param out_channels: number of output channels
-        :type out_channels: int
-        :param kernel_size: size of the kernel
-        :type kernel_size: int
-        :param bias: whether to use bias or not
-        :type bias: bool
-        :param mode: mode of the convBlock, posible values are: ['C', 'B', 'R', 'U', 'M', 'A']
-        :type mode: str
+        Args:
+            out_channels (int, optional): number of output channels. Defaults to 1.
+            kernel_size (int, optional): size of the kernel. Defaults to 3.
+            bias (bool, optional): whether to use bias or not. Defaults to False.
+            mode (str, optional): mode of the convBlock, posible values are: ['C', 'B', 'R', 'U', 'M', 'A']. Defaults to 'CBR'.
+            
         """
 
 
