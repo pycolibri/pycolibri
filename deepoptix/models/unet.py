@@ -1,6 +1,5 @@
 """ Unet Architecture """
 
-import tensorflow as tf
 import layers as custom_layers
 
 class Unet(tf.keras.layers.Layer):
@@ -63,33 +62,3 @@ class Unet(tf.keras.layers.Layer):
             x = up(x, outputs.pop())
         
         return self.outc(x)
-
-
-def unet(in_channels, out_channels, size=None):
-
-    _input = tf.keras.Input(shape=(size, size, in_channels))
-    output = Unet(out_channels)(_input)
-    model = tf.keras.Model(inputs=_input, outputs=output)
-
-    return model
-
-
-if __name__ == "__main__":
-
-    import numpy as np
-
-    size = 128
-    in_channels = 16
-    out_channels = 1
-
-    model = unet(in_channels, out_channels, size)
-
-    x = np.random.randn(1, size, size, in_channels).astype(np.float32)
-    y = model(x)
-
-    print("input shape: ", x.shape)
-    print("output shape: ", y.shape)
-
-    # model summary
-    model.summary()
-
