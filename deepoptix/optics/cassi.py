@@ -2,10 +2,108 @@ import tensorflow as tf
 import numpy as np
 
 
+def forward_color_cassi(x, ca):
+    """
+    Forward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    :param x: Spectral image with shape (1, M, N, L)
+    :param ca: Coded aperture with shape (1, M, N, L)
+    :return: Measurement with shape (1, M, N, 1)
+    """
+    y = tf.multiply(x, ca)
+    return tf.reduce_sum(y, axis=-1, keepdims=True)
+
+def backward_color_cassi(y, ca):
+    """
+    Backward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    :param y: Measurement with shape (1, M, N + L - 1, 1)
+    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
+    :return: Spectral image with shape (1, M, N, L)
+    """
+    _, M, N, _ = y.shape  # Extract spectral image shape
+    L = ca.shape[-2] - ca.shape[-3] + 1  # Number of shifts
+    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
+
+    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
+    Hn = tf.divide(H, tf.add(tf.reduce_sum(H, axis=-1, keepdims=True), 1e-12))
+    x = tf.multiply(y, Hn)
+
+    return x
+
+
+def forward_dd_cassi(x, ca):
+    """
+    Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    :param x: Spectral image with shape (1, M, N, L)
+    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
+    :return: Measurement with shape (1, M, N + L - 1, 1)
+    """
+    _, M, N, L = x.shape  # Extract spectral image shape
+    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
+
+    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
+    y = tf.multiply(x, H)
+    return tf.reduce_sum(y, axis=-1, keepdims=True)
+
+
+def backward_dd_cassi(y, ca):
+    """
+    Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    :param y: Measurement with shape (1, M, N + L - 1, 1)
+    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
+    :return: Spectral image with shape (1, M, N, L)
+    """
+    _, M, N, _ = y.shape  # Extract spectral image shape
+    L = ca.shape[-2] - ca.shape[-3] + 1  # Number of shifts
+    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
+
+    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
+    Hn = tf.divide(H, tf.add(tf.reduce_sum(H, axis=-1, keepdims=True), 1e-12))
+    x = tf.multiply(y, Hn)
+
+    return x
+
+
+def forward_cassi(x, ca):
+    """
+    Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+    :param x: Spectral image with shape (1, M, N, L)
+    :param ca: Coded aperture with shape (1, M, N, 1)
+    :return: Measurement with shape (1, M, N + L - 1, 1)
+    """
+    y1 = tf.multiply(x, ca)  # Multiplication of the scene by the coded aperture
+    _, M, N, L = y1.shape  # Extract spectral image shape
+    # shift and sum
+    y2 = tf.zeros((1, M, N + L - 1, 1))  # Variable that will serve as the measurement
+    for l in range(L):
+        # Shifting produced by the prism 
+        y2 += tf.pad(y1[..., l, None], [(0, 0), (0, 0), (l, L - l - 1), (0, 0)])
+
+    return y2
+
+
+def backward_cassi(y, ca):
+    """
+    Backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+    :param y: Measurement with shape (1, M, N + L - 1, 1)
+    :param ca: Coded aperture with shape (1, M, N, 1)
+    :return: Spectral image with shape (1, M, N, L)
+    """
+    _, M, N, _ = y.shape  # Extract spectral image shape
+    L = N - M + 1  # Number of shifts
+    x = tf.concat([y[..., l:l + M, :] for l in range(L)],
+                  axis=-1)  # Undo unshifting and create cube version of measurement
+    return tf.multiply(x, ca)
+
+
 class CASSI(tf.keras.layers.Layer):
-    def __init__(self, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
+    """
+    Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+
+    """
+
+    def __init__(self, mode, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
         """
-        Layer that performs the forward and transpose operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+        :param mode: String, mode of the coded aperture, it can be "base", "dd" or "color"
         :param trainable: Boolean, if True the coded aperture is trainable
         :param ca_regularizer: Regularizer function applied to the coded aperture
         :param initial_ca: Initial coded aperture with shape (1, M, N, 1)
@@ -17,44 +115,63 @@ class CASSI(tf.keras.layers.Layer):
         self.ca_regularizer = ca_regularizer
         self.initial_ca = initial_ca
 
+        if mode == "base":
+            self.forward = forward_cassi
+            self.backward = backward_cassi
+        elif mode == "dd":
+            self.forward = forward_dd_cassi
+            self.backward = backward_dd_cassi
+        elif mode == "color":
+            self.forward = forward_color_cassi
+            self.backward = backward_color_cassi
+
+        self.mode = mode
+
     def build(self, input_shape):
+        """
+        Build method of the layer, it creates the coded aperture according to the input shape
+        :param input_shape: Shape of the input tensor (1, M, N, L)
+        :return: None
+        """
         super(CASSI, self).build(input_shape)
         self.M, self.N, self.L = input_shape  # Extract spectral image shape
+
+        if self.mode == 'base':
+            shape = (1, self.M, self.N, 1)
+        elif self.mode == 'dd':
+            shape = (1, self.M, self.N + self.L - 1, 1)
+        elif self.mode == 'color':
+            shape = (1, self.M, self.N, self.L)
+        else:
+            raise ValueError(f"the mode {self.mode} is not valid")
 
         if self.initial_ca is None:
             initializer = tf.random_uniform_initializer(minval=0, maxval=1, seed=self.seed)
         else:
-            assert self.initial_ca.shape != (1, self.M, self.N, 1), "the start CA shape should be (1, M, N, 1)"
+            assert self.initial_ca.shape != shape, f"the start CA shape should be {shape}"
             initializer = tf.constant_initializer(self.initial_ca)
 
-        self.ca = self.add_weight(name='coded_apertures', shape=(1, self.M, self.N, 1), initializer=initializer,
+        self.ca = self.add_weight(name='coded_apertures', shape=shape, initializer=initializer,
                                   trainable=self.trainable, regularizer=self.ca_regularizer)
 
-    def forward(self, x, ca=None):  # perform H * x
-        ca = self.ca if ca is None else ca
-        y1 = tf.multiply(x, ca)  # Multiplication of the scene by the coded aperture
+    def __call__(self, x, type_calculation="forward"):
+        """
+        Call method of the layer, it performs the forward or backward operator according to the type_calculation
+        :param x: Input tensor with shape (1, M, N, L)
+        :param type_calculation: String, it can be "forward", "backward" or "forward_backward"
+        :return: Output tensor with shape (1, M, N + L - 1, 1) if type_calculation is "forward", (1, M, N, L) if type_calculation is "backward, or (1, M, N, L) if type_calculation is "forward_backward
+        :raises ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
+        """
+        if type_calculation == "forward":
+            return self.forward(x, self.ca)
 
-        # shift and sum
-        y2 = tf.zeros((1, self.M, self.N + self.L - 1, 1))  # Variable that will serve as the measurement
-        for l in range(self.L):
-            # Shifting produced by the prism 
-            y2 += tf.pad(y1[..., l, None], [(0, 0), (0, 0), (l, self.L - l - 1), (0, 0)])
+        elif type_calculation == "backward":
+            return self.backward(x, self.ca)
+        elif type_calculation == "forward_backward":
+            return self.backward(self.forward(x, self.ca), self.ca)
 
-        return y2
-
-    def backward(self, y, ca=None):  # perform H^T * y
-        ca = self.ca if ca is None else ca
-        x = tf.concat([y[..., l:l + self.N, :] for l in range(self.L)],
-                      axis=-1)  # Undo unshifting and create cube version of measurement
-        return tf.multiply(x, ca)
-
-    def forward_backward(self, x, ca=None):  # perform H^T * H * x
-        ca = self.ca if ca is None else ca
-        return self.backward(self.forward(x, ca), ca)
-
-    def backward_forward(self, y, ca=None):  # perform H * H^T * y
-        ca = self.ca if ca is None else ca
-        return self.forward(self.backward(y, ca), ca)
+        else:
+            raise ValueError("type_calculation must be forward, backward or forward_backward")
 
 
 if __name__ == "__main__":
@@ -70,22 +187,23 @@ if __name__ == "__main__":
 
     # load optical encoder
 
-    cassi = CASSI()
+    mode = 'color'
+    cassi = CASSI(mode)
     cassi.build(cube.shape)  # this is only for the demo
 
     # encode the cube
 
     cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
-    measurement = cassi.forward(cube_tf, ca)
-    transpose = cassi.backward(measurement, ca)
-    direct_transpose = cassi.forward_backward(cube_tf, ca)
-    measurement2 = cassi.forward(transpose, ca)
+    measurement = cassi(cube_tf, type_calculation="forward")
+    backward = cassi(measurement, type_calculation="backward")
+    direct_backward = cassi(cube_tf)
+    measurement2 = cassi(backward, type_calculation="forward_backward")
 
     # Print information about tensors
 
     print('cube shape: ', cube_tf.shape)
     print('measurement shape: ', measurement.shape)
-    print('transpose shape: ', transpose.shape)
+    print('backward shape: ', backward.shape)
 
     # visualize the measurement
 
@@ -100,8 +218,8 @@ if __name__ == "__main__":
     plt.imshow(measurement[0, ..., 0])
 
     plt.subplot(223)
-    plt.title('transpose')
-    plt.imshow(transpose[0, ..., 0])
+    plt.title('backward')
+    plt.imshow(backward[0, ..., 0])
 
     plt.subplot(224)
     plt.title('measurement2')
