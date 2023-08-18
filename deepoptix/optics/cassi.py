@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     # load a mat file
 
-    cube = sio.loadmat(os.path.join('examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
+    cube = sio.loadmat(os.path.join('deepoptix', 'examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
     ca = np.random.rand(1, cube.shape[0], cube.shape[1], 1)  # custom ca (1, M, N, 1)
 
     # load optical encoder
