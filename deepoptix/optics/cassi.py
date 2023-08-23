@@ -1,99 +1,6 @@
 import tensorflow as tf
 import numpy as np
-
-
-def forward_color_cassi(x, ca):
-    """
-    Forward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
-    :param x: Spectral image with shape (1, M, N, L)
-    :param ca: Coded aperture with shape (1, M, N, L)
-    :return: Measurement with shape (1, M, N, 1)
-    """
-    y = tf.multiply(x, ca)
-    return tf.reduce_sum(y, axis=-1, keepdims=True)
-
-def backward_color_cassi(y, ca):
-    """
-    Backward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
-    :param y: Measurement with shape (1, M, N + L - 1, 1)
-    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
-    :return: Spectral image with shape (1, M, N, L)
-    """
-    _, M, N, _ = y.shape  # Extract spectral image shape
-    L = ca.shape[-2] - ca.shape[-3] + 1  # Number of shifts
-    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
-
-    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
-    Hn = tf.divide(H, tf.add(tf.reduce_sum(H, axis=-1, keepdims=True), 1e-12))
-    x = tf.multiply(y, Hn)
-
-    return x
-
-
-def forward_dd_cassi(x, ca):
-    """
-    Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
-    :param x: Spectral image with shape (1, M, N, L)
-    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
-    :return: Measurement with shape (1, M, N + L - 1, 1)
-    """
-    _, M, N, L = x.shape  # Extract spectral image shape
-    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
-
-    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
-    y = tf.multiply(x, H)
-    return tf.reduce_sum(y, axis=-1, keepdims=True)
-
-
-def backward_dd_cassi(y, ca):
-    """
-    Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
-    :param y: Measurement with shape (1, M, N + L - 1, 1)
-    :param ca: Coded aperture with shape (1, M, N + L - 1, 1)
-    :return: Spectral image with shape (1, M, N, L)
-    """
-    _, M, N, _ = y.shape  # Extract spectral image shape
-    L = ca.shape[-2] - ca.shape[-3] + 1  # Number of shifts
-    assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
-
-    H = tf.concat([ca[..., l:l + M, :] for l in range(L)], axis=-1)
-    Hn = tf.divide(H, tf.add(tf.reduce_sum(H, axis=-1, keepdims=True), 1e-12))
-    x = tf.multiply(y, Hn)
-
-    return x
-
-
-def forward_cassi(x, ca):
-    """
-    Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
-    :param x: Spectral image with shape (1, M, N, L)
-    :param ca: Coded aperture with shape (1, M, N, 1)
-    :return: Measurement with shape (1, M, N + L - 1, 1)
-    """
-    y1 = tf.multiply(x, ca)  # Multiplication of the scene by the coded aperture
-    _, M, N, L = y1.shape  # Extract spectral image shape
-    # shift and sum
-    y2 = tf.zeros((1, M, N + L - 1, 1))  # Variable that will serve as the measurement
-    for l in range(L):
-        # Shifting produced by the prism 
-        y2 += tf.pad(y1[..., l, None], [(0, 0), (0, 0), (l, L - l - 1), (0, 0)])
-
-    return y2
-
-
-def backward_cassi(y, ca):
-    """
-    Backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
-    :param y: Measurement with shape (1, M, N + L - 1, 1)
-    :param ca: Coded aperture with shape (1, M, N, 1)
-    :return: Spectral image with shape (1, M, N, L)
-    """
-    _, M, N, _ = y.shape  # Extract spectral image shape
-    L = N - M + 1  # Number of shifts
-    x = tf.concat([y[..., l:l + M, :] for l in range(L)],
-                  axis=-1)  # Undo unshifting and create cube version of measurement
-    return tf.multiply(x, ca)
-
+from functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
 
 class CASSI(tf.keras.layers.Layer):
     """
@@ -152,7 +59,7 @@ class CASSI(tf.keras.layers.Layer):
             initializer = tf.constant_initializer(self.initial_ca)
 
         self.ca = self.add_weight(name='coded_apertures', shape=shape, initializer=initializer,
-                                  trainable=self.trainable, regularizer=self.ca_regularizer)
+                                    trainable=self.trainable, regularizer=self.ca_regularizer)
 
     def __call__(self, x, type_calculation="forward"):
         """
@@ -187,7 +94,7 @@ if __name__ == "__main__":
 
     # load optical encoder
 
-    mode = 'color'
+    mode = 'dd'
     cassi = CASSI(mode)
     cassi.build(cube.shape)  # this is only for the demo
 
