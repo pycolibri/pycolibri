@@ -1,12 +1,10 @@
 """ Autoencoder Architecture """
 
 import tensorflow as tf
-from tensorflow.keras.layers import *
+from tensorflow.keras.layers import Layer
 from tensorflow.keras.models import Model
 import layers as custom_layers
 
-
-# TODO: Implement Autoencoder model
 
 class Autoencoder(Layer):
     """

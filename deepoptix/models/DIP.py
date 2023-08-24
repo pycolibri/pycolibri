@@ -1,8 +1,10 @@
 
 import tensorflow as tf
 import tensorflow.keras.layers as layers
-from autoencoder import *
-from unet import *
+import numpy as np
+
+from autoencoder import Autoencoder
+from unet import Unet
 import tensorflow as tf
 
 
