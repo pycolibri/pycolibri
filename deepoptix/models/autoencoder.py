@@ -3,116 +3,78 @@
 import tensorflow as tf
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
-from layers import *
+import layers as custom_layers
+
+
 # TODO: Implement Autoencoder model
 
-class Autoencoder(Model):
+class Autoencoder(Layer):
     """
-    Autoencoder model
-
-
-    :param out_channels: number of output channels
-    :param levels: number of levels in the Autoencoder
-    :param activation: activation function
-    :param filter_list: list of filters
-    :param reduce_spatial: select if the autoencoder reduce spatial dimension
-    :param latent_channels: number of latent space channels
-    :return: Autoencoder model
-    :rtype: tf.keras.Model
+    Autoencoder layer
     """
 
-    def __init__(self,reduce_spatial=False, latent_channels = 3, levels=4, output_channel=1,kernel_size=3,activation='relu',filter_list=None):
+    def __init__(self, 
+                 out_channels, 
+                 features=[32, 64, 128, 256],
+                 last_activation='sigmoid',
+                 reduce_spatial = False):
+        """ Autoencoder Layer
+
+            Args:
+                out_channels (int): number of output channels
+                features (list, optional): number of features in each level of the Unet. Defaults to [32, 64, 128, 256].
+                last_activation (str, optional): activation function for the last layer. Defaults to 'sigmoid'.
+                reduce_spatial (bool): select if the autoencder reduce spatial dimension
+                
+            
+            Returns:
+                tf.keras.Layer: Autoencoder model
+                
+        """    
         super(Autoencoder, self).__init__()
-        self.encoder = Encoder(reduce_spatial=reduce_spatial, latent_channels = latent_channels, levels=levels, filter_list=filter_list[::-1],kernel_size=kernel_size,activation=activation)
-        self.decoder = Decoder(reduce_spatial=reduce_spatial, output_channel=output_channel, levels=levels,activation=activation,
-                               kernel_size=kernel_size, filter_list=filter_list)
-    def call(self, inputs, get_latent=False,**kwargs):
-        z = self.encoder(inputs)
-        x = self.decoder(z)
-        if get_latent:
-            return x,z
+
+        levels = len(features)
+
+        self.inc = custom_layers.convBlock(features[0], mode='CBRCBR') 
+        if reduce_spatial:
+            self.downs = [
+                custom_layers.downBlock(features[i+1]) for i in range(levels-2)
+            ]
+            self.ups = [
+                custom_layers.upBlockNoSkip(features[i] // 2) for i in range(levels-2, 0, -1)
+            ]
+            self.bottle = custom_layers.downBlock(features[-1] // 2)
+            self.ups.append(custom_layers.upBlockNoSkip(features[0] // 2))
         else:
-            return x
+            self.downs = [
+                custom_layers.convBlock(features[i+1], mode='CBRCBR') for i in range(levels-2)
+            ]
 
-class Encoder(Model):
-    """
-    Encoder model
+            self.bottle = custom_layers.convBlock(features[-1], mode='CBRCBR')
 
+            self.ups = [
+                custom_layers.convBlock(features[i] // 2, mode='CBRCBR') for i in range(levels-2, 0, -1)
+            ]
+            self.ups.append(custom_layers.convBlock(features[0],mode='CBCBR'))
 
-    :param levels: number of levels in the autoencoder
-    :param kernel_size: kernel size of the conv layers
-    :param activation: activation function
-    :param filter_list: list of filters
-    :param reduce_spatial: select if the autoencoder reduce spatial dimension
-    :param latent_channels: number of latent space channels
-    :return: Encoder model
-    :rtype: tf.keras.Model
-    """
-    def __init__(self, reduce_spatial=False, latent_channels = 3, levels=4, filter_list=None, kernel_size=3, activation='relu'):
-        super(Encoder, self).__init__()
+            
+        self.outc = custom_layers.outBlock(out_channels, last_activation)
 
-        self.conv_lay = []
-        self.reduce_spatial = reduce_spatial
-        self.levels = levels
-        self.bn = []
-        self.act = tf.keras.layers.Activation(activation)
-        for i in range(levels):
-            self.conv_lay.append(Conv2D(filter_list[i],kernel_size=kernel_size,padding='SAME'))
-            self.bn.append(BatchNormalization())
-        self.conv_lay.append(Conv2D(latent_channels, kernel_size=kernel_size,  padding='SAME'))
-        if reduce_spatial:
-            self.maxpool = MaxPooling2D(pool_size=(2,2))
+    def call(self, inputs, get_latent=False,**kwargs):
 
-    def call(self, input, **kwargs):
-        x = input
-        for i in range(self.levels):
-            x = self.conv_lay[i](x)
-            x = self.bn[i](x)
-            x = self.act(x)
-            if self.reduce_spatial:
-                x = self.maxpool(x)
-        x = self.conv_lay[-1](x)
-        return x
+        x = self.inc(inputs)
+        
+        for down in self.downs:
+            x = down(x)
 
-
-class Decoder(Model):
-    """
-    Decoder model
-
-
-    :param levels: number of levels in the autoencoder
-    :param kernel_size: kernel size of the conv layers
-    :param activation: activation function
-    :param filter_list: list of filters
-    :param reduce_spatial: select if the autoencoder reduce spatial dimension
-    :param out_channels: number of latent space channels
-    :return: Decoder model
-    :rtype: tf.keras.Model
-    """
-    def __init__(self, reduce_spatial=False, levels=4, filter_list=None, kernel_size=3,output_channel=1,activation='relu'):
-        super(Decoder, self).__init__()
-        self.conv_lay = []
-        self.reduce_spatial = reduce_spatial
-        self.levels = levels
-        self.bn = []
-        self.act = tf.keras.layers.Activation(activation)
-        for i in range(levels):
-            self.conv_lay.append(Conv2D(filter_list[i],kernel_size=kernel_size, padding='SAME'))
-            self.bn.append(BatchNormalization())
-        self.conv_lay.append(Conv2D(output_channel, kernel_size=kernel_size, padding='SAME'))
-        if reduce_spatial:
-            self.ups = UpSampling2D(size=(2,2))
-
-    def call(self, input, **kwargs):
-        x = input
-        for i in range(self.levels):
-            x = self.conv_lay[i](x)
-            x = self.bn[i](x)
-            x = self.act(x)
-            if self.reduce_spatial:
-                x = self.ups(x)
-        x = self.conv_lay[-1](x)
-        return x
+        xl = self.bottle(x)
+        x = xl
+        for up in self.ups:
+            x = up(x)
+        if get_latent:
+            return self.outc(x),xl
+        else:
+            return self.outc(x)
 
 
 
@@ -124,13 +86,13 @@ if __name__ == "__main__":
 
     # load a mat file
 
-    cube = sio.loadmat('spectral_image.mat')['img']
+    cube = sio.loadmat(os.path.join('deepoptix', 'examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
 
 
     # load optical encoder
     cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
     print(cube_tf.shape)
-    model = Autoencoder(reduce_spatial=True,latent_channels=1,filter_list=[4,16,32],output_channel = cube.shape[-1],kernel_size=3,levels=3)
+    model = Autoencoder(reduce_spatial=True,out_channels=cube_tf.shape[-1],features=[4,16,6],last_activation='relu')
     model.build(cube_tf.shape)  # this is only for the demo
 
     # encode the cube

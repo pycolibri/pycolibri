@@ -98,6 +98,27 @@ class upBlock(layers.Layer):
         return self.conv_block(tf.concat([x2, x1], axis=-1))
 
 
+class upBlockNoSkip(layers.Layer):
+    """Spatial upsampling and then convBlock"""
+
+    def __init__(self, out_channels):
+        super(upBlockNoSkip, self).__init__()
+
+        self.up = layers.UpSampling2D(size=2, interpolation='bilinear')
+        self.conv_block = tf.keras.Sequential([
+            convBlock(out_channels // 2),
+            convBlock(out_channels)
+        ])
+
+
+    def call(self, x1):
+        
+        x1 = self.up(x1)
+        # input is CHW
+        return self.conv_block(x1)
+
+
+
 class outBlock(layers.Layer):
     """Convolutional Block with 1x1 kernel and without activation"""
 
