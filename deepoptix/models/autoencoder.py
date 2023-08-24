@@ -18,7 +18,7 @@ class Autoencoder(Layer):
                  features=[32, 64, 128, 256],
                  last_activation='sigmoid',
                  reduce_spatial = False):
-        """ Unet Layer
+        """ Autoencoder Layer
 
             Args:
                 out_channels (int): number of output channels
@@ -28,7 +28,7 @@ class Autoencoder(Layer):
                 
             
             Returns:
-                tf.keras.Layer: Unet model
+                tf.keras.Layer: Autoencoder model
                 
         """    
         super(Autoencoder, self).__init__()
