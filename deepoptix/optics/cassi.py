@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
+from deepoptix.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
 
 class CASSI(tf.keras.layers.Layer):
     """
@@ -55,7 +55,7 @@ class CASSI(tf.keras.layers.Layer):
         if self.initial_ca is None:
             initializer = tf.random_uniform_initializer(minval=0, maxval=1, seed=self.seed)
         else:
-            assert self.initial_ca.shape != shape, f"the start CA shape should be {shape}"
+            assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but it is {self.initial_ca.shape}"
             initializer = tf.constant_initializer(self.initial_ca)
 
         self.ca = self.add_weight(name='coded_apertures', shape=shape, initializer=initializer,

@@ -33,17 +33,18 @@ class DIP_CASSI(tf.keras.models.Model):
         super(DIP_CASSI,self).__init__()
         self.initilization = initilization
         self.optics = CASSI(mode=mode, initial_ca=initial_ca)
-        self.input_shape = input_shape
+        self.input_size = input_shape
+
         if recon=='unet':
             self.recon = Unet(out_channels=input_shape[-1],features=network_args['features'],last_activation='relu')
-        elif recon == 'Autoencoder':
+        elif recon == 'autoencoder':
              self.recon = Autoencoder(out_channels=input_shape[-1],features=network_args['features'],last_activation='relu',reduce_spatial=network_args['reduce_spatial'])   
         else:
             raise ValueError("Choose models autoencoder or unet")
 
     def __call__(self,y,is_training=True):
         if self.initilization=='random':
-            z0 = tf.random.normal(shape=(1,*self.input_shape))
+            z0 = tf.random.normal(shape=(1,*self.input_size))
         if self.initilization=='transpose':
             z0 = self.optics(y,type_calculation='backward')
 
@@ -75,7 +76,8 @@ if __name__ == "__main__":
     ca = np.random.rand(1, cube.shape[0], cube.shape[1], 1)  # custom ca (1, M, N, 1)
 
     mode = 'base'
-    cassi = CASSI(mode,initial_ca=ca)
+    cassi = CASSI(mode, initial_ca=ca)
+    cassi.build(ca.shape[1:])
 
     cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
     y = cassi(cube_tf, type_calculation="forward")
@@ -86,7 +88,7 @@ if __name__ == "__main__":
     # load optical encoder
     
 
-    recon = model(y,True)
+    recon = model(y, True)
 
 
     # Print information about tensors
