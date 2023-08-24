@@ -1,19 +1,15 @@
 from unet import Unet
+from autoencoder import Autoencoder
 
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
 
-models = {
-    "Unet": Unet
-}
-
-__all__ = models.keys()
 
 def build_network(model=Unet, size=256, in_channels=31 ,**network_params):
     """ Build the network model
 
     Args:
-        model_name (str, optional): Model name. Defaults to "unet".
+        model_name (tf.keras.Layer, optional): Model name. Defaults to "unet".
         in_channels (int, optional): Number of input channels. Defaults to 1.
         size (int, optional): Size of the input image. Defaults to None.
         **network_params (dict): Network parameters
@@ -27,11 +23,13 @@ if __name__ == "__main__":
     import tensorflow as tf
 
 
-    model_layer = Unet
+    model_layer = Autoencoder
+
     network_params = dict(
         out_channels=1,
         features=[32, 64, 128, 256],
-        last_activation='relu'
+        last_activation='relu',
+        reduce_spatial = True
     )
 
     model = build_network(model=model_layer, size=32, in_channels=1, **network_params)
