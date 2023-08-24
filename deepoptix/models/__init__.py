@@ -9,31 +9,32 @@ models = {
 
 __all__ = models.keys()
 
-def build_network(model_name="Unet", in_channels=1, out_channels=1, size=None, last_activation='sigmoid'):
+def build_network(model=Unet, size=256, in_channels=31 ,**network_params):
     """ Build the network model
 
     Args:
         model_name (str, optional): Model name. Defaults to "unet".
         in_channels (int, optional): Number of input channels. Defaults to 1.
-        out_channels (int, optional): Number of output channels. Defaults to 1.
         size (int, optional): Size of the input image. Defaults to None.
-        last_activation (str, optional): Activation function for the last layer. Defaults to 'relu'.
-
+        **network_params (dict): Network parameters
     """
-
-    if model_name not in models.keys():
-        raise ValueError(f"Model {model_name} not found. Available models: {list(models.keys())}")
-    
     _input = Input(shape=(size, size, in_channels))
-    output = models[model_name](out_channels, last_activation=last_activation)(_input)
+    output = model(**network_params)(_input)
     model = Model(inputs=_input, outputs=output)
-
     return model
     
 if __name__ == "__main__":
     import tensorflow as tf
 
-    model = build_network(model_name="Unet", in_channels=1, out_channels=1, size=32)
+
+    model_layer = Unet
+    network_params = dict(
+        out_channels=1,
+        features=[32, 64, 128, 256],
+        last_activation='relu'
+    )
+
+    model = build_network(model=model_layer, size=32, in_channels=1, **network_params)
     model.summary()
 
     x = tf.random.normal((1, 32, 32, 1))
