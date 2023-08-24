@@ -21,6 +21,7 @@ class DIP_CASSI(tf.keras.models.Model):
             initialization (str): type of initilziation
             initial_ca (array): coded aperture
             mode (str):  cassi mode
+            network_args (dict): args of the recon network
 
         
         Returns:
