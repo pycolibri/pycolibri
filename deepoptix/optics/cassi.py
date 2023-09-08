@@ -10,11 +10,12 @@ class CASSI(tf.keras.layers.Layer):
 
     def __init__(self, mode, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
         """
-        :param mode: String, mode of the coded aperture, it can be "base", "dd" or "color"
-        :param trainable: Boolean, if True the coded aperture is trainable
-        :param ca_regularizer: Regularizer function applied to the coded aperture
-        :param initial_ca: Initial coded aperture with shape (1, M, N, 1)
-        :param seed: Random seed
+        Args:
+            mode (str): String, mode of the coded aperture, it can be "base", "dd" or "color"
+            trainable (bool): Boolean, if True the coded aperture is trainable
+            ca_regularizer (LossFunc?): Regularizer function applied to the coded aperture
+            initial_ca (torch.Tensor): Initial coded aperture with shape (1, M, N, 1)
+            seed (int): Random seed
         """
         super(CASSI, self).__init__(name='cassi')
         self.seed = seed
@@ -37,8 +38,10 @@ class CASSI(tf.keras.layers.Layer):
     def build(self, input_shape):
         """
         Build method of the layer, it creates the coded aperture according to the input shape
-        :param input_shape: Shape of the input tensor (1, M, N, L)
-        :return: None
+        Args:
+            input_shape (list): Shape of the input tensor (1, M, N, L)
+        Returns:
+            None
         """
         super(CASSI, self).build(input_shape)
         self.M, self.N, self.L = input_shape  # Extract spectral image shape
@@ -64,10 +67,13 @@ class CASSI(tf.keras.layers.Layer):
     def __call__(self, x, type_calculation="forward"):
         """
         Call method of the layer, it performs the forward or backward operator according to the type_calculation
-        :param x: Input tensor with shape (1, M, N, L)
-        :param type_calculation: String, it can be "forward", "backward" or "forward_backward"
-        :return: Output tensor with shape (1, M, N + L - 1, 1) if type_calculation is "forward", (1, M, N, L) if type_calculation is "backward, or (1, M, N, L) if type_calculation is "forward_backward
-        :raises ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
+        Args:
+            x (torch.Tensor): Input tensor with shape (1, M, N, L)
+            type_calculation (str): String, it can be "forward", "backward" or "forward_backward"
+        Returns:
+            torch.Tensor: Output tensor with shape (1, M, N + L - 1, 1) if type_calculation is "forward", (1, M, N, L) if type_calculation is "backward, or (1, M, N, L) if type_calculation is "forward_backward
+        Raises:
+            ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
         if type_calculation == "forward":
             return self.forward(x, self.ca)
