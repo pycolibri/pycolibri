@@ -105,7 +105,7 @@ def SAM(org, pred, reduce=None):
         SAM between org and pred.
     """
     numerator = tf.sum(tf.math.multiply(pred, org), axis=-1)
-    denominator = tf.norm(org, ord=1, axis=-1) * tf.norm(pred, ord=1, axis=-1)
+    denominator = tf.norm(org, ord=2, axis=-1) * tf.norm(pred, ord=2, axis=-1)
     val = tf.clip_by_value(numerator / denominator, -1, 1)
     angles = tf.math.acos(val)
 
