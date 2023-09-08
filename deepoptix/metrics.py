@@ -94,18 +94,18 @@ def recall(y_true, y_pred):
     """
     return tf.keras.metrics.recall(y_true, y_pred)
 
-def SAM(org, pred, reduce=None):
+def SAM(y_true, y_pred, reduce=None):
     """Calculate Spectral Angle Mapper between org and pred.
 
     Args:
-        org: Tensor of actual values. [n, bands] 
-        pred: Tensor of predicted values. [n, bands]
+        y_true: Tensor of actual values. [B x H x W x C] 
+        y_pred: Tensor of predicted values. [B x H x W x C]
 
     Returns:
         SAM between org and pred.
     """
-    numerator = tf.sum(tf.math.multiply(pred, org), axis=-1)
-    denominator = tf.norm(org, ord=2, axis=-1) * tf.norm(pred, ord=2, axis=-1)
+    numerator = tf.sum(tf.math.multiply(y_pred, y_true), axis=-1)
+    denominator = tf.norm(y_true, ord=2, axis=-1) * tf.norm(y_pred, ord=2, axis=-1)
     val = tf.clip_by_value(numerator / denominator, -1, 1)
     angles = tf.math.acos(val)
 
