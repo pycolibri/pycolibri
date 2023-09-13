@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 
 
@@ -20,3 +21,19 @@ def hot_encode(label, num_classes=10):
     :return: encoded label
     """
     return tf.one_hot(label, num_classes)
+
+
+def get_all_filenames(root_directory):
+    file_paths = []
+
+    # Walk through the directory tree using os.walk
+    for root, directories, files in os.walk(root_directory):
+        for filename in files:
+            if filename.lower().endswith('.jpg') or filename.lower().endswith('.jpeg') or filename.lower().endswith(
+                    '.png'):
+                # Get the full path of the file
+                file_path = os.path.join(root, filename)
+                file_paths.append(file_path)
+
+    file_paths.sort()
+    return file_paths

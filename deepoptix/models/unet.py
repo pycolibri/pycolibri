@@ -17,8 +17,6 @@ class Unet(tf.keras.Model):
     :return: Unet model
     :rtype: tf.keras.Model
     """
-
-
     def __init__(self, 
                  in_channels, 
                  out_channels, 
