@@ -8,13 +8,20 @@ from deepoptix.datasets.utils import *
 
 class FolderDataset(tf.data.Dataset):
     """
-    FolderDataset
-
-    :param data_path: path to the dataset
-    :rtype: FolderDataset
+    Class for loading a dataset from a folder
+    Args:
+        data_path (str): path to the dataset
     """
-
     def _generator(data_path):
+        """
+        A generator function to load and preprocess images from the specified folder.
+
+        Args:
+            data_path (str): The path to the dataset folder.
+
+        Yields:
+            np.ndarray: Preprocessed image data as NumPy arrays, normalized to the range [0, 1].
+        """
         filenames = get_all_filenames(data_path.decode())
 
         for filename in filenames:
@@ -26,6 +33,15 @@ class FolderDataset(tf.data.Dataset):
             yield np.array(image) / 255.
 
     def __new__(cls, data_path):
+        """
+        Create a new FolderDataset instance.
+
+        Args:
+            data_path (str): The path to the dataset folder.
+
+        Returns:
+            tf.data.Dataset: A TensorFlow Dataset containing preprocessed image data.
+        """
         return tf.data.Dataset.from_generator(
             cls._generator,
             output_types=(tf.float32),
@@ -35,17 +51,30 @@ class FolderDataset(tf.data.Dataset):
 
 class Dataset:
     """
-    Dataset
+    A class for managing and loading datasets.
 
-    :param data_path: path to the dataset. If it is a string, it will load a basic dataset,
-                      otherwise if it is a dictionary it will load a folder dataset
-    :param batch_size: batch size
-    :param buffer_size: buffer size for shuffling
-    :param chache_dir: directory to cache the dataset
-    :rtype: Dataset
+    Parameters:
+        data_path (str or dict): Path to the dataset. If it is a string, it will load a basic dataset,
+                                 otherwise, if it is a dictionary, it will load a folder dataset.
+        batch_size (int): Batch size.
+        buffer_size (int): Buffer size for shuffling (default is 3).
+        cache_dir (str): Directory to cache the dataset.
+
+    Returns:
+        tuple: A tuple containing train and test datasets.
     """
 
     def __init__(self, data_path, batch_size, buffer_size=3, chache_dir=''):
+        """
+        Initialize the Dataset class.
+
+        Args:
+            data_path (str or dict): Path to the dataset. If it is a string, it will load a basic dataset,
+                                     otherwise, if it is a dictionary, it will load a folder dataset.
+            batch_size (int): Batch size.
+            buffer_size (int, optional): Buffer size for shuffling (default is 3).
+            cache_dir (str, optional): Directory to cache the dataset.
+        """
         self.data_path = data_path
         self.buffer_size = buffer_size
         self.chache_dir = chache_dir
@@ -81,10 +110,13 @@ class Dataset:
 
     def load_basic_dataset(self, name):
         """
-        Function that loads basic datasets with labels or classes
-        :param name: name of the dataset (mnist, fashion_mnist, cifar10, cifar100)
-        :param batch_size: batch size
-        :return: train and test dataset
+        Load basic datasets with labels or classes.
+
+        Args:
+            name (str): Name of the dataset (mnist, fashion_mnist, cifar10, cifar100).
+
+        Returns:
+            tuple: Train and test datasets.
         """
         print('Loading dataset: ', name)
 
@@ -110,7 +142,16 @@ class Dataset:
 
     def build_pipeline(self, dataset, batch_size, shuffle=False, cache_dir=''):
         """
-        Function that builds the pipeline for the dataset
+        Build the data pipeline for the dataset.
+
+        Args:
+            dataset (tf.data.Dataset): The input dataset.
+            batch_size (int): Batch size.
+            shuffle (bool): Whether to shuffle the dataset.
+            cache_dir (str): Directory to cache the dataset.
+
+        Returns:
+            tf.data.Dataset: The processed dataset.
         """
         dataset = dataset.cache(cache_dir) if cache_dir else dataset
         dataset = dataset.shuffle(self.buffer_size) if shuffle else dataset
