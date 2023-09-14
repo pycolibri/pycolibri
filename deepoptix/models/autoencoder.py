@@ -3,7 +3,7 @@
 import tensorflow as tf
 from tensorflow.keras.layers import Layer
 from tensorflow.keras.models import Model
-import layers as custom_layers
+from . import custom_layers 
 
 
 class Autoencoder(Layer):

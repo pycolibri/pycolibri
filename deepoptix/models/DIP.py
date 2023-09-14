@@ -3,8 +3,8 @@ import tensorflow as tf
 import tensorflow.keras.layers as layers
 import numpy as np
 
-from autoencoder import Autoencoder
-from unet import Unet
+from  models.autoencoder import Autoencoder
+from  models.unet import Unet
 import tensorflow as tf
 
 
@@ -14,7 +14,7 @@ class DIP_CASSI(tf.keras.models.Model):
 
     """
 
-    def __init__(self,input_shape=[128,128,25], recon='unet',initilization='random',initial_ca=None,mode='base',network_args=None,):
+    def __init__(self,input_shape=[128,128,25], recon='unet',initilization='random',optical_layer=None,mode='base',network_args=None,):
         """ DIP Model
 
         Args:
@@ -32,7 +32,7 @@ class DIP_CASSI(tf.keras.models.Model):
         """
         super(DIP_CASSI,self).__init__()
         self.initilization = initilization
-        self.optics = CASSI(mode=mode, initial_ca=initial_ca)
+        self.optics = optical_layer
         self.input_size = input_shape
 
         if recon=='unet':
@@ -42,7 +42,7 @@ class DIP_CASSI(tf.keras.models.Model):
         else:
             raise ValueError("Choose models autoencoder or unet")
 
-    def __call__(self,y,is_training=True):
+    def __call__(self,y,training=True):
         if self.initilization=='random':
             z0 = tf.random.normal(shape=(1,*self.input_size))
         if self.initilization=='transpose':
@@ -53,55 +53,8 @@ class DIP_CASSI(tf.keras.models.Model):
 
         ys = self.optics(x,type_calculation='forward')
 
-        if is_training:
+        if training:
             return ys
         else:
             return x
         
-
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    import tensorflow as tf
-    import scipy.io as sio
-    
-    from deepoptix.optics.cassi import CASSI
-    import os
-
-    # load a mat file
-
-    cube = sio.loadmat(os.path.join('deepoptix', 'examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
-
-    ca = np.random.rand(1, cube.shape[0], cube.shape[1], 1)  # custom ca (1, M, N, 1)
-
-    mode = 'base'
-    cassi = CASSI(mode, initial_ca=ca)
-    cassi.build(ca.shape[1:])
-
-    cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
-    y = cassi(cube_tf, type_calculation="forward")
-    network_args = {'features': [28,32,14],'reduce_spatial':False,'out_channels':cube_tf.shape[-1],}
-    model = DIP_CASSI(input_shape=cube.shape,recon='autoencoder',initilization='random',network_args=network_args)
-
-
-    # load optical encoder
-    
-
-    recon = model(y, True)
-
-
-    # Print information about tensors
-
-
-    # visualize the measurement
-
-    plt.figure(figsize=(10, 10))
-
-
-    plt.title('cube')
-    plt.imshow(y[..., 0])
-
-
-
-    plt.show()
