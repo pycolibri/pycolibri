@@ -5,28 +5,60 @@ import tensorflow.keras.layers as layers
 
 
 class convBlock(layers.Layer):
-    """(Conv2D => Batchnom => ReLU) * 2"""
+    """ Convolutional Block
 
-    def __init__(self, out_channels, mid_channels=None):
+    default configuration: (Conv2D => Batchnorm => ReLU) * 2
+
+    """
+
+    def __init__(self, out_channels=1, kernel_size=3, bias=False, mode='CBR', factor=2):
+        """ Convolutional Block
+
+        Args:
+            out_channels (int, optional): number of output channels. Defaults to 1.
+            kernel_size (int, optional): size of the kernel. Defaults to 3.
+            bias (bool, optional): whether to use bias or not. Defaults to False.
+            mode (str, optional): mode of the convBlock, posible values are: ['C', 'B', 'R', 'U', 'M', 'A']. Defaults to 'CBR'.
+            factor (int, optional): factor for upsampling/downsampling. Defaults to 2.
+            
+        """
+
         super(convBlock, self).__init__()
 
-        if not mid_channels:
-            mid_channels = out_channels
+        self.layers = []
+        conv_kwargs = dict(filters=out_channels, 
+                           kernel_size=kernel_size, 
+                           padding='same', 
+                           use_bias=bias)
 
-        conv_kwargs = dict(kernel_size=3, padding='same', use_bias=False)
-
-        self.conv_block = tf.keras.Sequential([
-            layers.Conv2D(mid_channels, **conv_kwargs),
-            layers.BatchNormalization(),
-            layers.ReLU(),
-            layers.Conv2D(out_channels, **conv_kwargs),
-            layers.BatchNormalization(),
-            layers.ReLU(),
-        ])
-
+        for c in mode:
+            layer = self.build_layer(c, conv_kwargs, factor)
+            self.layers.append(layer)
+        
     def call(self, x):
-        return self.conv_block(x)
+        for layer in self.layers:
+            x = layer(x)
+        return x
     
+    def build_layer(self, c, params, factor):
+
+        params_mapping = {
+            'C': (layers.Conv2D, params),
+            'B': (layers.BatchNormalization, None),
+            'R': (layers.ReLU, None),
+            'U': (layers.UpSampling2D, dict(size=(factor,factor))),
+            'M': (layers.MaxPool2D, dict(pool_size=(factor,factor))),
+            'A': (layers.AveragePooling2D, dict(pool_size=(factor,factor))),
+        }
+
+        if c in params_mapping.keys():
+            layer, params = params_mapping[c]
+            return layer(**params) if params else layer()
+        else:
+            raise ValueError(f'Unknown layer type: {c}')
+
+
+
 
 class downBlock(layers.Layer):
     """Spatial downsampling and then convBlock"""
@@ -34,10 +66,7 @@ class downBlock(layers.Layer):
     def __init__(self, out_channels):
         super(downBlock, self).__init__()
 
-        self.pool_conv = tf.keras.Sequential([
-            layers.MaxPool2D(2),
-            convBlock(out_channels)
-        ])
+        self.pool_conv = convBlock(out_channels, mode='MCBRCBR')
 
     def call(self, x):
         return self.pool_conv(x)
@@ -50,7 +79,10 @@ class upBlock(layers.Layer):
         super(upBlock, self).__init__()
 
         self.up = layers.UpSampling2D(size=2, interpolation='bilinear')
-        self.conv_block = convBlock(out_channels, out_channels // 2)
+        self.conv_block = tf.keras.Sequential([
+            convBlock(out_channels // 2),
+            convBlock(out_channels)
+        ])
 
 
     def call(self, x1, x2):
@@ -66,13 +98,34 @@ class upBlock(layers.Layer):
         return self.conv_block(tf.concat([x2, x1], axis=-1))
 
 
+class upBlockNoSkip(layers.Layer):
+    """Spatial upsampling and then convBlock"""
+
+    def __init__(self, out_channels):
+        super(upBlockNoSkip, self).__init__()
+
+        self.up = layers.UpSampling2D(size=2, interpolation='bilinear')
+        self.conv_block = tf.keras.Sequential([
+            convBlock(out_channels // 2),
+            convBlock(out_channels)
+        ])
+
+
+    def call(self, x1):
+        
+        x1 = self.up(x1)
+        # input is CHW
+        return self.conv_block(x1)
+
+
+
 class outBlock(layers.Layer):
+    """Convolutional Block with 1x1 kernel and without activation"""
+
     def __init__(self, out_channels, activation=None):
         super(outBlock, self).__init__()
 
-        conv_kwargs = dict(kernel_size=1, padding='same', use_bias=False)
-
-        self.conv = layers.Conv2D(out_channels, **conv_kwargs)
+        self.conv = convBlock(out_channels, kernel_size=1, mode='C')
         self.act  = layers.Activation(activation) if activation else None
 
     def call(self, x):
