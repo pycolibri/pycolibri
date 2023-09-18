@@ -5,6 +5,13 @@ from PIL import Image
 
 from deepoptix.datasets.utils import *
 
+BASIC_DATASETS = {
+    'mnist': tf.keras.datasets.mnist,
+    'fashion_mnist': tf.keras.datasets.fashion_mnist,
+    'cifar10': tf.keras.datasets.cifar10,
+    'cifar100': tf.keras.datasets.cifar100
+}
+
 
 class FolderDataset(tf.data.Dataset):
     """
@@ -12,6 +19,7 @@ class FolderDataset(tf.data.Dataset):
     Args:
         data_path (str): path to the dataset
     """
+
     def _generator(data_path):
         """
         A generator function to load and preprocess images from the specified folder.
@@ -79,10 +87,9 @@ class Dataset:
         self.buffer_size = buffer_size
         self.chache_dir = chache_dir
 
-        basic_datasets = ['mnist, fashion_mnist', 'cifar10', 'cifar100']
-
         # basic datasets
 
+        basic_datasets = list(BASIC_DATASETS.keys())
         if isinstance(data_path, str):
             cmp_datasets = [dataset_name in data_path for dataset_name in basic_datasets]
 
@@ -120,15 +127,9 @@ class Dataset:
         """
         print('Loading dataset: ', name)
 
-        if name == 'mnist':
-            dataset = tf.keras.datasets.mnist
-        elif name == 'fashion_mnist':
-            dataset = tf.keras.datasets.fashion_mnist
-        elif name == 'cifar10':
-            dataset = tf.keras.datasets.cifar10
-        elif name == 'cifar100':
-            dataset = tf.keras.datasets.cifar100
-        else:
+        try:
+            dataset = BASIC_DATASETS[name]
+        except:
             raise ValueError('Dataset not supported')
 
         (x_train, y_train), (x_test, y_test) = dataset.load_data()
