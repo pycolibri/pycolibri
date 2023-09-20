@@ -4,12 +4,36 @@ import matplotlib.pyplot as plt
 
 class LossAndPredictionCallback(tf.keras.callbacks.Callback):
     def __init__(self, dataset, num_samples=5, plot_graph=False):
+        """
+        Callback para mostrar pérdida y predicciones durante el entrenamiento.
+
+        Parameters
+        ----------
+        dataset : tf.data.Dataset
+            El conjunto de datos de entrenamiento.
+        num_samples : int, optional
+            El número de muestras aleatorias para mostrar, por defecto es 5.
+        plot_graph : bool, optional
+            Indica si se deben trazar las imágenes de Ground Truth y las predicciones, por defecto es False.
+
+        """
         super(LossAndPredictionCallback, self).__init__()
         self.dataset = dataset
         self.num_samples = num_samples
         self.plot_graph = plot_graph
 
     def on_epoch_end(self, epoch, logs=None):
+        """
+        Llamado al final de cada época para mostrar pérdida y predicciones.
+
+        Parameters
+        ----------
+        epoch : int
+            Número de la época actual.
+        logs : dict, optional
+            Diccionario que contiene las métricas de entrenamiento, por defecto es None.
+
+        """
         # Obtén muestras aleatorias del conjunto de datos
         sample_indices = tf.random.uniform(
             (self.num_samples,), maxval=len(self.dataset), dtype=tf.int32
@@ -26,7 +50,7 @@ class LossAndPredictionCallback(tf.keras.callbacks.Callback):
         # Realiza predicciones en las muestras seleccionadas
         predictions = self.model.predict(sampled_images)
 
-        # Dibuja las imágenes de Ground Truth y las predicciones
+        # Dibuja las imágenes de Ground Truth y las predicciones si se requiere
         if self.plot_graph:
             plt.figure(figsize=(12, 6))
             for i in range(self.num_samples):
@@ -43,3 +67,5 @@ class LossAndPredictionCallback(tf.keras.callbacks.Callback):
 
         # Reporta la pérdida en el registro
         print(f'Epoch {epoch + 1} - Loss: {logs["loss"]:.4f}')
+
+
