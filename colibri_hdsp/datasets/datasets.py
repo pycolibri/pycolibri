@@ -3,7 +3,7 @@ import os
 import numpy as np
 from PIL import Image
 
-from deepoptix.datasets.utils import *
+from colibri_hdsp.datasets.utils import *
 
 BASIC_DATASETS = {
     'mnist': tf.keras.datasets.mnist,
