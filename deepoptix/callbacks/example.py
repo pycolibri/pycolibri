@@ -2,113 +2,123 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import scipy.io as sio
 
-class LossAndEncoderOutputCallback(tf.keras.callbacks.Callback):
+class LossAndPlotCallback(tf.keras.callbacks.Callback):
 
     def __init__(self, dataset, num_samples=1, plot_graph=False):
         """
-        Callback para mostrar pérdida y predicciones durante el entrenamiento.
+        Callback to display loss and predictions during training.
 
         Parameters
         ----------
         dataset : tf.data.Dataset
-            El conjunto de datos de entrenamiento.
+            The training dataset.
         num_samples : int, optional
-            El número de muestras aleatorias para mostrar, por defecto es 5.
+            The number of random samples to display, default is 1.
         plot_graph : bool, optional
-            Indica si se deben trazar las imágenes de Ground Truth y las predicciones, por defecto es False.
+            Indicates whether to plot Ground Truth images and predictions, default is False.
 
         """
 
-        super(LossAndEncoderOutputCallback, self).__init__()
+        super(LossAndPlotCallback, self).__init__()
         self.dataset = dataset
         self.num_samples = num_samples
         self.plot_graph = plot_graph
 
     def on_epoch_end(self, epoch, logs=None):
         """
-        Llamado al final de cada época para mostrar pérdida y predicciones.
+        Called at the end of each epoch to display loss and predictions.
 
         Parameters
         ----------
         epoch : int
-            Número de la época actual.
+            The current epoch number.
         logs : dict, optional
-            Diccionario que contiene las métricas de entrenamiento, por defecto es None.
+            A dictionary containing training metrics, default is None.
 
         """
 
-        # Calcular el promedio de la pérdida en esta época
+        # Calculate the average loss for this epoch
         epoch_loss = logs["loss"]
         epoch_num = epoch + 1
 
-        # Imprimir la pérdida promedio de esta época
-        print('\n\n' + f'Época {epoch_num} - Pérdida Promedio: {epoch_loss:.4f}' + '\n\n')
+        # Print the average loss for this epoch
+        print('\n\n' + f'Epoch {epoch_num} - Average Loss: {epoch_loss:.4f}' + '\n\n')
 
-        # Calcular la salida del codificador para las imágenes muestreadas
+        # Calculate the encoder output for sampled images
         for _ in range(self.num_samples):
             index = tf.random.uniform(
                 (), maxval=len(self.dataset), dtype=tf.int32
             )
-            sampled_images = self.dataset[index]  # Una lista de imágenes
+            sampled_images = self.dataset[index]  # A list of images
 
-            # Procesar cada imagen individualmente
+            # Process each image individually
             for sampled_image in sampled_images:
-                sampled_image = tf.reshape(sampled_image, (1, 256, 256, 28))
-                encoder_output = self.model.layers[2](sampled_image)  # Cambiar al índice correcto de la capa
+                print('sampled_image.shape:', sampled_image.shape)
+                sampled_image = tf.expand_dims(sampled_image, 0)
+                prediction = self.model(sampled_image)  # Change to the correct layer index
 
-                # Plotear la imagen de entrada vs. la salida de la red
+                # Plot the input image vs. the network output
                 if self.plot_graph:
-                    num_bands = sampled_image.shape[3]  # Número de bandas en la imagen de entrada
+                    num_bands = sampled_image.shape[3]  # Number of bands in the input image
 
-                    # Crear una figura con subplots para cada banda de entrada y salida
-                    plt.figure(figsize=(num_bands, 2))  # Aumentamos el tamaño de la figura
+                    # Create a figure with subplots for each input and output band
+                    plt.figure(figsize=(num_bands, 2))  # Increase the figure size
 
-                    # Subplots para la entrada
+                    # Subplots for input
                     for band in range(num_bands):
                         plt.subplot(2, num_bands, band + 1)
                         plt.imshow(sampled_image[0, :, :, band].numpy(), cmap='gray')
                         plt.title(f'In: {band + 1}')
-                        plt.axis('off')  # Eliminamos los ejes
+                        plt.axis('off')  # Remove axes
 
-                    # Subplots para la salida
+                    # Subplots for output
                     for band in range(num_bands):
                         plt.subplot(2, num_bands, num_bands + band + 1)
-                        plt.imshow(encoder_output[0, :, :, band].numpy(), cmap='gray')
+                        plt.imshow(prediction[0, :, :, band].numpy(), cmap='gray')
                         plt.title(f'Out: {band + 1}')
-                        plt.axis('off')  # Eliminamos los ejes
+                        plt.axis('off')  # Remove axes
 
                     plt.tight_layout()
                     plt.show()
 
+if __name__ == "__main__":
+    img = sio.loadmat('spectral_image.mat')['img']
 
+    # Reshape the data to the appropriate shape
+    (M, N, L) = img.shape
+    img = img.reshape(-1, M, N, L)
 
+    # Create a dataset that includes both images and labels
+    # In this case, we use the images themselves as labels
+    dataset = [img, img]
 
+    # Now, we can use this dataset with our custom callback
 
-img = sio.loadmat('../examples/data/spectral_image.mat')['img']
+    # Create an instance of the custom callback
+    custom_callback = LossAndPlotCallback(dataset=dataset, plot_graph=True)
 
-img = img.reshape(-1, 256, 256, 28)
+    # Define the input shape for our model
+    input_shape = (M, N, L)
 
-dataset = [img, img]
+    # Define the encoder part of the autoencoder
+    inputs = tf.keras.layers.Input(shape=input_shape)
+    x = tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(inputs)
+    x = tf.keras.layers.MaxPooling2D((2, 2), padding='same')(x)
+    encoded = tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same')(x)
 
-custom_callback = LossAndEncoderOutputCallback(dataset=dataset, plot_graph=True)
+    # Define the decoder part of the autoencoder
+    x = tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same')(encoded)
+    x = tf.keras.layers.UpSampling2D((2, 2))(x)
+    decoded = tf.keras.layers.Conv2D(28, (3, 3), activation='sigmoid', padding='same')(x)
 
+    # Create the autoencoder model
+    autoencoder = tf.keras.models.Model(inputs, decoded)
 
-input_shape = (256, 256, 28)
+    # Compile the model specifying the optimizer and loss function
+    autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
 
-inputs = tf.keras.layers.Input(shape=input_shape)
-x = tf.keras.layers.Conv2D(64, (3, 3), activation='relu', padding='same')(inputs)
-x = tf.keras.layers.MaxPooling2D((2, 2), padding='same')(x)
-encoded = tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same')(x)
+    # Display a summary of the model architecture
+    autoencoder.summary()
 
-x = tf.keras.layers.Conv2D(128, (3, 3), activation='relu', padding='same')(encoded)
-x = tf.keras.layers.UpSampling2D((2, 2))(x)
-decoded = tf.keras.layers.Conv2D(28, (3, 3), activation='sigmoid', padding='same')(x)
-
-
-autoencoder = tf.keras.models.Model(inputs, decoded)
-
-autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
-
-autoencoder.summary()
-
-autoencoder.fit(img, img, epochs=10, callbacks=[custom_callback])
+    # Train the model using the custom callback
+    autoencoder.fit(img, img, epochs=10, callbacks=[custom_callback])
