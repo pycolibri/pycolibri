@@ -1,12 +1,9 @@
 """ Autoencoder Architecture """
-
-import tensorflow as tf
-from tensorflow.keras.layers import Layer
-from tensorflow.keras.models import Model
 from . import custom_layers 
+import tensorflow as tf
 
 
-class Autoencoder(Layer):
+class Autoencoder(tf.keras.layers.Layer):
     """
     Autoencoder layer
     """
@@ -73,48 +70,3 @@ class Autoencoder(Layer):
             return self.outc(x),xl
         else:
             return self.outc(x)
-
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    import tensorflow as tf
-    import scipy.io as sio
-    import os
-
-    # load a mat file
-
-    cube = sio.loadmat(os.path.join('deepoptix', 'examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
-
-
-    # load optical encoder
-    cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
-    print(cube_tf.shape)
-    model = Autoencoder(reduce_spatial=True,out_channels=cube_tf.shape[-1],features=[4,16,6],last_activation='relu')
-    model.build(cube_tf.shape)  # this is only for the demo
-
-    # encode the cube
-
-    recon = model(cube_tf,True)
-
-
-    # Print information about tensors
-
-
-    # visualize the measurement
-
-    plt.figure(figsize=(10, 10))
-
-    plt.subplot(131)
-    plt.title('cube')
-    plt.imshow(cube[..., 0])
-
-    plt.subplot(132)
-    plt.title('latent space')
-    plt.imshow(recon[1][0, ...])
-
-    plt.subplot(133)
-    plt.title('recon')
-    plt.imshow(recon[0][0, ..., 0])
-
-    plt.show()
