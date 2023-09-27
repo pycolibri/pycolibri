@@ -3,8 +3,8 @@ import tensorflow as tf
 import tensorflow.keras.layers as layers
 import numpy as np
 
-from  models.autoencoder import Autoencoder
-from  models.unet import Unet
+from  .autoencoder import Autoencoder
+from  .unet import Unet
 import tensorflow as tf
 
 
