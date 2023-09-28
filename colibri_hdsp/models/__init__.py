@@ -1,8 +1,8 @@
-from models.custom_layers import *
+from colibri_hdsp.models.custom_layers import *
 
-from models.unet import Unet
-from  models.autoencoder import Autoencoder
-from models.DIP import DIP_CASSI
+from colibri_hdsp.models.unet import Unet
+from  colibri_hdsp.models.autoencoder import Autoencoder
+from colibri_hdsp.models.DIP import DIP_CASSI
 from tensorflow.keras.layers import Input
 from tensorflow.keras.models import Model
 
