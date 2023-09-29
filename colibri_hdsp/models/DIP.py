@@ -3,8 +3,9 @@ import tensorflow as tf
 import tensorflow.keras.layers as layers
 import numpy as np
 
-from  colibri_hdsp.models.autoencoder import Autoencoder
-from  colibri_hdsp.models.unet import Unet
+from  .autoencoder import Autoencoder
+from  .unet import Unet
+
 import tensorflow as tf
 
 

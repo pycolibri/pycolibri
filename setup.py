@@ -1,5 +1,5 @@
 from setuptools import setup
 
 setup(
-    name='deepoptix',
+    name='colibri_hdsp',
 )
