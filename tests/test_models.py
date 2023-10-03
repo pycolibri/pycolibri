@@ -1,5 +1,5 @@
 import pytest
-from .test_utils import include_colibri
+from .utils import include_colibri
 include_colibri()
 
 from colibri_hdsp.models import build_network, Autoencoder, Unet
