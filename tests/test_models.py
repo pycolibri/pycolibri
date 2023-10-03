@@ -33,4 +33,3 @@ def test_model(model_name, imsize):
     y = model(x)
 
     assert y.shape == x.shape
-
