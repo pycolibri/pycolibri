@@ -1,7 +1,7 @@
 import h5py
 
-from colibri_hdsp.data.spec2rgb import ColourSystem
-from colibri_hdsp.data.utils import *
+from spec2rgb import ColourSystem
+from utils import *
 
 BASIC_DATASETS = {
     'mnist': tf.keras.datasets.mnist,
