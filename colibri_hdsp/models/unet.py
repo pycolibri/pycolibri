@@ -18,7 +18,7 @@ class Unet(nn.Module):
         in_channels=1,
         out_channels=1,
         features=[32, 64, 128, 256],
-        last_activation=nn.Sigmoid,
+        last_activation="sigmoid",
     ):
         """Unet Layer
 
