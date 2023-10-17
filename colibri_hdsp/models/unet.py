@@ -1,17 +1,21 @@
 """ Unet Architecture """
 
 from . import custom_layers
-import tensorflow as tf
-class Unet(tf.keras.layers.Layer):
+# import tensorflow as tf
+import torch
+import torch.nn as nn
+
+class Unet(nn.Module):
     """
     Unet Layer
 
     """
 
     def __init__(self, 
-                 out_channels, 
+                 in_channels=1,
+                 out_channels=1, 
                  features=[32, 64, 128, 256],
-                 last_activation='sigmoid'):
+                 last_activation=nn.Sigmoid):
         """ Unet Layer
 
         Args:
@@ -28,28 +32,38 @@ class Unet(tf.keras.layers.Layer):
 
         levels = len(features)
 
-        self.inc = custom_layers.convBlock(features[0], mode='CBRCBR') 
-
-        self.downs = [
-            custom_layers.downBlock(features[i+1]) for i in range(levels-2)
-        ]
-
-        self.bottle = custom_layers.downBlock(features[-1] // 2)
-
-        self.ups = [
-            custom_layers.upBlock(features[i] // 2) for i in range(levels-2, 0, -1)
-        ]
-
-        self.ups.append(custom_layers.upBlock(features[0] // 2))
+        self.inc = custom_layers.convBlock(in_channels, features[0], mode='CBRCBR') 
+        
+        # -----------------  Down Path ----------------- #
+        self.downs = ()
+        for i in range(levels-2):
+            self.downs += (custom_layers.downBlock(features[i], features[i+1]),)
+        self.downs = nn.ModuleList(self.downs)
 
 
-        self.outc = custom_layers.outBlock(out_channels, last_activation)
+        # -----------------  Bottleneck  ----------------- #
+        self.bottle = custom_layers.downBlock(features[-2], features[-1] )
 
 
-    def call(self, x):
+        # -----------------  Up Path ----------------- #
+        self.ups = ()
+        for i in range(levels-2, 0, -1):
+            self.ups += (custom_layers.upBlock(features[i]), )
+
+        self.ups += (custom_layers.upBlock(features[0]), )
+        self.ups = nn.ModuleList(self.ups)
+
+        
+        # -----------------  Output ----------------- #
+        self.outc = custom_layers.outBlock(features[0],  out_channels, last_activation)
+
+
+    def forward(self, x):
 
         outputs = []
+
         x = self.inc(x)
+
         outputs.append(x)
         
         for down in self.downs:

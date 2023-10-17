@@ -2,8 +2,10 @@ from .unet import Unet
 from .autoencoder import Autoencoder
 from .DIP import DIP_CASSI
 
-from tensorflow.keras.layers import Input
-from tensorflow.keras.models import Model
+# from tensorflow.keras.layers import Input
+# from tensorflow.keras.models import Model
+import torch
+import torch.nn
 
 __all__ = [ 
     "Unet",
@@ -12,7 +14,7 @@ __all__ = [
     "build_network"
 ]
 
-def build_network(model=Unet, size=256, in_channels=31 ,**network_params):
+def build_network(model=Unet, **network_params):
     """ Build the network model
 
     Args:
@@ -21,9 +23,8 @@ def build_network(model=Unet, size=256, in_channels=31 ,**network_params):
         size (int, optional): Size of the input image. Defaults to None.
         **network_params (dict): Network parameters
     """
-    _input = Input(shape=(size, size, in_channels))
-    output = model(**network_params)(_input)
-    model = Model(inputs=_input, outputs=output)
+
+    model = model(**network_params)
     return model
 
 

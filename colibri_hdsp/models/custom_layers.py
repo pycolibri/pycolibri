@@ -1,17 +1,20 @@
 """ Utilities for building layers. """
 
-import tensorflow as tf
-import tensorflow.keras.layers as layers
+# import tensorflow as tf
+# import tensorflow.keras.layers as layers
+
+import torch
+import torch.nn as nn
 
 
-class convBlock(layers.Layer):
+class convBlock(nn.Module):
     """ Convolutional Block
 
     default configuration: (Conv2D => Batchnorm => ReLU) * 2
 
     """
 
-    def __init__(self, out_channels=1, kernel_size=3, bias=False, mode='CBR', factor=2):
+    def __init__(self, in_channels=1, out_channels=1, kernel_size=3, bias=False, mode='CBR', factor=2):
         """ Convolutional Block
 
         Args:
@@ -26,29 +29,40 @@ class convBlock(layers.Layer):
         super(convBlock, self).__init__()
 
         self.layers = []
-        conv_kwargs = dict(filters=out_channels, 
-                           kernel_size=kernel_size, 
-                           padding='same', 
-                           use_bias=bias)
+        pad_size = kernel_size // 2
 
-        for c in mode:
+        conv_kwargs = dict( in_channels=in_channels,
+                            out_channels=out_channels, 
+                            kernel_size=kernel_size, 
+                            padding=pad_size, 
+                            bias=bias)
+        first_conv = True
+
+        for c in mode:           
             layer = self.build_layer(c, conv_kwargs, factor)
             self.layers.append(layer)
+
+            if c == "C" and first_conv:
+                first_conv = False
+                conv_kwargs["in_channels"] = conv_kwargs["out_channels"]
         
-    def call(self, x):
+    def forward(self, x):
         for layer in self.layers:
             x = layer(x)
         return x
     
     def build_layer(self, c, params, factor):
 
+        num_features = params['out_channels']
+        batch_norm_params = dict(num_features=num_features)
+
         params_mapping = {
-            'C': (layers.Conv2D, params),
-            'B': (layers.BatchNormalization, None),
-            'R': (layers.ReLU, None),
-            'U': (layers.UpSampling2D, dict(size=(factor,factor))),
-            'M': (layers.MaxPool2D, dict(pool_size=(factor,factor))),
-            'A': (layers.AveragePooling2D, dict(pool_size=(factor,factor))),
+            'C': (nn.Conv2d, params),
+            'B': (nn.BatchNorm2d, batch_norm_params),
+            'R': (nn.ReLU, None),
+            'U': (nn.Upsample, dict(size=(factor,factor))),
+            'M': (nn.MaxPool2d, dict(kernel_size=(factor,factor))),
+            'A': (nn.AvgPool2d, dict(kernel_size=(factor,factor))),
         }
 
         if c in params_mapping.keys():
@@ -60,58 +74,66 @@ class convBlock(layers.Layer):
 
 
 
-class downBlock(layers.Layer):
+class downBlock(nn.Module):
     """Spatial downsampling and then convBlock"""
 
-    def __init__(self, out_channels):
+    def __init__(self, in_channels, out_channels):
         super(downBlock, self).__init__()
 
-        self.pool_conv = convBlock(out_channels, mode='MCBRCBR')
+        self.pool_conv = convBlock(in_channels, out_channels, mode='MCBRCBR')
 
-    def call(self, x):
+    def forward(self, x):
         return self.pool_conv(x)
 
 
-class upBlock(layers.Layer):
+class upBlock(nn.Module):
     """Spatial upsampling and then convBlock"""
 
-    def __init__(self, out_channels):
+    def __init__(self, in_channels):
         super(upBlock, self).__init__()
 
-        self.up = layers.UpSampling2D(size=2, interpolation='bilinear')
-        self.conv_block = tf.keras.Sequential([
-            convBlock(out_channels // 2),
-            convBlock(out_channels)
-        ])
+        self.up = nn.Sequential(
+             nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True),
+             nn.Conv2d(in_channels*2, in_channels, kernel_size=1, bias=False),    
+        )
+       
+
+        self.conv_block = nn.Sequential(
+            convBlock(in_channels*2, in_channels),
+            convBlock(in_channels,   in_channels)
+        )
 
 
-    def call(self, x1, x2):
+    def forward(self, x1, x2):
         
         x1 = self.up(x1)
         # input is CHW
-        diffY = x2.shape[1] - x1.shape[1]
-        diffX = x2.shape[2] - x1.shape[2]
+        diffY = x2.shape[-2] - x1.shape[-2]
+        diffX = x2.shape[-1] - x1.shape[-1]
 
-        x1 = tf.pad(x1, [[0, 0], [diffX // 2, diffX - diffX // 2],
-                         [diffY // 2, diffY - diffY // 2], [0, 0]])
+        
+        x1 = nn.functional.pad(x1, (diffX // 2, diffX - diffX // 2,
+                            diffY // 2, diffY - diffY // 2) )
 
-        return self.conv_block(tf.concat([x2, x1], axis=-1))
+        return self.conv_block(torch.cat([x2, x1], dim=1))
 
 
-class upBlockNoSkip(layers.Layer):
+class upBlockNoSkip(nn.Module):
     """Spatial upsampling and then convBlock"""
 
     def __init__(self, out_channels):
         super(upBlockNoSkip, self).__init__()
 
-        self.up = layers.UpSampling2D(size=2, interpolation='bilinear')
-        self.conv_block = tf.keras.Sequential([
+        self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+
+        self.conv_block = nn.Sequential(
             convBlock(out_channels // 2),
             convBlock(out_channels)
-        ])
+        )
 
 
-    def call(self, x1):
+
+    def forward(self, x1):
         
         x1 = self.up(x1)
         # input is CHW
@@ -119,16 +141,16 @@ class upBlockNoSkip(layers.Layer):
 
 
 
-class outBlock(layers.Layer):
+class outBlock(nn.Module):
     """Convolutional Block with 1x1 kernel and without activation"""
 
-    def __init__(self, out_channels, activation=None):
+    def __init__(self, in_channels, out_channels, activation=None):
         super(outBlock, self).__init__()
 
-        self.conv = convBlock(out_channels, kernel_size=1, mode='C')
-        self.act  = layers.Activation(activation) if activation else None
+        self.conv = convBlock(in_channels, out_channels, kernel_size=1, mode='C')
+        self.act = activation() if activation else nn.Identity()
 
-    def call(self, x):
+    def forward(self, x):
         x = self.conv(x)
         return self.act(x) if self.act else x
 
