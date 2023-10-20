@@ -2,36 +2,6 @@ import os
 from PIL import Image
 
 import numpy as np
-import tensorflow as tf
-
-
-def normalize_img(image, max_val=255.):
-    """
-    Normalize the input image.
-
-    Args:
-        image (tf.Tensor): The image to normalize.
-        max_val (float, optional): The maximum value of the image (default is 255.0).
-
-    Returns:
-        tf.Tensor: The normalized image.
-    """
-    norm_img = tf.cast(image, tf.float32) / max_val
-    return norm_img
-
-
-def hot_encode(label, num_classes=10):
-    """
-    One-hot encode the label.
-
-    Args:
-        label (int): The label to encode.
-        num_classes (int, optional): The number of classes (default is 10).
-
-    Returns:
-        tf.Tensor: The encoded label.
-    """
-    return tf.one_hot(label, num_classes)
 
 
 def get_all_filenames(root_directory):
@@ -59,6 +29,15 @@ def get_all_filenames(root_directory):
 
 
 def load_image(filename):
+    """
+    Load a jpg, jpeg or png image
+
+    Args:
+        filename (str): The filename to be loaded.
+
+    Returns:
+        image (array): The normalized image [0, 1] as numpy array.
+    """
     image = Image.open(filename)
 
     if image.mode != 'RGB':
