@@ -1,23 +1,23 @@
-import tensorflow as tf
+import torch
 import numpy as np
-from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
-
-class CASSI(tf.keras.layers.Layer):
+#from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
+from functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
+class CASSI(torch.nn.Module):
     """
     Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
 
     """
 
-    def __init__(self, mode, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
+    def __init__(self, input_shape, mode, device, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
         """
         Args:
             mode (str): String, mode of the coded aperture, it can be "base", "dd" or "color"
             trainable (bool): Boolean, if True the coded aperture is trainable
-            ca_regularizer (LossFunc?): Regularizer function applied to the coded aperture
+            ca_regularizer (function): Regularizer function applied to the coded aperture
             initial_ca (torch.Tensor): Initial coded aperture with shape (1, M, N, 1)
             seed (int): Random seed
         """
-        super(CASSI, self).__init__(name='cassi')
+        super(CASSI, self).__init__()
         self.seed = seed
         self.trainable = trainable
         self.ca_regularizer = ca_regularizer
@@ -34,16 +34,9 @@ class CASSI(tf.keras.layers.Layer):
             self.backward = backward_color_cassi
 
         self.mode = mode
+        self.device = device
 
-    def build(self, input_shape):
-        """
-        Build method of the layer, it creates the coded aperture according to the input shape
-        Args:
-            input_shape (list): Shape of the input tensor (1, M, N, L)
-        Returns:
-            None
-        """
-        super(CASSI, self).build(input_shape)
+
         self.M, self.N, self.L = input_shape  # Extract spectral image shape
 
         if self.mode == 'base':
@@ -56,13 +49,14 @@ class CASSI(tf.keras.layers.Layer):
             raise ValueError(f"the mode {self.mode} is not valid")
 
         if self.initial_ca is None:
-            initializer = tf.random_uniform_initializer(minval=0, maxval=1, seed=self.seed)
+            initializer = torch.randn(shape, requires_grad=self.trainable)
         else:
-            assert self.initial_ca.shape != shape, f"the start CA shape should be {shape}"
-            initializer = tf.constant_initializer(self.initial_ca)
+            assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
+            initializer = torch.from_numpy(self.initial_ca).float()
 
-        self.ca = self.add_weight(name='coded_apertures', shape=shape, initializer=initializer,
-                                    trainable=self.trainable, regularizer=self.ca_regularizer)
+        #Add parameter CA in pytorch manner
+        initializer = initializer.to(device)
+        self.ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
 
     def __call__(self, x, type_calculation="forward"):
         """
@@ -89,24 +83,23 @@ class CASSI(tf.keras.layers.Layer):
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
-    import tensorflow as tf
+    import torch
     import scipy.io as sio
     import os
 
     # load a mat file
 
-    cube = sio.loadmat(os.path.join('deepoptix', 'examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
+    cube = sio.loadmat(os.path.join('examples', 'data', 'spectral_image.mat'))['img']  # (M, N, L)
     ca = np.random.rand(1, cube.shape[0], cube.shape[1], 1)  # custom ca (1, M, N, 1)
 
     # load optical encoder
 
-    mode = 'dd'
-    cassi = CASSI(mode)
-    cassi.build(cube.shape)  # this is only for the demo
-
+    mode = 'base'
+    device = 'cuda'
+    cassi = CASSI(input_shape=cube.shape, mode=mode, device=device, trainable=False, initial_ca=ca)
     # encode the cube
 
-    cube_tf = tf.convert_to_tensor(cube)[None]  # None add a new dimension
+    cube_tf = torch.from_numpy(cube).float().unsqueeze(0).to(device) # (1, M, N, L)
     measurement = cassi(cube_tf, type_calculation="forward")
     backward = cassi(measurement, type_calculation="backward")
     direct_backward = cassi(cube_tf)
@@ -128,15 +121,15 @@ if __name__ == "__main__":
 
     plt.subplot(222)
     plt.title('measurement')
-    plt.imshow(measurement[0, ..., 0])
+    plt.imshow(measurement[0, ..., 0].cpu())
 
     plt.subplot(223)
     plt.title('backward')
-    plt.imshow(backward[0, ..., 0])
+    plt.imshow(backward[0, ..., 0].cpu())
 
     plt.subplot(224)
     plt.title('measurement2')
-    plt.imshow(measurement2[0, ..., 0])
+    plt.imshow(measurement2[0, ..., 0].cpu())
 
     plt.tight_layout()
     plt.show()
