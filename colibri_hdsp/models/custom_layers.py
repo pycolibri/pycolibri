@@ -161,7 +161,7 @@ class upBlockNoSkip(nn.Module):
         self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
 
         self.conv_block = nn.Sequential(
-            convBlock(out_channels // 2), convBlock(out_channels)
+            convBlock(out_channels * 2, out_channels), convBlock(out_channels, out_channels)
         )
 
     def forward(self, x1):

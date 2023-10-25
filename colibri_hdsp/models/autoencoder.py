@@ -1,15 +1,15 @@
 """ Autoencoder Architecture """
 from . import custom_layers 
-import tensorflow as tf
+import torch.nn as nn
 
-
-class Autoencoder(tf.keras.layers.Layer):
+class Autoencoder(nn.Module):
     """
     Autoencoder layer
     """
 
     def __init__(self, 
-                 out_channels, 
+                 in_channels=1,
+                 out_channels=1, 
                  features=[32, 64, 128, 256],
                  last_activation='sigmoid',
                  reduce_spatial = False):
@@ -30,30 +30,36 @@ class Autoencoder(tf.keras.layers.Layer):
 
         levels = len(features)
 
-        self.inc = custom_layers.convBlock(features[0], mode='CBRCBR') 
+        self.inc = custom_layers.convBlock(in_channels,features[0], mode='CBRCBR') 
         if reduce_spatial:
-            self.downs = [
-                custom_layers.downBlock(features[i+1]) for i in range(levels-2)
-            ]
-            self.ups = [
-                custom_layers.upBlockNoSkip(features[i] // 2) for i in range(levels-2, 0, -1)
-            ]
-            self.bottle = custom_layers.downBlock(features[-1] // 2)
+            self.downs = nn.ModuleList(
+                [
+                    custom_layers.downBlock(features[i], features[i + 1])
+                    for i in range(len(features) - 2)
+                ]
+            )
+            self.ups = nn.ModuleList(
+                [
+                    custom_layers.upBlockNoSkip(features[i])
+                    for i in range(len(features) - 2, 0, -1)
+                ]
+                + [custom_layers.upBlockNoSkip(features[0])]
+            )
             self.ups.append(custom_layers.upBlockNoSkip(features[0] // 2))
+            self.bottle = custom_layers.convBlock(features[-2], features[-1])
+
         else:
-            self.downs = [
-                custom_layers.convBlock(features[i+1], mode='CBRCBR') for i in range(levels-2)
-            ]
+            self.downs =  nn.ModuleList([
+                custom_layers.convBlock(features[i],features[i+1], mode='CBRCBR') for i in range(levels-2)
+            ])
 
-            self.bottle = custom_layers.convBlock(features[-1], mode='CBRCBR')
+            self.bottle = custom_layers.downBlock(features[-2], features[-1])
 
-            self.ups = [
-                custom_layers.convBlock(features[i] // 2, mode='CBRCBR') for i in range(levels-2, 0, -1)
-            ]
+
             self.ups.append(custom_layers.convBlock(features[0],mode='CBCBR'))
 
             
-        self.outc = custom_layers.outBlock(out_channels, last_activation)
+        self.outc = custom_layers.outBlock(features[0], out_channels, last_activation)
 
     def call(self, inputs, get_latent=False,**kwargs):
 
@@ -70,3 +76,4 @@ class Autoencoder(tf.keras.layers.Layer):
             return self.outc(x),xl
         else:
             return self.outc(x)
+        
