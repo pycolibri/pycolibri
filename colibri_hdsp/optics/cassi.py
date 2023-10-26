@@ -1,6 +1,5 @@
 import torch
 import numpy as np
-#from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
 from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
 class CASSI(torch.nn.Module):
     """
