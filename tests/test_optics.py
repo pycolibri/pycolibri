@@ -35,10 +35,10 @@ def test_cassi(mode, imsize):
     out_shape = compute_outshape(imsize, mode)
 
 
-    cassi = CASSI(mode=mode)
+    cassi = CASSI(imsize[1:], mode, "cpu")
 
-    cube_tf = torch.from_numpy(cube).float()
-    measurement = cassi(cube_tf, type_calculation="forward")
+    cube = cube.float()
+    measurement = cassi(cube, type_calculation="forward")
 
     assert measurement.shape == out_shape
 
