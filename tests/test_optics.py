@@ -3,7 +3,7 @@ from .utils import include_colibri
 include_colibri()
 
 
-import tensorflow as tf
+import torch
 from colibri_hdsp.optics.cassi import CASSI
 
 @pytest.fixture
@@ -21,24 +21,24 @@ def compute_outshape(imsize, mode):
         out = (1, h, w + c - 1, 1)
     elif mode == "dd":
         out = (1, h, w, 1)
+    elif mode == "color":
+        out = (1, h, w, 1)
     
     return out
 
-mode_list = ["base", "dd"]
+mode_list = ["base", "dd", "color"]
 
 @pytest.mark.parametrize("mode", mode_list)
 def test_cassi(mode, imsize):
 
-    cube      =  tf.random.normal(imsize)
+    cube = torch.randn(imsize)
     out_shape = compute_outshape(imsize, mode)
 
-    h, w, c = imsize[1:]
 
-    cassi = CASSI(mode=mode)
-    cassi.build((h, w, c))
+    cassi = CASSI(imsize[1:], mode, "cpu")
 
-    cube_tf = tf.convert_to_tensor(cube, dtype=tf.float32)
-    measurement = cassi(cube_tf, type_calculation="forward")
+    cube = cube.float()
+    measurement = cassi(cube, type_calculation="forward")
 
     assert measurement.shape == out_shape
 
