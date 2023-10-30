@@ -22,7 +22,7 @@ def compute_outshape(imsize, mode):
     elif mode == "dd":
         out = (1, h, w, 1)
     elif mode == "color":
-        out = (1, h, w, c)
+        out = (1, h, w, 1)
     
     return out
 
