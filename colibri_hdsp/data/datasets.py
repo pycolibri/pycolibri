@@ -5,8 +5,8 @@ import torchvision
 from torch.utils import data
 from torchvision import transforms
 
-from spec2rgb import ColourSystem
-from utils import *
+from colibri_hdsp.data.spec2rgb import ColourSystem
+from colibri_hdsp.data.utils import *
 
 BASIC_DATASETS = {
     'mnist': torchvision.datasets.MNIST,
