@@ -1,114 +1,90 @@
 import h5py
 
-from spec2rgb import ColourSystem
-from utils import *
+import torch
+import torchvision
+from torch.utils import data
+from torchvision import transforms
+
+from colibri_hdsp.data.spec2rgb import ColourSystem
+from colibri_hdsp.data.utils import *
 
 BASIC_DATASETS = {
-    'mnist': tf.keras.datasets.mnist,
-    'fashion_mnist': tf.keras.datasets.fashion_mnist,
-    'cifar10': tf.keras.datasets.cifar10,
-    'cifar100': tf.keras.datasets.cifar100
+    'mnist': torchvision.datasets.MNIST,
+    'fashion_mnist': torchvision.datasets.FashionMNIST,
+    'cifar10': torchvision.datasets.CIFAR10,
+    'cifar100': torchvision.datasets.CIFAR100,
 }
 
 
-class FolderDataset(tf.data.Dataset):
-    """
-    Class for loading a dataset from a folder
-    Args:
-        data_path (str): path to the dataset
-    """
+class FolderDataset(data.Dataset):
+    def __init__(self, dataset_path, keys=None, is_train=False):
+        super(FolderDataset, self).__init__()
+        self.keys = keys
 
-    def _generator(data_path, keys=''):
-        """
-        A generator function to load and preprocess images from the specified folder.
+        self.filenames = get_all_filenames(dataset_path)
+        self.dataset_len = len(self.filenames)
 
-        Args:
-            data_path (str): The path to the dataset folder.
-            keys (str): If the dataset contains .mat files, it should contain the keys related to each
-                         sample separated by commas. For arad dataset, it works 'cube'.
+        self.is_train = is_train
 
-        Yields:
-            np.ndarray: Preprocessed image data as NumPy arrays, normalized to the range [0, 1].
-        """
-        filenames = get_all_filenames(data_path.decode())
+    def __len__(self):
+        return self.dataset_len
 
-        for filename in filenames:
-            if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
-                yield load_image(filename)
+    def __getitem__(self, index):
 
-            elif filename.lower().endswith('.mat'):
-                keys = keys[0].split(',') if isinstance(keys, list) else keys.decode().split(',')
+        # load sample
 
-                with h5py.File(str(filename), 'r') as mat:
-                    spectral_image = np.float32(np.array(mat[keys[0]]))
-                    spectral_image = np.transpose(spectral_image, (2, 1, 0))
+        filename = self.filenames[index]
 
-                filename = filename.replace('_spectral', '_RGB')
-                image = load_image(filename.replace('.mat', '.jpg'))
+        # from jpg, jpeg or png images
 
-                yield image, spectral_image
+        if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
+            sample = load_image(filename)
 
-            else:
-                raise "The filename type image is unknown, please check the data_path"
+            return torch.from_numpy(sample.copy()).permute(2, 0, 1)
 
-    def __new__(cls, data_path, keys=''):
-        """
-        Create a new FolderDataset instance.
+        # from mat files
 
-        Args:
-            data_path (str): The path to the dataset folder.
+        elif filename.lower().endswith('.mat'):
+            with h5py.File(str(filename), 'r') as mat:
+                spectral_image = np.float32(np.array(mat[self.keys['spec']]))
+                spectral_image = np.transpose(spectral_image, (2, 1, 0))
 
-        Returns:
-            tf.data.Dataset: A TensorFlow Dataset containing preprocessed image data.
-        """
-        output_types = (tf.float32)
-        if 'arad' in data_path.lower():
-            output_types = (tf.float32, tf.float32)
+            filename = filename.replace('_spectral', '_RGB')
+            image = load_image(filename.replace('.mat', '.jpg'))
 
-        return tf.data.Dataset.from_generator(
-            cls._generator,
-            output_types=output_types,
-            args=(data_path, keys)
-        )
+            spectral_image = torch.from_numpy(spectral_image.copy()).permute(2, 0, 1)
+            image = torch.from_numpy(image.copy()).permute(2, 0, 1)
+
+            return image, spectral_image
+
+        else:
+            raise "Unknown filename extension (only availabe .jpg, .jpeg, .png and .mat files)"
 
 
 class Dataset:
     """
     A class for managing and loading data.
-
-    Parameters:
-        data_path (str or dict): Path to the dataset. If it is a string, it will load a basic dataset,
-                                 otherwise, if it is a dictionary, it will load a folder dataset.
-        batch_size (int): Batch size.
-        buffer_size (int): Buffer size for shuffling (default is 3).
-        cache_dir (str): Directory to cache the dataset.
-
-    Returns:
-        tuple: A tuple containing train and test data.
     """
 
-    def __init__(self, data_path, batch_size, keys='', buffer_size=3, chache_dir=''):
+    def __init__(self, dataset_path, keys=None, batch_size=1, num_workers=0):
         """
         Initialize the Dataset class.
 
         Args:
-            data_path (str or dict): Path to the dataset. If it is a string, it will load a basic dataset,
+            dataset_path (str or dict): Path to the dataset. If it is a string, it will load a basic dataset,
                                      otherwise, if it is a dictionary, it will load a folder dataset.
-            batch_size (int): Batch size.
             keys (str): If the dataset contains .mat files, it should contain the keys related to each
                          sample. For arad, we have keys=dict(spec='cube')
-            buffer_size (int, optional): Buffer size for shuffling (default is 3).
-            cache_dir (str, optional): Directory to cache the dataset.
+            batch_size (int): Batch size.
+            num_workers (int): number of workers.
         """
-        self.data_path = data_path
-        self.buffer_size = buffer_size
-        self.chache_dir = chache_dir
+        self.dataset_path = dataset_path
 
         # basic data
 
         basic_datasets = list(BASIC_DATASETS.keys())
-        if isinstance(data_path, str):
-            cmp_datasets = [dataset_name in data_path for dataset_name in basic_datasets]
+        if isinstance(dataset_path, str):
+            cmp_datasets = [dataset_name in dataset_path for dataset_name in basic_datasets]
 
             if any(cmp_datasets):
                 idx = np.argwhere(cmp_datasets)[0][0]
@@ -119,9 +95,9 @@ class Dataset:
 
         # folder data
 
-        elif isinstance(data_path, dict):
-            train_data_path = data_path['train']
-            test_data_path = data_path['test']
+        elif isinstance(dataset_path, dict):
+            train_data_path = dataset_path['train']
+            test_data_path = dataset_path['test']
 
             train_dataset = FolderDataset(train_data_path, keys=keys)
             test_dataset = FolderDataset(test_data_path, keys=keys)
@@ -129,8 +105,10 @@ class Dataset:
         else:
             raise ValueError('Dataset not supported')
 
-        self.train_dataset = self.build_pipeline(train_dataset, batch_size, shuffle=True, cache_dir=self.chache_dir)
-        self.test_dataset = self.build_pipeline(test_dataset, batch_size, shuffle=False, cache_dir=self.chache_dir)
+        self.train_dataset = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
+                                                         num_workers=num_workers)
+        self.test_dataset = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False,
+                                                        num_workers=num_workers)
 
     def load_basic_dataset(self, name):
         """
@@ -149,54 +127,29 @@ class Dataset:
         except:
             raise ValueError('Dataset not supported')
 
-        (x_train, y_train), (x_test, y_test) = dataset.load_data()
-        x_train = x_train / 255.
-        x_test = x_test / 255.
+        transform = transforms.Compose([transforms.ToTensor()])
 
-        # create dataset
-
-        train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train.squeeze()))
-        test_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test.squeeze()))
+        train_dataset = dataset(root='./data', train=True, download=True, transform=transform)
+        test_dataset = dataset(root='./data', train=False, download=True, transform=transform)
 
         return train_dataset, test_dataset
-
-    def build_pipeline(self, dataset, batch_size, shuffle=False, cache_dir=''):
-        """
-        Build the data pipeline for the dataset.
-
-        Args:
-            dataset (tf.data.Dataset): The input dataset.
-            batch_size (int): Batch size.
-            shuffle (bool): Whether to shuffle the dataset.
-            cache_dir (str): Directory to cache the dataset.
-
-        Returns:
-            tf.data.Dataset: The processed dataset.
-        """
-        dataset = dataset.cache(cache_dir) if cache_dir else dataset
-        dataset = dataset.shuffle(self.buffer_size) if shuffle else dataset
-        dataset = dataset.batch(batch_size)
-        dataset = dataset.prefetch(tf.data.AUTOTUNE)
-
-        return dataset
 
 
 if __name__ == "__main__":
 
-    import tensorflow as tf
     import matplotlib.pyplot as plt
 
     # load dataset
+    dataset_path = 'cifar10'
     keys = ''
-    data_path = 'cifar10'
-    # data_path = dict(train='/home/myusername/Datasets/processed/coco/train2017_r512',
+    # dataset_path = dict(train='/home/myusername/Datasets/processed/coco/train2017_r512',
     #                  test='/home/myusername/Datasets/processed/coco/train2017_r512')
-    # data_path = dict(train='/home/myusername/Datasets/raw/arad/Train_spectral',
+    # dataset_path = dict(train='/home/myusername/Datasets/raw/arad/Train_spectral',
     #                  test='/home/myusername/Datasets/raw/arad/Valid_spectral')
-    # keys = 'cube'
+    # keys = dict(spec='cube')
     batch_size = 32
 
-    dataset = Dataset(data_path, batch_size, keys=keys)
+    dataset = Dataset(dataset_path, keys=keys, batch_size=batch_size)
     train_dataset, test_dataset = dataset.train_dataset, dataset.test_dataset
 
     # print information about dataset
@@ -205,33 +158,35 @@ if __name__ == "__main__":
 
     # visualize samples
 
-    if isinstance(data_path, str):  # basic datasets
+    if isinstance(dataset_path, str):  # basic datasets
         basic_datasets = list(BASIC_DATASETS.keys())
-        cmp_datasets = [dataset_name in data_path for dataset_name in basic_datasets]
+        cmp_datasets = [dataset_name in dataset_path for dataset_name in basic_datasets]
 
         if any(cmp_datasets):
             # visualize dataset
-            for x, y in train_dataset.take(1):
+            for x, y in train_dataset:
                 plt.figure(figsize=(7, 7))
                 for i in range(9):
                     plt.subplot(3, 3, i + 1)
-                    plt.imshow(x[i], cmap='gray')
+                    plt.imshow(x[i].permute(1, 2, 0), cmap='gray')
                     plt.title(f'class number: {y[i]}')
                     plt.axis('off')
 
                 plt.tight_layout()
                 plt.show()
 
-    elif 'arad' in data_path['train']:  # arad dataset
+                break
+
+    elif 'arad' in dataset_path['train']:  # arad dataset
         cs_ciergb = ColourSystem(start=400, end=700, num=31)
         RGB = cs_ciergb.get_transform_matrix()
 
-        for x, y in train_dataset.take(1):
+        for x, y in train_dataset:
             plt.figure(figsize=(7, 7))
             plt.suptitle('rgb samples')
             for i in range(9):
                 plt.subplot(3, 3, i + 1)
-                plt.imshow(x[i])
+                plt.imshow(x[i].permute(1, 2, 0))
                 plt.axis('off')
 
             plt.tight_layout()
@@ -240,7 +195,7 @@ if __name__ == "__main__":
             plt.figure(figsize=(7, 7))
             plt.suptitle('mapped spectral samples')
             for i in range(9):
-                rgb = cs_ciergb.spec_to_rgb(y[i].numpy())
+                rgb = cs_ciergb.spec_to_rgb(y[i].permute(1, 2, 0).numpy())
                 plt.subplot(3, 3, i + 1)
                 plt.imshow(rgb)
                 plt.axis('off')
@@ -248,13 +203,17 @@ if __name__ == "__main__":
             plt.tight_layout()
             plt.show()
 
+            break
+
     else:  # folder dataset
-        for x in train_dataset.take(1):
+        for x in train_dataset:
             plt.figure(figsize=(7, 7))
             for i in range(9):
                 plt.subplot(3, 3, i + 1)
-                plt.imshow(x[i])
+                plt.imshow(x[i].permute(1, 2, 0))
                 plt.axis('off')
 
             plt.tight_layout()
             plt.show()
+
+            break
