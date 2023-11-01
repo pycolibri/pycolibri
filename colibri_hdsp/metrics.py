@@ -1,6 +1,6 @@
 import torch
-from torchmetrics import MeanSquaredError, MeanAbsoluteError, Accuracy, Precision, Recall
-from torchmetrics.image import SpectralAngleMapper, PeakSignalNoiseRatio, StructuralSimilarityIndexMeasure
+from torchmetrics.functional import mean_squared_error, mean_absolute_error, accuracy as acc, precision as prec, recall as rec
+from torchmetrics.functional.image import spectral_angle_mapper, peak_signal_noise_ratio, structural_similarity_index_measure
 
 """
 metrics.py
@@ -18,8 +18,7 @@ def psnr(y_true, y_pred):
     Returns:
         PSNR between y_true and y_pred.
     """
-    psnr_metric = PeakSignalNoiseRatio()
-    return psnr_metric(y_pred, y_true)
+    return peak_signal_noise_ratio(y_pred, y_true)
 
 def ssim(y_true, y_pred):
     """Calculate Structural Similarity Index between y_true and y_pred.
@@ -31,8 +30,7 @@ def ssim(y_true, y_pred):
     Returns:
         SSIM between y_true and y_pred.
     """
-    ssim_metric = StructuralSimilarityIndexMeasure()
-    return ssim_metric(y_pred, y_true)
+    return structural_similarity_index_measure(y_pred, y_true)
 
 def mse(y_true, y_pred):
     """Calculate Mean Squared Error between y_true and y_pred.
@@ -44,8 +42,7 @@ def mse(y_true, y_pred):
     Returns:
         MSE between y_true and y_pred.
     """
-    mse_metric = MeanSquaredError()
-    return mse_metric(y_pred, y_true)
+    return mean_squared_error(y_pred, y_true)
 
 def mae(y_true, y_pred):
     """Calculate Mean Absolute Error between y_true and y_pred.
@@ -57,8 +54,7 @@ def mae(y_true, y_pred):
     Returns:
         MAE between y_true and y_pred.
     """
-    mae_metric = MeanAbsoluteError()
-    return mae_metric(y_pred, y_true)
+    return mean_absolute_error(y_pred, y_true)
 
 def accuracy(y_true, y_pred, num_classes=2):
     """Calculate accuracy between y_true and y_pred.
@@ -71,8 +67,7 @@ def accuracy(y_true, y_pred, num_classes=2):
     Returns:
         Accuracy between y_true and y_pred.
     """
-    acc_metric = Accuracy(task="binary" if num_classes == 2 else "multiclass",num_classes=num_classes, threshold=0.5 if num_classes == 2 else None)
-    return acc_metric(y_pred, y_true)
+    return acc(y_pred, y_true, task="binary" if num_classes == 2 else "multiclass",num_classes=num_classes, threshold=0.5 if num_classes == 2 else None)
 
 def precision(y_true, y_pred, num_classes=2):
     """Calculate precision between y_true and y_pred.
@@ -85,8 +80,8 @@ def precision(y_true, y_pred, num_classes=2):
     Returns:
         Precision between y_true and y_pred.
     """
-    precision_metric = Precision(task="binary" if num_classes == 2 else "multiclass", num_classes=num_classes)
-    return precision_metric(y_pred, y_true)
+    return prec(y_pred, y_true, task="binary" if num_classes == 2 else "multiclass", num_classes=num_classes)
+    
 
 def recall(y_true, y_pred, num_classes=2):
     """Calculate recall between y_true and y_pred.
@@ -99,8 +94,8 @@ def recall(y_true, y_pred, num_classes=2):
     Returns:
         Recall between y_true and y_pred.
     """
-    recall_metric = Recall(task="binary" if num_classes == 2 else "multiclass", num_classes=num_classes)
-    return recall_metric(y_pred, y_true)
+    return rec(y_pred, y_true, task="binary" if num_classes == 2 else "multiclass", num_classes=num_classes)
+
 
 def sam(y_true, y_pred, reduce=None):
     """Calculate Spectral Angle Mapper between org and pred.
@@ -122,10 +117,7 @@ def sam(y_true, y_pred, reduce=None):
     if reduce not in reduction.keys():
         raise ValueError(f"Invalid reduction type. Expected one of: {list(reduction.keys())}")
 
-    sam_metric = SpectralAngleMapper(reduction=reduction[reduce])
-    angles = sam_metric(y_pred, y_true)
-
-    return angles
+    return spectral_angle_mapper(y_pred, y_true, reduction=reduction[reduce])
     
 
 
@@ -151,3 +143,4 @@ if __name__ == "__main__":
     print("Recall:", recall(y_true_class, y_pred_class, num_classes=2).item())
     
     print("SAM (media):", sam(y_true, y_pred, reduce='mean').item())
+
