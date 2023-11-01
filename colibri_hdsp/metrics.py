@@ -1,4 +1,6 @@
-import tensorflow as tf
+import torch
+from torchmetrics.functional import mean_squared_error, mean_absolute_error, accuracy as acc, precision as prec, recall as rec
+from torchmetrics.functional.image import spectral_angle_mapper, peak_signal_noise_ratio, structural_similarity_index_measure
 
 """
 metrics.py
@@ -16,7 +18,7 @@ def psnr(y_true, y_pred):
     Returns:
         PSNR between y_true and y_pred.
     """
-    return tf.image.psnr(y_true, y_pred, max_val=1.0)
+    return peak_signal_noise_ratio(y_pred, y_true)
 
 def ssim(y_true, y_pred):
     """Calculate Structural Similarity Index between y_true and y_pred.
@@ -28,7 +30,7 @@ def ssim(y_true, y_pred):
     Returns:
         SSIM between y_true and y_pred.
     """
-    return tf.image.ssim(y_true, y_pred, max_val=1.0)
+    return structural_similarity_index_measure(y_pred, y_true)
 
 def mse(y_true, y_pred):
     """Calculate Mean Squared Error between y_true and y_pred.
@@ -40,7 +42,7 @@ def mse(y_true, y_pred):
     Returns:
         MSE between y_true and y_pred.
     """
-    return tf.keras.losses.mean_squared_error(y_true, y_pred) 
+    return mean_squared_error(y_pred, y_true)
 
 def mae(y_true, y_pred):
     """Calculate Mean Absolute Error between y_true and y_pred.
@@ -52,7 +54,7 @@ def mae(y_true, y_pred):
     Returns:
         MAE between y_true and y_pred.
     """
-    return tf.keras.losses.mean_absolute_error(y_true, y_pred)
+    return mean_absolute_error(y_pred, y_true)
 
 def accuracy(y_true, y_pred, num_classes=2):
     """Calculate accuracy between y_true and y_pred.
@@ -65,36 +67,37 @@ def accuracy(y_true, y_pred, num_classes=2):
     Returns:
         Accuracy between y_true and y_pred.
     """
-    if num_classes == 2:
-        return tf.keras.metrics.binary_accuracy(y_true, y_pred)
-    else:
-        return tf.keras.metrics.categorical_accuracy(y_true, y_pred)
-  
-def precision(y_true, y_pred):
+    return acc(y_pred, y_true, task="binary" if num_classes == 2 else "multiclass",num_classes=num_classes, threshold=0.5 if num_classes == 2 else None)
+
+def precision(y_true, y_pred, num_classes=2):
     """Calculate precision between y_true and y_pred.
 
     Args:
         y_true: Tensor of actual values.
         y_pred: Tensor of predicted values.
+        num_classes: Number of classes.
 
     Returns:
         Precision between y_true and y_pred.
     """
-    return tf.keras.metrics.precision(y_true, y_pred)
+    return prec(y_pred, y_true, task="binary" if num_classes == 2 else "multiclass", num_classes=num_classes)
+    
 
-def recall(y_true, y_pred):
+def recall(y_true, y_pred, num_classes=2):
     """Calculate recall between y_true and y_pred.
 
     Args:
         y_true: Tensor of actual values.
         y_pred: Tensor of predicted values.
+        num_classes: Number of classes.
 
     Returns:
         Recall between y_true and y_pred.
     """
-    return tf.keras.metrics.recall(y_true, y_pred)
+    return rec(y_pred, y_true, task="binary" if num_classes == 2 else "multiclass", num_classes=num_classes)
 
-def SAM(y_true, y_pred, reduce=None):
+
+def sam(y_true, y_pred, reduce=None):
     """Calculate Spectral Angle Mapper between org and pred.
 
     Args:
@@ -104,15 +107,40 @@ def SAM(y_true, y_pred, reduce=None):
     Returns:
         SAM between org and pred.
     """
-    numerator = tf.sum(tf.math.multiply(y_pred, y_true), axis=-1)
-    denominator = tf.norm(y_true, ord=2, axis=-1) * tf.norm(y_pred, ord=2, axis=-1)
-    val = tf.clip_by_value(numerator / denominator, -1, 1)
-    angles = tf.math.acos(val)
-
-    if reduce is None:
-        return angles
-    elif reduce == 'mean':
-        return tf.reduce_mean(angles)
-    elif reduce == 'sum':
-        return tf.reduce_sum(angles)
     
+    reduction = {
+        "mean": "elementwise_mean",
+        "sum": "sum",
+        None: None
+    }
+
+    if reduce not in reduction.keys():
+        raise ValueError(f"Invalid reduction type. Expected one of: {list(reduction.keys())}")
+
+    return spectral_angle_mapper(y_pred, y_true, reduction=reduction[reduce])
+    
+
+
+if __name__ == "__main__":
+    B, C, H, W = 8, 3, 256, 256 
+
+
+    y_true = torch.rand(B, C, H, W)
+    y_pred = torch.rand(B, C, H, W)
+
+
+    print("PSNR:", psnr(y_true, y_pred).item())
+    print("SSIM:", ssim(y_true, y_pred).item())
+    print("MSE:", mse(y_true, y_pred).item())
+    print("MAE:", mae(y_true, y_pred).item())
+
+
+    y_true_class = torch.randint(0, 2, (B,)).float()
+    y_pred_class = torch.rand(B)
+
+    print("Accuracy:", accuracy(y_true_class, y_pred_class).item())
+    print("Precision:", precision(y_true_class, y_pred_class, num_classes=2).item())
+    print("Recall:", recall(y_true_class, y_pred_class, num_classes=2).item())
+    
+    print("SAM (media):", sam(y_true, y_pred, reduce='mean').item())
+
