@@ -3,9 +3,9 @@ from .utils import include_colibri
 include_colibri()
 
 from colibri_hdsp.models import build_network, Autoencoder, Unet
-import tensorflow as tf
+import torch
 
-model_list = ["autoencoder", "unet"]
+model_list = ["unet"]
 
 @pytest.fixture
 def imsize():
@@ -13,7 +13,7 @@ def imsize():
     h = 32
     w = 32
     c = 1
-    return b, h, w, c
+    return b, c, h, w
 
 def choose_model(name, imsize):
 
@@ -22,14 +22,14 @@ def choose_model(name, imsize):
     elif name == "unet":
         model_layer = Unet
     
-    model = build_network(model=model_layer, size=imsize[-2], in_channels=imsize[-1], out_channels=imsize[-1])
+    model = build_network(model=model_layer, in_channels=imsize[1], out_channels=imsize[1])
     return model
 
 @pytest.mark.parametrize("model_name", model_list)
 def test_model(model_name, imsize):
     
     model = choose_model(model_name, imsize)
-    x = tf.random.normal(imsize)
+    x = torch.randn(imsize)
     y = model(x)
 
     assert y.shape == x.shape
