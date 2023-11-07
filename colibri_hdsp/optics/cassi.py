@@ -36,14 +36,14 @@ class CASSI(torch.nn.Module):
         self.device = device
 
 
-        self.M, self.N, self.L = input_shape  # Extract spectral image shape
+        self.L, self.M, self.N = input_shape  # Extract spectral image shape
 
         if self.mode == 'base':
-            shape = (1, self.M, self.N, 1)
+            shape = (1, 1, self.M, self.N)
         elif self.mode == 'dd':
-            shape = (1, self.M, self.N + self.L - 1, 1)
+            shape = (1, 1, self.M, self.N + self.L - 1)
         elif self.mode == 'color':
-            shape = (1, self.M, self.N, self.L)
+            shape = (1, self.L, self.M, self.N)
         else:
             raise ValueError(f"the mode {self.mode} is not valid")
 
