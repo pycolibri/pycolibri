@@ -8,7 +8,7 @@ metrics.py
 The metrics
 """
 
-def psnr(y_true, y_pred):
+def psnr(y_true, y_pred, data_range=None):
     """Calculate Peak Signal to Noise Ratio between y_true and y_pred.
 
     Args:
@@ -18,9 +18,9 @@ def psnr(y_true, y_pred):
     Returns:
         PSNR between y_true and y_pred.
     """
-    return peak_signal_noise_ratio(y_pred, y_true)
+    return peak_signal_noise_ratio(y_pred, y_true, data_range=None)
 
-def ssim(y_true, y_pred):
+def ssim(y_true, y_pred, data_range=None):
     """Calculate Structural Similarity Index between y_true and y_pred.
 
     Args:
@@ -30,7 +30,7 @@ def ssim(y_true, y_pred):
     Returns:
         SSIM between y_true and y_pred.
     """
-    return structural_similarity_index_measure(y_pred, y_true)
+    return structural_similarity_index_measure(y_pred, y_true, data_range=None)
 
 def mse(y_true, y_pred):
     """Calculate Mean Squared Error between y_true and y_pred.
