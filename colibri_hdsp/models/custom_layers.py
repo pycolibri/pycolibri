@@ -67,7 +67,8 @@ class convBlock(nn.Module):
 
         super(convBlock, self).__init__()
 
-        self.layers = []
+        self.layers = nn.ModuleList()
+        
         pad_size = kernel_size // 2
 
         conv_kwargs = dict(
