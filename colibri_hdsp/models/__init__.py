@@ -1,6 +1,6 @@
 from .unet import Unet
 from .autoencoder import Autoencoder
-from .DIP import DIP_CASSI
+# from .DIP import DIP_CASSI
 
 # from tensorflow.keras.layers import Input
 # from tensorflow.keras.models import Model
