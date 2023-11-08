@@ -20,14 +20,21 @@ def compute_regularizer(regularizer, layer):
 class Reg_Binary(nn.Module):
     """
     Binary Regularization for Neural Network Weights.
-
-    Args:
-        parameter (float): Regularization parameter.
-        min_v (float): Minimum value for weight clipping.
-        max_v (float): Maximum value for weight clipping.
+    Code adapted from  Bacca, Jorge, Tatiana Gelvez-Barrera, and Henry Arguello. 
+    "Deep coded aperture design: An end-to-end approach for computational imaging tasks." 
+    IEEE Transactions on Computational Imaging 7 (2021): 1148-1160.
     """
 
     def __init__(self, parameter=10, min_v=0, max_v=1):
+        """
+        Binary Regularization for Neural Network Weights.
+
+        Args:
+            parameter (float): Regularization parameter.
+            min_v (float): Minimum value for weight clipping.
+            max_v (float): Maximum value for weight clipping.
+        """
+        
         super(Reg_Binary, self).__init__()
         self.parameter = parameter
         self.min_v = min_v
@@ -49,13 +56,20 @@ class Reg_Binary(nn.Module):
 class Reg_Transmittance(nn.Module):
     """
     Transmittance Regularization for Neural Network Weights.
-
-    Args:
-        parameter (float): Regularization parameter.
-        t (float): Target transmittance value.
+    Code adapted from  Bacca, Jorge, Tatiana Gelvez-Barrera, and Henry Arguello. 
+    "Deep coded aperture design: An end-to-end approach for computational imaging tasks." 
+    IEEE Transactions on Computational Imaging 7 (2021): 1148-1160.
     """
 
     def __init__(self, parameter=10, t=0.8):
+        """
+        Transmittance Regularization for Neural Network Weights.
+
+        Args:
+            parameter (float): Regularization parameter.
+            t (float): Target transmittance value.
+        """
+
         super(Reg_Transmittance, self).__init__()
         self.parameter = parameter
         self.t = t
@@ -77,12 +91,16 @@ class Correlation(nn.Module):
     """
     Correlation Regularization for Neural Network Layers.
 
-    Args:
-        batch_size (int): Batch size used for reshaping.
-        param (float): Regularization parameter.
     """
 
     def __init__(self, batch_size=128, param=0.001):
+        """
+        Correlation Regularization for Neural Network Layers.
+
+        Args:
+            batch_size (int): Batch size used for reshaping.
+            param (float): Regularization parameter.
+        """        
         super(Correlation, self).__init__()
         self.batch_size = batch_size
         self.param = param
@@ -110,14 +128,21 @@ class Correlation(nn.Module):
 class KLGaussian(nn.Module):
     """
     KL Divergence Regularization for Gaussian Distributions.
-
-    Args:
-        mean (float): Target mean for the Gaussian distribution.
-        stddev (float): Target standard deviation for the Gaussian distribution.
+    Code adapted from [2] Jacome, Roman, Pablo Gomez, and Henry Arguello.
+    "Middle output regularized end-to-end optimization for computational imaging." 
+    Optica 10.11 (2023): 1421-1431.
     """
 
     def __init__(self, mean=1e-2, stddev=2.0):
         super(KLGaussian, self).__init__()
+        """ KL Divergence Regularization for Gaussian Distributions.
+            Args:
+                mean (float): Target mean for the Gaussian distribution.
+                stddev (float): Target standard deviation for the Gaussian distribution.
+            
+            Returns:
+                torch.Tensor: KL divergence regularization term.
+        """
         self.mean = mean
         self.stddev = stddev
 
@@ -141,14 +166,21 @@ class KLGaussian(nn.Module):
 class MinVariance(nn.Module):
     """
     Minimum Variance Regularization for Neural Network Layers.
-
-    Args:
-        param (float): Regularization parameter.
+    KL Divergence Regularization for Gaussian Distributions.
+    Code adapted from [2] Jacome, Roman, Pablo Gomez, and Henry Arguello.
+    "Middle output regularized end-to-end optimization for computational imaging." 
+    Optica 10.11 (2023): 1421-1431.
     """
 
     def __init__(self, param=1e-2):
         super(MinVariance, self).__init__()
         self.param = param
+    """
+    Minimum Variance Regularization for Neural Network Layers.
+
+    Args:
+        param (float): Regularization parameter.
+    """        
 
     def forward(self, y):
         """

@@ -15,7 +15,7 @@ def imsize():
     c = 3
     return b, c, h, w
 
-def choose_regularizer(name, imsize):
+def choose_regularizer(name):
 
     if name == "binary":
         reg = regularizers.Reg_Binary()
