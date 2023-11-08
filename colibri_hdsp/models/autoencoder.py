@@ -23,7 +23,7 @@ class Autoencoder(nn.Module):
                 
             
             Returns:
-                tf.keras.Layer: Autoencoder model
+                torch.nn.Module: Autoencoder model
                 
         """    
         super(Autoencoder, self).__init__()
