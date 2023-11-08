@@ -166,45 +166,5 @@ class MinVariance(nn.Module):
 
 
 
-if __name__ == '__main__':
-    import torch
-
-    x1 = torch.randint(0, 2, (8, 3, 256, 256))
-    x2 = torch.rand(8, 3, 256, 256)
-    reg = Reg_Binary()
-    print(reg(x1))
-    print(reg(x2))
-
-    x1 = torch.round(torch.rand(1,1, 1024, 1024)+0.1)
-    x2 = torch.round(torch.rand(1,1, 1024, 1024)+0.8)
-    
-    
-    reg = Reg_Transmittance(t=0.1)
-    print(reg(x1))
-    print(reg(x2))
-
-
-    x1 = torch.rand(128, 3, 256, 256)
-    x2 = torch.rand(128, 3, 256, 256)
-    reg = Correlation()
-    print(reg((x1,x2)))
-    print(reg((x2,x2)))
-
-    x1 = torch.normal(5,1,size=(128, 3, 256, 256))
-    x2 = torch.normal(0,5,size=(128, 3, 256, 256))
-
-    reg = KLGaussian(mean=torch.Tensor([5.0]),stddev=torch.Tensor([1.0]))
-    print(reg(x1))
-    print(reg(x2))
-
-    x1 = torch.normal(0,1,size=(128, 3, 256, 256))
-    x2 = torch.normal(0,5,size=(128, 3, 256, 256))
-
-    reg = MinVariance()
-    print(reg(x1))
-    print(reg(x2))
-
-
-
 
     
