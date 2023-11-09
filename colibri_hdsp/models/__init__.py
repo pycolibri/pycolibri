@@ -1,16 +1,11 @@
 from .unet import Unet
 from .autoencoder import Autoencoder
-from .DIP import DIP_CASSI
-
-# from tensorflow.keras.layers import Input
-# from tensorflow.keras.models import Model
 import torch
 import torch.nn
 
 __all__ = [ 
     "Unet",
     "Autoencoder",
-    "DIP_CASSI",
     "build_network"
 ]
 
