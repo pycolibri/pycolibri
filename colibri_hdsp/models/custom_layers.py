@@ -155,13 +155,13 @@ class upBlock(nn.Module):
 class upBlockNoSkip(nn.Module):
     """Spatial upsampling and then convBlock"""
 
-    def __init__(self, out_channels):
+    def __init__(self, in_channels,out_channels):
         super(upBlockNoSkip, self).__init__()
 
         self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
 
         self.conv_block = nn.Sequential(
-            convBlock(out_channels * 2, out_channels), convBlock(out_channels, out_channels)
+            convBlock(in_channels,out_channels ), convBlock(out_channels, out_channels)
         )
 
     def forward(self, x1):
