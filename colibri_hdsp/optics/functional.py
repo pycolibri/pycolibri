@@ -116,3 +116,34 @@ def backward_cassi(y, ca):
     y = torch.tile(y, [1, 1, 1, L])
     y = prism_operator(y, shift_sign = -1)
     return torch.multiply(y, ca)
+
+
+def backward_spc(self, y):
+    """
+    Inverse operation to reconsstruct the image from measurements.
+
+    Args:
+        y (torch.Tensor): Measurement tensor of size (b, m, c).
+
+    Returns:
+        torch.Tensor: Reconstructed image tensor.
+    """
+
+    Hinv = torch.pinverse(self.H)
+    Hinv = Hinv.unsqueeze(0).repeat(y.shape[0], 1, 1)
+
+    x = torch.bmm(Hinv, y)
+    x = x.permute(0, 2, 1)
+    b, c, hw = x.size()
+    h = int(np.sqrt(hw))
+    x = x.view(b, c, h, h)
+    return x
+
+def get_weights_spc(self):
+    """
+    Gets the measurement matrix.
+
+    Returns:
+        torch.Tensor: Flattened measurement matrix.
+    """
+    return torch.flatten(self.H)
