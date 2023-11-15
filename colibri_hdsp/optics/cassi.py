@@ -23,13 +23,13 @@ class CASSI(torch.nn.Module):
         self.initial_ca = initial_ca
 
         if mode == "base":
-            self.direct = forward_cassi
+            self.sensing = forward_cassi
             self.backward = backward_cassi
         elif mode == "dd":
-            self.direct = forward_dd_cassi
+            self.sensing = forward_dd_cassi
             self.backward = backward_dd_cassi
         elif mode == "color":
-            self.direct = forward_color_cassi
+            self.sensing = forward_color_cassi
             self.backward = backward_color_cassi
 
         self.mode = mode
@@ -66,12 +66,12 @@ class CASSI(torch.nn.Module):
             ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
         if type_calculation == "forward":
-            return self.direct(x, self.ca)
+            return self.sensing(x, self.ca)
 
         elif type_calculation == "backward":
             return self.backward(x, self.ca)
         elif type_calculation == "forward_backward":
-            return self.backward(self.direct(x, self.ca), self.ca)
+            return self.backward(self.sensing(x, self.ca), self.ca)
 
         else:
             raise ValueError("type_calculation must be forward, backward or forward_backward")
