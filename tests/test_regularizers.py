@@ -30,9 +30,9 @@ def choose_regularizer(name):
     return reg
 
 @pytest.mark.parametrize("reg_name", reg_list)
-def test_model(reg_name, imsize):
+def test_regularizer(reg_name, imsize):
     
-    reg = choose_regularizer(reg_name, imsize)
+    reg = choose_regularizer(reg_name)
     if reg_name=="binary":
         x1 = torch.randint(0, 2, imsize)
         x2 = torch.rand(imsize)
