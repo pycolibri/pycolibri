@@ -32,7 +32,7 @@ class Unet(nn.Module):
 
         """
 
-        super(Unet, self).__init__()
+        super().__init__()
 
         levels = len(features)
 

@@ -12,9 +12,9 @@ def prism_operator(x, shift_sign = 1):
     """
 
     assert shift_sign == 1 or shift_sign == -1, "The shift sign must be 1 or -1"
-    _, M, N, L = x.shape  # Extract spectral image shape
+    _, L, M, N = x.shape  # Extract spectral image shape
 
-    x = torch.unbind(x, dim=-1)
+    x = torch.unbind(x, dim=1)
 
 
     if shift_sign == 1:
@@ -24,7 +24,7 @@ def prism_operator(x, shift_sign = 1):
         # Unshifting produced by the prism
         x = [x[l][:, :, l:N - (L- 1)+l] for l in range(L)]
 
-    x = torch.stack(x, dim=-1)
+    x = torch.stack(x, dim=1)
     return x
 
 def forward_color_cassi(x, ca):
@@ -62,9 +62,9 @@ def forward_dd_cassi(x, ca):
     Returns:
         torch.Tensor: Measurement with shape (1, M, N + L - 1, 1)
     """
-    _, M, N, L = x.shape  # Extract spectral image shape
+    _, L, M, N = x.shape  # Extract spectral image shape
     assert ca.shape[-2] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
-    ca = torch.tile(ca, [1, 1, 1, L])
+    ca = torch.tile(ca, [1, L, 1, 1])
     ca = prism_operator(ca, shift_sign = -1)
     y = forward_color_cassi(x, ca)
     return y
@@ -90,16 +90,16 @@ def forward_cassi(x, ca):
     """
     Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
     Args:
-        x (torch.Tensor): Spectral image with shape (1, M, N, L)
-        ca (torch.Tensor): Coded aperture with shape (1, M, N, 1)
+        x (torch.Tensor): Spectral image with shape (1, L, M, N,)
+        ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)
     Returns:
-        torch.Tensor: Measurement with shape (1, M, N + L - 1, 1)
+        torch.Tensor: Measurement with shape (1, 1, M, N + L - 1)
     """
     y1 = torch.multiply(x, ca)  # Multiplication of the scene by the coded aperture
     _, M, N, L = y1.shape  # Extract spectral image shape
     # shift and sum
     y2 = prism_operator(y1, shift_sign = 1)
-    return y2.sum(dim=-1, keepdim=True)
+    return y2.sum(dim=1, keepdim=True)
 
 
 def backward_cassi(y, ca):
@@ -111,8 +111,8 @@ def backward_cassi(y, ca):
     Returns:
         torch.Tensor: Spectral image with shape (1, M, N, L)
     """
-    _, M, N, _ = y.shape  # Extract spectral image shape
+    _, _, M, N = y.shape  # Extract spectral image shape
     L = N - M + 1  # Number of shifts
-    y = torch.tile(y, [1, 1, 1, L])
+    y = torch.tile(y, [1, L, 1, 1])
     y = prism_operator(y, shift_sign = -1)
     return torch.multiply(y, ca)
