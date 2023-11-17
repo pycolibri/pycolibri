@@ -118,7 +118,27 @@ def backward_cassi(y, ca):
     return torch.multiply(y, ca)
 
 
-def backward_spc(self, y):
+def forward_spc(x, H):
+    """
+    Forward propagation through the SPC model.
+
+    Args:
+        x (torch.Tensor): Input image tensor of size (b, c, h, w).
+        H (torch.Tensor): Measurement matrix of size (m, h*w).
+
+    Returns:
+        torch.Tensor: Output tensor after measurement.
+    """
+    b, c, h, w = x.size()
+    x = x.view(b, c, h*w)
+    x = x.permute(0, 2, 1)
+
+    # measurement
+    H = H.unsqueeze(0).repeat(b, 1, 1)
+    y = torch.bmm(H, x)
+    return y
+
+def backward_spc(y, H):
     """
     Inverse operation to reconsstruct the image from measurements.
 
@@ -129,7 +149,7 @@ def backward_spc(self, y):
         torch.Tensor: Reconstructed image tensor.
     """
 
-    Hinv = torch.pinverse(self.H)
+    Hinv = torch.pinverse(H)
     Hinv = Hinv.unsqueeze(0).repeat(y.shape[0], 1, 1)
 
     x = torch.bmm(Hinv, y)
@@ -138,12 +158,3 @@ def backward_spc(self, y):
     h = int(np.sqrt(hw))
     x = x.view(b, c, h, h)
     return x
-
-def get_weights_spc(self):
-    """
-    Gets the measurement matrix.
-
-    Returns:
-        torch.Tensor: Flattened measurement matrix.
-    """
-    return torch.flatten(self.H)

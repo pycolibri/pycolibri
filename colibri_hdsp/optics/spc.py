@@ -1,7 +1,8 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch
 import numpy as np
+from .functional import forward_spc, backward_spc
 
 
 class SPC(nn.Module):
@@ -19,7 +20,7 @@ class SPC(nn.Module):
         self.H = nn.Parameter(torch.randn(m, img_size**2))
         self.image_size = img_size
 
-    def forward(self, x):
+    def forward(self, x, type_calculation="forward"):
         """
         Forward propagation through the SPC model.
 
@@ -30,12 +31,13 @@ class SPC(nn.Module):
             torch.Tensor: Output tensor after measurement.
         """
 
-        # spatial vectorization
-        b, c, h, w = x.size()
-        x = x.view(b, c, h*w)
-        x = x.permute(0, 2, 1)
-
-        # measurement
-        H = self.H.unsqueeze(0).repeat(b, 1, 1)
-        y = torch.bmm(H, x)
-        return y
+        if type_calculation == "forward":
+            return forward_spc(x, self.H)
+        elif type_calculation == "backward":
+            return backward_spc(x, self.H)
+        elif type_calculation == "forward_backward":
+            return backward_spc(forward_spc(x, self.H), self.H)
+        
+        else:
+            raise ValueError("type_calculation must be 'forward', 'backward' or 'forward_backward'")
+        
