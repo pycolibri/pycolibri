@@ -5,7 +5,7 @@ include_colibri()
 from colibri_hdsp.models import build_network, Autoencoder, Unet
 import torch
 
-model_list = ["unet"]
+model_list = ["unet","autoencoder"]
 
 @pytest.fixture
 def imsize():

@@ -7,7 +7,7 @@ class CASSI(torch.nn.Module):
 
     """
 
-    def __init__(self, input_shape, mode, device, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
+    def __init__(self, input_shape, mode, trainable=False, ca_regularizer=None, initial_ca=None, seed=None):
         """
         Args:
             mode (str): String, mode of the coded aperture, it can be "base", "dd" or "color"
@@ -23,27 +23,25 @@ class CASSI(torch.nn.Module):
         self.initial_ca = initial_ca
 
         if mode == "base":
-            self.forward = forward_cassi
+            self.sensing = forward_cassi
             self.backward = backward_cassi
         elif mode == "dd":
-            self.forward = forward_dd_cassi
+            self.sensing = forward_dd_cassi
             self.backward = backward_dd_cassi
         elif mode == "color":
-            self.forward = forward_color_cassi
+            self.sensing = forward_color_cassi
             self.backward = backward_color_cassi
 
         self.mode = mode
-        self.device = device
-
-
-        self.M, self.N, self.L = input_shape  # Extract spectral image shape
+  
+        self.L, self.M, self.N = input_shape  # Extract spectral image shape
 
         if self.mode == 'base':
-            shape = (1, self.M, self.N, 1)
+            shape = (1, 1, self.M, self.N)
         elif self.mode == 'dd':
-            shape = (1, self.M, self.N + self.L - 1, 1)
+            shape = (1, 1, self.M, self.N + self.L - 1)
         elif self.mode == 'color':
-            shape = (1, self.M, self.N, self.L)
+            shape = (1, self.L, self.M, self.N)
         else:
             raise ValueError(f"the mode {self.mode} is not valid")
 
@@ -54,10 +52,9 @@ class CASSI(torch.nn.Module):
             initializer = torch.from_numpy(self.initial_ca).float()
 
         #Add parameter CA in pytorch manner
-        initializer = initializer.to(device)
         self.ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
 
-    def __call__(self, x, type_calculation="forward"):
+    def forward(self, x, type_calculation="forward"):
         """
         Call method of the layer, it performs the forward or backward operator according to the type_calculation
         Args:
@@ -69,15 +66,16 @@ class CASSI(torch.nn.Module):
             ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
         if type_calculation == "forward":
-            return self.forward(x, self.ca)
+            return self.sensing(x, self.ca)
 
         elif type_calculation == "backward":
             return self.backward(x, self.ca)
         elif type_calculation == "forward_backward":
-            return self.backward(self.forward(x, self.ca), self.ca)
+            return self.backward(self.sensing(x, self.ca), self.ca)
 
         else:
             raise ValueError("type_calculation must be forward, backward or forward_backward")
+        
 
 
 if __name__ == "__main__":
