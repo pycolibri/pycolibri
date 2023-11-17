@@ -5,6 +5,7 @@ include_colibri()
 
 import torch
 from colibri_hdsp.optics.cassi import CASSI
+from colibri_hdsp.optics.spc import SPC
 
 @pytest.fixture
 def imsize():
@@ -42,3 +43,20 @@ def test_cassi(mode, imsize):
 
     assert measurement.shape == out_shape
 
+
+@pytest.fixture
+def spc_config():
+    img_size = 32
+    m = 256
+    return img_size, m
+
+def test_spc_forward(spc_config):
+    img_size, m = spc_config
+    spc = SPC(img_size, m)
+
+    b, c, h, w = 1, 3, img_size, img_size 
+    x = torch.randn(b, c, h, w)
+
+    y_forward = spc(x, type_calculation="forward")
+    expected_shape = (b, m, c) 
+    assert y_forward.shape == expected_shape, "Forward output shape is incorrect"
