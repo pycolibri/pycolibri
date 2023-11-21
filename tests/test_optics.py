@@ -13,17 +13,17 @@ def imsize():
     h = 32
     w = 32
     c = 31
-    return b, h, w, c
+    return b, c, h, w
 
 def compute_outshape(imsize, mode):
-    h, w, c = imsize[1:]
+    c, h, w = imsize[1:]
 
     if mode == "base":
-        out = (1, h, w + c - 1, 1)
+        out = (1, 1, h, w + c - 1)
     elif mode == "dd":
-        out = (1, h, w, 1)
+        out = (1, 1, h, w)
     elif mode == "color":
-        out = (1, h, w, 1)
+        out = (1, 1, h, w)
     
     return out
 
@@ -36,7 +36,7 @@ def test_cassi(mode, imsize):
     out_shape = compute_outshape(imsize, mode)
 
 
-    cassi = CASSI(imsize[1:], mode, "cpu")
+    cassi = CASSI(imsize[1:], mode)
 
     cube = cube.float()
     measurement = cassi(cube, type_calculation="forward")
