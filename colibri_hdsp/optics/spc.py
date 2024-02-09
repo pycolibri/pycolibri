@@ -41,3 +41,12 @@ class SPC(nn.Module):
         else:
             raise ValueError("type_calculation must be 'forward', 'backward' or 'forward_backward'")
         
+        
+    def ca_reg(self,reg):
+        reg_value = reg(self.ca)
+        return reg_value
+
+    def measurements_reg(self,reg,x):
+        y = self.sensing(x, self.ca)
+        reg_value = reg(y)
+        return reg_value

@@ -6,7 +6,7 @@ class Training():
     Class for training a neural network model.
     """
 
-    def __init__(self, model, train_loader, optimizer, loss_func, losses_weights, metrics, regularizers, regularization_weights, schedulers = [], callbacks = [], device='cpu'):
+    def __init__(self, model, train_loader, optimizer, loss_func, losses_weights, metrics, regularizers, regularizers_optics_mo, regularization_optics_weights_mo, regularizers_optics_ce, regularization_optics_weights_ce,regularization_weights, schedulers = [], callbacks = [], device='cpu'):
         """
         Args:
             model (torch.nn.Module): Neural network model.
@@ -19,6 +19,7 @@ class Training():
             regularization_weights (list): List of weights for each regularizer.
             schedulers (list): List of learning rate schedulers.
             callbacks (list): List of callbacks.
+            regularizers_optics(dict): Dictionary of regularizers for optics, format: {"name_regularizer":function}.
             device (str): Device to use for training.
         """
         self.model = model
@@ -28,7 +29,11 @@ class Training():
         self.optimizer = optimizer
         self.metrics = metrics
         self.regularizers = regularizers
+        self.regularizers_optics_mo = regularizers_optics_mo
         self.regularization_weights = regularization_weights
+        self.regularization_optics_weights_mo = regularization_optics_weights_mo
+        self.regularizers_optics_ce = regularizers_optics_ce
+        self.regularization_optics_weights_ce = regularization_optics_weights_ce
         self.schedulers = schedulers
         self.callbacks = callbacks
         self.device = device
@@ -67,11 +72,23 @@ class Training():
             final_loss = 0.0
             loss_values = {}#loss_values = { key: 0.0 for key in self.loss_func.keys()}
             for idx, key in enumerate(self.loss_func.keys()):
+             
                 res = self.loss_func[key](outputs_pred, outputs_gt) * self.losses_weights[idx]
                 loss_values[key] = res
                 final_loss += loss_values[key]
+            
+            if self.regularizers is not None:
+                tmp, reg_decoders =  self.reg_decoder()
+                final_loss += tmp
+            if self.regularizers_optics_ce is not None:
+                tmp, reg_ce = self.reg_optics_ce(inputs)
+                final_loss += tmp
+            if self.regularizers_optics_mo is not None:
+                tmp, reg_mo = self.reg_optics_mo(inputs)
+                final_loss += tmp
 
             final_loss.backward()
+            
 
             # Adjust learning weights
             self.optimizer.step()
@@ -96,30 +113,60 @@ class Training():
 
                 txt_metrics = "".join([f"{key}: {metric_values[key]:.3E}, " for key in metric_values.keys()])
                 txt_losses = "".join([f"{key}: {loss_values[key]:.3E}, " for key in loss_values.keys()])
-                print(f'  batch {i + 1}/{len(self.train_loader)}, {txt_losses}, {txt_metrics}, time per batch: {t:.1f} [s]')
+                # txt_reg_decoders = "".join([f"{key}: {reg_decoders[key]:.3E}, " for key in reg_decoders.keys()])    
+                txt_reg_ce = "".join([f"{key}: {reg_ce[key]:.3E}, " for key in reg_ce.keys()])
+                txt_reg_mo = "".join([f"{key}: {reg_mo[key]:.3E}, " for key in reg_mo.keys()])
+
+                print(f'  batch {i + 1}/{len(self.train_loader)}, {txt_losses}, {txt_metrics}, {txt_reg_mo}, {txt_reg_ce}, time per batch: {t:.1f} [s]')
             if steps_per_epoch != None and i >= steps_per_epoch:
-                return loss_values
+                return loss_values, reg_ce, reg_mo
 
         
         return loss_values
 
-    def reg_one_epoch(self, verbose = False):
+    def reg_decoder(self, verbose = False):
         """
         Weight regularization for one epoch.
         """
         running_reg = 0.
         reg_values = {}
         for idx, key in enumerate(self.regularizers.keys()):
-            for p in self.model.parameters():
+            for p in self.model.decoder.parameters():
                 if p.requires_grad:
                     reg = self.regularizers[key](p) * self.regularization_weights[idx]
                     reg_values[key] = reg
                     running_reg += reg
         if verbose and len(reg_values) > 0:
             print(f'  regularization loss: {running_reg:.5E}')
-        return running_reg
+        return running_reg,reg_values
 
+    def reg_optics_ce(self, x=None, verbose = False):
+        reg_values = {}
+        running_reg = 0.
 
+        for idx, key in enumerate(self.regularizers_optics_ce.keys()):
+         
+            reg = self.model.optical_layer.ca_reg(self.regularizers_optics_ce[key]) * self.regularization_optics_weights_ce[idx]
+            reg_values[key] = reg
+            running_reg += reg
+        if verbose and len(reg_values) > 0:
+            print(f'  optics  regularization on ce loss: {running_reg:.5E}')
+        return running_reg,reg_values
+    
+    
+    def reg_optics_mo(self, x=None, verbose = False):
+        reg_values = {}
+        running_reg = 0.
+
+        for idx, key in enumerate(self.regularizers_optics_mo.keys()):
+    
+            reg = self.model.optical_layer.measurements_reg(self.regularizers_optics_mo[key],x) * self.regularization_optics_weights_mo[idx]
+            reg_values[key] = reg
+            running_reg += reg
+        if verbose and len(reg_values) > 0:
+            print(f'  optics  regularization on middle output loss: {running_reg:.5E}')
+        return running_reg,reg_values
+    
     def fit(self, n_epochs, verbose_reg = True, freq=1, steps_per_epoch = None):
         """
         Train model 
@@ -139,14 +186,11 @@ class Training():
 
             self.model.train(True)
             if self.loss_func:
-                results_fidelities  = self.train_one_epoch(freq = freq, steps_per_epoch = steps_per_epoch)
+                results_fidelities,reg_ce, reg_mo  = self.train_one_epoch(freq = freq, steps_per_epoch = steps_per_epoch)
             else:
                 results_fidelities = {}
-            if self.regularizers:
-                results_reg = self.reg_one_epoch_with_data(verbose = verbose_reg)
-            else:
-                results_reg = {}
-            results_losses = {**results_fidelities, **results_reg}
+            
+            results_losses = {**results_fidelities,**reg_ce,**reg_mo}
             self.model.train(False)
 
             for s in self.schedulers:

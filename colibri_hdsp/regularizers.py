@@ -3,19 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-def compute_regularizer(regularizer, layer):
-    """
-    Compute a regularization term for a given layer's weight tensor.
 
-    Args:
-        regularizer (nn.Module): A PyTorch regularization module.
-        layer (nn.Module): A PyTorch layer for which to compute the regularization term.
-
-    Returns:
-        torch.Tensor: Regularization term calculated using the provided regularizer.
-    """
-    x = layer.weight
-    return regularizer(x)
 
 class Reg_Binary(nn.Module):
     """
@@ -39,6 +27,7 @@ class Reg_Binary(nn.Module):
         self.parameter = parameter
         self.min_v = min_v
         self.max_v = max_v
+        self.type_reg = 'ca'
 
     def forward(self, x):
         """
@@ -73,6 +62,7 @@ class Reg_Transmittance(nn.Module):
         super(Reg_Transmittance, self).__init__()
         self.parameter = parameter
         self.t = t
+        self.type_reg = 'ca'
 
     def forward(self, x):
         """
@@ -104,6 +94,7 @@ class Correlation(nn.Module):
         super(Correlation, self).__init__()
         self.batch_size = batch_size
         self.param = param
+        self.type_reg = 'measurements'
 
     def forward(self, inputs):
         """
@@ -145,6 +136,7 @@ class KLGaussian(nn.Module):
         """
         self.mean = mean
         self.stddev = stddev
+        self.type_reg = 'measurements'
 
     def forward(self, y):
         """
@@ -175,6 +167,8 @@ class MinVariance(nn.Module):
     def __init__(self, param=1e-2):
         super(MinVariance, self).__init__()
         self.param = param
+        self.type_reg = 'measurements'
+
     """
     Minimum Variance Regularization for Neural Network Layers.
 
