@@ -18,7 +18,7 @@ def psnr(y_true, y_pred, data_range=None):
     Returns:
         PSNR between y_true and y_pred.
     """
-    return peak_signal_noise_ratio(y_pred, y_true, data_range=None)
+    return peak_signal_noise_ratio(y_pred, y_true, data_range=data_range)
 
 def ssim(y_true, y_pred, data_range=None):
     """Calculate Structural Similarity Index between y_true and y_pred.
@@ -30,7 +30,7 @@ def ssim(y_true, y_pred, data_range=None):
     Returns:
         SSIM between y_true and y_pred.
     """
-    return structural_similarity_index_measure(y_pred, y_true, data_range=None)
+    return structural_similarity_index_measure(y_pred, y_true, data_range=data_range)
 
 def mse(y_true, y_pred):
     """Calculate Mean Squared Error between y_true and y_pred.
