@@ -151,7 +151,7 @@ class KLGaussian(nn.Module):
         z_mean = torch.mean(y, 0)
         z_log_var = torch.log(torch.std(y, 0))
         kl_loss = -0.5 * torch.mean(
-            z_log_var - torch.log(self.stddev) - (torch.exp(z_log_var) + torch.pow(z_mean - self.mean, 2)) / (
+            z_log_var - torch.log(self.stddev*torch.ones_like(z_log_var)) - (torch.exp(z_log_var) + torch.pow(z_mean - self.mean, 2)) / (
                     self.stddev ** 2) + 1)
         return kl_loss
 
