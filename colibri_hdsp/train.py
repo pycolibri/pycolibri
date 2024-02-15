@@ -64,7 +64,6 @@ class Training:
         Args:
             freq (int): Frequency for printing training progress.
             steps_per_epoch (int): Number of steps per epoch.
-
         Returns:
             dict: Dictionary of loss values.
         """
@@ -227,7 +226,6 @@ class Training:
             n_epochs (int): Number of epochs.
             freq (int): Frequency for printing training progress.
             steps_per_epoch (int): Number of steps per epoch.
-
         Returns:
             dict: Dictionary of loss values.
         """
