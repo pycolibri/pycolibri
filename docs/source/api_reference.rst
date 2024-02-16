@@ -1,13 +1,10 @@
 API Reference
 =============
 
-.. automodule:: colibri_hdsp.datasets.datasets
+.. automodule:: colibri_hdsp.data.datasets
    :members:
    
-.. automodule:: colibri_hdsp.datasets.utils
-   :members:
-   
-.. automodule:: colibri_hdsp.models.DIP
+.. automodule:: colibri_hdsp.data.utils
    :members:
 
 .. automodule:: colibri_hdsp.models.autoencoder
