@@ -43,10 +43,10 @@ class SPC(nn.Module):
         
         
     def ca_reg(self,reg):
-        reg_value = reg(self.ca)
+        reg_value = reg(self.H)
         return reg_value
 
     def measurements_reg(self,reg,x):
-        y = self.sensing(x, self.ca)
+        y = self(x, type_calculation="forward")
         reg_value = reg(y)
         return reg_value
