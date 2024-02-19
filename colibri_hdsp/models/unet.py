@@ -1,9 +1,6 @@
 """ Unet Architecture """
 
 from . import custom_layers
-
-# import tensorflow as tf
-import torch
 import torch.nn as nn
 
 
@@ -24,6 +21,7 @@ class Unet(nn.Module):
         """Unet Layer
 
         Args:
+            in_channels (int): number of input channels
             out_channels (int): number of output channels
             features (list, optional): number of features in each level of the Unet. Defaults to [32, 64, 128, 256].
             last_activation (str, optional): activation function for the last layer. Defaults to 'sigmoid'.

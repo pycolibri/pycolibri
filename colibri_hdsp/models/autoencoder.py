@@ -21,6 +21,8 @@ class Autoencoder(nn.Module):
         """Autoencoder Layer
 
         Args:
+
+            in_channels (int): number of input channels
             out_channels (int): number of output channels
             features (list, optional): number of features in each level of the Unet. Defaults to [32, 64, 128, 256].
             last_activation (str, optional): activation function for the last layer. Defaults to 'sigmoid'.
