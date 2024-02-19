@@ -19,6 +19,7 @@ class Unet(nn.Module):
         out_channels=1,
         features=[32, 64, 128, 256],
         last_activation="sigmoid",
+        **kwargs,
     ):
         """Unet Layer
 
