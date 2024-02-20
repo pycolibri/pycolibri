@@ -21,6 +21,7 @@ class Autoencoder(nn.Module):
         """Autoencoder Layer
 
         Args:
+
             in_channels (int): number of input channels
             out_channels (int): number of output channels
             features (list, optional): number of features in each level of the Unet. Defaults to [32, 64, 128, 256].
@@ -80,17 +81,14 @@ class Autoencoder(nn.Module):
         x = self.inc(inputs)
 
         for down in self.downs:
-            print("d", x.shape)
             x = down(x)
 
         xl = self.bottle(x)
         x = xl
-        print("b", x.shape)
 
         for up in self.ups:
-            print("u", x.shape)
-
             x = up(x)
+
         if get_latent:
             return self.outc(x), xl
         else:
