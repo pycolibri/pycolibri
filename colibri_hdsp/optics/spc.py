@@ -50,10 +50,29 @@ class SPC(nn.Module):
         
         
     def ca_reg(self,reg):
+        """
+        Regularization of the coded aperture.
+
+        Args:
+            reg (function): Regularization function.
+        
+        Returns:
+            torch.Tensor: Regularization value.
+        """
         reg_value = reg(self.ca)
         return reg_value
 
     def measurements_reg(self,reg,x):
+        """
+        Regularization of the measurements.
+
+        Args:
+            reg (function): Regularization function.
+            x (torch.Tensor): Input image tensor of size (b, c, h, w).
+
+        Returns:
+            torch.Tensor: Regularization value.
+        """
         y = self(x, type_calculation="forward")
         reg_value = reg(y)
         return reg_value
