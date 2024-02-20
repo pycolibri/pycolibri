@@ -49,7 +49,7 @@ class SPC(nn.Module):
             raise ValueError("type_calculation must be 'forward', 'backward' or 'forward_backward'")
         
         
-    def ca_reg(self,reg):
+    def weights_reg(self,reg):
         """
         Regularization of the coded aperture.
 
@@ -62,7 +62,7 @@ class SPC(nn.Module):
         reg_value = reg(self.ca)
         return reg_value
 
-    def measurements_reg(self,reg,x):
+    def output_reg(self,reg,x):
         """
         Regularization of the measurements.
 

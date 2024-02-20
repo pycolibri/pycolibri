@@ -75,7 +75,7 @@ class CASSI(torch.nn.Module):
         
 
         
-    def ca_reg(self,reg):
+    def weights_reg(self,reg):
         """
         Regularization of the coded aperture.
 
@@ -88,7 +88,7 @@ class CASSI(torch.nn.Module):
         reg_value = reg(self.ca)
         return reg_value
 
-    def measurements_reg(self,reg,x):
+    def output_reg(self,reg,x):
         """
         Regularization of the measurements.
 
