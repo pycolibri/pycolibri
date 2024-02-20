@@ -1,24 +1,21 @@
 import torch
-import numpy as np
 from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_cassi, backward_cassi
 
 
 class CASSI(torch.nn.Module):
     """
     Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
-
     """
 
-    def __init__(self, input_shape, mode = "base", trainable=False, initial_ca=None, seed=None):
+    def __init__(self, input_shape, mode = "base", trainable=False, initial_ca=None):
         """
         Args:
+            input_shape (tuple): Tuple, shape of the input image (L, M, N).
             mode (str): String, mode of the coded aperture, it can be "base", "dd" or "color"
             trainable (bool): Boolean, if True the coded aperture is trainable
             initial_ca (torch.Tensor): Initial coded aperture with shape (1, M, N, 1)
-            seed (int): Random seed
         """
         super(CASSI, self).__init__()
-        self.seed = seed
         self.trainable = trainable
         self.initial_ca = initial_ca
 
