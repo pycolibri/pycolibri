@@ -5,7 +5,7 @@ from .functional import forward_spc, backward_spc
 
 class SPC(nn.Module):
 
-    def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None):
+    def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None, **kwargs):
         """
         Initializes the Single Pixel Camera (SPC) model.
 
