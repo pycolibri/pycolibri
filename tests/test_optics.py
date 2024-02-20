@@ -15,7 +15,7 @@ def imsize():
     c = 31
     return b, c, h, w
 
-def compute_outshape(imsize, mode):
+def cassi_config(imsize, mode):
     c, h, w = imsize[1:]
 
     if mode == "base":
@@ -33,7 +33,7 @@ mode_list = ["base", "dd", "color"]
 def test_cassi(mode, imsize):
 
     cube = torch.randn(imsize)
-    out_shape = compute_outshape(imsize, mode)
+    out_shape = cassi_config(imsize, mode)
 
 
     cassi = CASSI(imsize[1:], mode)
@@ -46,17 +46,17 @@ def test_cassi(mode, imsize):
 
 @pytest.fixture
 def spc_config():
-    img_size = 32
-    m = 256
-    return img_size, m
+    img_size = [128, 32, 32]
+    n_measurements = 256
+    return img_size, n_measurements
 
 def test_spc_forward(spc_config):
-    img_size, m = spc_config
-    spc = SPC(img_size, m)
+    img_size, n_measurements = spc_config
+    spc = SPC(img_size, n_measurements)
 
-    b, c, h, w = 1, 3, img_size, img_size 
+    b, c, h, w = 1, *img_size
     x = torch.randn(b, c, h, w)
 
     y_forward = spc(x, type_calculation="forward")
-    expected_shape = (b, m, c) 
+    expected_shape = (b, n_measurements, c) 
     assert y_forward.shape == expected_shape, "Forward output shape is incorrect"

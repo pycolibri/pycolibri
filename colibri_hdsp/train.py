@@ -191,7 +191,7 @@ class Training:
         for idx, key in enumerate(self.regularizers_optics_ce.keys()):
 
             reg = (
-                self.model.optical_layer.ca_reg(self.regularizers_optics_ce[key])
+                self.model.optical_layer.weights_reg(self.regularizers_optics_ce[key])
                 * self.regularization_optics_weights_ce[idx]
             )
             reg_values[key] = reg
@@ -207,7 +207,7 @@ class Training:
         for idx, key in enumerate(self.regularizers_optics_mo.keys()):
 
             reg = (
-                self.model.optical_layer.measurements_reg(
+                self.model.optical_layer.output_reg(
                     self.regularizers_optics_mo[key], x
                 )
                 * self.regularization_optics_weights_mo[idx]
