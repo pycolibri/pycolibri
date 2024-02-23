@@ -120,9 +120,11 @@ plt.show()
 # %%
 # Reconstruction model
 # -----------------------------------------------
-# Define the recovery model :math: ´\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})´, in this case, a simple U-Net model.
+# Define the recovery model :math: ´\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})´, in this case, a simple U-Net model. 
+# You can add you custom model by using the :meth: `build_network` function.
 # Additionally we define the end-to-end model that combines the forward and recovery models.
-# We define the loss function :math: ´\mathcal{L}´, and the regularizers :math: ´\mathcal{R}´ for the forward and recovery models.
+# Define the loss function :math: ´\mathcal{L}´, and the regularizers :math: ´\mathcal{R}´ for the forward and recovery models. 
+
 
 from colibri_hdsp.models import build_network, Unet, Autoencoder
 from colibri_hdsp.archs import E2E
