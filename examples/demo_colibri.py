@@ -2,7 +2,24 @@ r"""
 Demo Colibri.
 ===================================================
 
-In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models.
+In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models. Mainly, the forward model is defined,
+
+.. math::
+    \mathbf{y} = \mathbf{H}_\phi \mathbf{x}
+
+where :math:`\mathbf{H}` is the forward model, :math:`\mathbf{x}` is the input image and :math:`\mathbf{y}` is the measurement and :math:`\phi` are the coding elements of the forward model. The recovery model is defined as,
+
+.. math::
+    \mathbf{x} = \mathcal{G}_\theta( \mathbf{y})
+
+where :math:`\mathcal{G}` is the recovery model and :math:`\theta` are the parameters of the recovery model.
+
+The training is performed by minimizing the following loss function,
+
+.. math::
+    \{\phi^*,\theta^*\} = \arg \min_{\phi,\theta} \sum_{p=1}^{P}\mathcal{L}(\mathbf{x}_p, \mathcal{G}_\theta( \mathbf{H}_\phi \mathbf{x}_p)) + \lambda \mathcal{R}(\phi) + \mu \mathcal{R}(\mathbf{H}_\phi \mathbf{x}) 
+
+where :math:`\mathcal{L}` is the loss function, :math:`\mathcal{R}` is the regularizer, :math:`\lambda` and :math:`\mu` are the regularization weights, and :math:`P` is the number of samples in the training dataset.
 
 """
 
@@ -59,6 +76,11 @@ plt.show()
 
 # %%
 # Optics forward model
+# -----------------------------------------------
+# Define the forward operators :math: ´\mathbf{y} = \mathbf{H}_\phi \mathbf{x}´, in this case, the CASSI and SPC forward models.  
+# Each optics model can comptute the forward and backward operators i.e., :math: ´\mathbf{y} = \mathbf{H}_\phi \mathbf{x}´ and :math: ´\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}´.
+
+
 
 import math
 from colibri_hdsp.optics import SPC, CASSI
@@ -98,6 +120,10 @@ plt.show()
 # %%
 # Reconstruction model
 # -----------------------------------------------
+# Define the recovery model :math: ´\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})´, in this case, a simple U-Net model.
+# Additionally we define the end-to-end model that combines the forward and recovery models.
+# We define the loss function :math: ´\mathcal{L}´, and the regularizers :math: ´\mathcal{R}´ for the forward and recovery models.
+
 from colibri_hdsp.models import build_network, Unet, Autoencoder
 from colibri_hdsp.archs import E2E
 from colibri_hdsp.train import Training
@@ -162,6 +188,7 @@ results = train_schedule.fit(
 # %%
 # Visualize results
 # -----------------------------------------------
+# Performs the inference :math: ´\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})´ and visualize the results.
 
 x_est = model(sample.to(device)).cpu()
 y = acquistion_model(sample.to(device)).cpu()
