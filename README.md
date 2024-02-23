@@ -1,5 +1,5 @@
 ﻿
-![colibri-banner](https://github.com/colibri-hdsp/colibri-hdsp/docs/source/figures/colibri-banner.png)
+![colibri-banner](docs/source/figures/colibri-banner.png)
 
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)]()
