@@ -1,0 +1,47 @@
+name: Build docs
+
+# Runs on pushes targeting the default branch
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Install colibri and its dependencies
+        run: |
+          pip install -e .
+      - name: Install git repository optional dependencies
+        run: |
+          python3 -m pip install https://github.com/odlgroup/odl/archive/master.zip
+      - name: Run doctests
+        run: |
+          find . -name '*.py' | xargs grep -l '>>>' | while read file; do
+            echo "Running doctests in $file"
+            python -m doctest -v "$file"
+          done
+      - name: Sphinx build
+        run: |
+          sphinx-build docs/source _build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _build/
+          force_orphan: true
+          enable_jekyll: false
