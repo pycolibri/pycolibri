@@ -1,1 +1,3 @@
 torchmetrics
+sphinx
+furo
