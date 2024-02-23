@@ -24,9 +24,6 @@ jobs:
       - name: Install colibri and its dependencies
         run: |
           pip install -e .
-      - name: Install git repository optional dependencies
-        run: |
-          python3 -m pip install https://github.com/odlgroup/odl/archive/master.zip
       - name: Run doctests
         run: |
           find . -name '*.py' | xargs grep -l '>>>' | while read file; do
