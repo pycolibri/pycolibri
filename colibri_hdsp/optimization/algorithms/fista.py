@@ -15,7 +15,7 @@ class Fista(torch.nn.Module):
         self.transform = transform
 
         self.H = lambda x: self.acquistion_model.forward(self.transform.inverse(x))
-        self.tol = 1e-4
+        self.tol = algo_params["tol"]
         
     def forward(self, y, x0=None):
         

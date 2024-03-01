@@ -99,7 +99,7 @@ algo_params = {
     'max_iter': 2000,
     'alpha': 0.1,
     'lambda': 0.001,
-    'tol': 1e-3
+    'tol': 1e-5
 }
 
 
@@ -122,21 +122,25 @@ print("Error: ", torch.norm(sample - x_hat)  )
 plt.figure(figsize=(10,10))
 
 plt.subplot(1,4,1)
+plt.title('Reference')
 plt.imshow(sample[0,:,:].permute(1, 2, 0), cmap='gray')
 plt.xticks([])
 plt.yticks([])
 
 plt.subplot(1,4,2)
+plt.title('Sparse Representation')
 plt.imshow(abs(theta[0,:,:]).permute(1, 2, 0), cmap='gray')
 plt.xticks([])
 plt.yticks([])
 
 plt.subplot(1,4,3)
+plt.title('Measurement')
 plt.imshow(y[0,:,:].permute(1, 2, 0), cmap='gray')
 plt.xticks([])
 plt.yticks([])
 
 plt.subplot(1,4,4)
+plt.title('Reconstruction')
 plt.imshow(x_hat[0,:,:].permute(1, 2, 0).detach().cpu().numpy(), cmap='gray')
 plt.xticks([])
 plt.yticks([])
