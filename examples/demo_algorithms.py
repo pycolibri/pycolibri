@@ -71,7 +71,7 @@ acquisition_config = dict(
 )
 
 if adquistion_name == 'spc':
-    n_measurements  = 32**2 
+    n_measurements  = 25**2 
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
@@ -90,8 +90,8 @@ from colibri_hdsp.optimization.fidelity import L2
 from colibri_hdsp.optimization.transforms import DCT2D
 
 algo_params = {
-    'max_iter': 10,
-    'alpha': 0.001,
+    'max_iter': 200,
+    'alpha': 1e-4,
     'lambda': 0.001,
     'tol': 1e-3
 }
@@ -104,8 +104,7 @@ transform = DCT2D()
 
 fista = Fista(fidelity, prior, acquistion_model, algo_params, transform)
 
-x0 =  theta*0.9
-
+x0 = acquistion_model.forward(y,  type_calculation="backward")
 x_hat = fista(y, x0=x0 ) 
 
 print(x_hat.shape)
@@ -140,6 +139,8 @@ plt.yticks([])
 
 plt.subplot(1,4,4)
 plt.title('Reconstruction')
+x_hat -= x_hat.min()
+x_hat /= x_hat.max()
 plt.imshow(x_hat[0,:,:].permute(1, 2, 0).detach().cpu().numpy(), cmap='gray')
 plt.xticks([])
 plt.yticks([])

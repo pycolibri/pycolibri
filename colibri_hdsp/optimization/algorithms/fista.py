@@ -42,6 +42,8 @@ class Fista(torch.nn.Module):
             z = x + ((t_old - 1) / t) * (x - x_old)
 
 
+            error = self.fidelity.forward(x, y, self.H).item()
+            print("Iter: ", i, "fidelity: ", error)
             # print("Iter: ", i, "Norm x: ", torch.norm(x - x_old), "Norm z: ", torch.norm(z - z_old))
 
             # if torch.norm(x - x_old) < self.tol and torch.norm(z - z_old) < self.tol:
