@@ -1,3 +1,4 @@
 furo
 sphinx>=4.1.0
 autodocsumm
+sphinx_gallery

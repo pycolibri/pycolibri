@@ -25,6 +25,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
     "autodocsumm",
+    'sphinx_gallery.gen_gallery'
 ]
 
 exec_code_working_dir = "../.."
@@ -64,6 +65,13 @@ autodoc_typehints = "description"
 html_theme = 'furo'
 html_static_path = ['_static']
 
+
+sphinx_gallery_conf = {
+     'examples_dirs': '../../examples',   # path to your example scripts
+     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+     "filename_pattern": "/demo_",
+     "ignore_pattern": r"__init__\.py",
+}
 
 
 class FakeSignature:
