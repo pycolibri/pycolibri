@@ -15,6 +15,8 @@ BASIC_DATASETS = {
     'cifar100': torchvision.datasets.CIFAR100,
 }
 
+__all__ = list(BASIC_DATASETS.keys())
+
 
 class FolderDataset(data.Dataset):
     def __init__(self, dataset_path, keys=None, is_train=False):

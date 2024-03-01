@@ -2,17 +2,13 @@ import torch.nn as nn
 
 
 class E2E(nn.Module):
-    """
-        End-to-end model for image reconstruction from compressed measurements.
-    """
     def __init__(self, optical_layer: nn.Module, decoder: nn.Module):
         """ End-to-end model for image reconstruction from compressed measurements.
+        
         Args:
             optical_layer (nn.Module): Optical Layer module.
             decoder (nn.Module): Computational decoder module.
         """
-
-
         super(E2E, self).__init__()
         self.optical_layer = optical_layer
         self.decoder = decoder
