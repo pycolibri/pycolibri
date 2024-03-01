@@ -32,7 +32,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 1
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'cassi' #  ['spc', 'cassi']
+adquistion_name = 'spc' #  ['spc', 'cassi']
 
 
 
@@ -71,7 +71,7 @@ acquisition_config = dict(
 )
 
 if adquistion_name == 'spc':
-    n_measurements  = 256 
+    n_measurements  = 32**2 
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
@@ -81,13 +81,7 @@ acquistion_model = {
 }[adquistion_name]
 
 y = acquistion_model(sample)
-
-if adquistion_name == 'spc':
-    y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
-
-
-
-
+print(y.shape)
 
 # Reconstruct image
 from colibri_hdsp.optimization.algorithms.fista import Fista
@@ -96,10 +90,10 @@ from colibri_hdsp.optimization.fidelity import L2
 from colibri_hdsp.optimization.transforms import DCT2D
 
 algo_params = {
-    'max_iter': 2000,
-    'alpha': 0.1,
+    'max_iter': 10,
+    'alpha': 0.001,
     'lambda': 0.001,
-    'tol': 1e-5
+    'tol': 1e-3
 }
 
 
@@ -110,7 +104,7 @@ transform = DCT2D()
 
 fista = Fista(fidelity, prior, acquistion_model, algo_params, transform)
 
-x0 = 0.01*torch.randn_like(theta) # + theta*0.1
+x0 =  theta*0.9
 
 x_hat = fista(y, x0=x0 ) 
 
@@ -132,6 +126,11 @@ plt.title('Sparse Representation')
 plt.imshow(abs(theta[0,:,:]).permute(1, 2, 0), cmap='gray')
 plt.xticks([])
 plt.yticks([])
+
+
+if adquistion_name == 'spc':
+    y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
+
 
 plt.subplot(1,4,3)
 plt.title('Measurement')
