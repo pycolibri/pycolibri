@@ -41,7 +41,7 @@ adquistion_name = 'spc' #  ['spc', 'cassi']
 # Visualize dataset
 # -----------------------------------------------
 from torchvision.utils import make_grid
-from colibri_hdsp.optimization.transforms import DCT2D
+from colibri_hdsp.recovery.transforms import DCT2D
 
 sample = next(iter(dataset.train_dataset))[0]
 
@@ -81,13 +81,12 @@ acquistion_model = {
 }[adquistion_name]
 
 y = acquistion_model(sample)
-print(y.shape)
 
 # Reconstruct image
-from colibri_hdsp.optimization.algorithms.fista import Fista
-from colibri_hdsp.optimization.prior import Sparsity
-from colibri_hdsp.optimization.fidelity import L2
-from colibri_hdsp.optimization.transforms import DCT2D
+from colibri_hdsp.recovery.algorithms.fista import Fista
+from colibri_hdsp.recovery.prior import Sparsity
+from colibri_hdsp.recovery.fidelity import L2
+from colibri_hdsp.recovery.transforms import DCT2D
 
 algo_params = {
     'max_iter': 200,
@@ -108,9 +107,6 @@ x0 = acquistion_model.forward(y,  type_calculation="backward")
 x_hat = fista(y, x0=x0 ) 
 
 print(x_hat.shape)
-print("Error: ", torch.norm(sample - x_hat)  )
-
-
 
 plt.figure(figsize=(10,10))
 
