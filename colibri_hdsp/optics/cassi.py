@@ -3,12 +3,17 @@ from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_c
 
 
 class CASSI(torch.nn.Module):
-    """
-    Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+    r"""
+    Coded Aperture Snapshot Spectral Imager (CASSI)
+
+    CASSI systems allow for the capture of spectral information in a compressive manner via the light modulation and dispersion by a coded aperture and a dispersive element, respectively. Fore information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+
     """
 
     def __init__(self, input_shape, mode = "base", trainable=False, initial_ca=None, **kwargs):
-        """
+        r"""
+        Initializes the CASSI layer.
+
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
             mode (str): String, mode of the coded aperture, it can be "base", "dd" or "color"
@@ -52,8 +57,9 @@ class CASSI(torch.nn.Module):
         self.ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
 
     def forward(self, x, type_calculation="forward"):
-        """
+        r"""
         Call method of the layer, it performs the forward or backward operator according to the type_calculation
+
         Args:
             x (torch.Tensor): Input tensor with shape (1, M, N, L)
             type_calculation (str): String, it can be "forward", "backward" or "forward_backward"
@@ -62,6 +68,7 @@ class CASSI(torch.nn.Module):
         Raises:
             ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
+
         if type_calculation == "forward":
             return self.sensing(x, self.ca)
 
@@ -76,7 +83,7 @@ class CASSI(torch.nn.Module):
 
         
     def weights_reg(self,reg):
-        """
+        r"""
         Regularization of the coded aperture.
 
         Args:
@@ -85,11 +92,12 @@ class CASSI(torch.nn.Module):
         Returns:
             torch.Tensor: Regularization value.
         """
+
         reg_value = reg(self.ca)
         return reg_value
 
     def output_reg(self,reg,x):
-        """
+        r"""
         Regularization of the measurements.
 
         Args:
@@ -99,6 +107,7 @@ class CASSI(torch.nn.Module):
         Returns:
             torch.Tensor: Regularization value.
         """
+
         y = self.sensing(x, self.ca)
         reg_value = reg(y)
         return reg_value

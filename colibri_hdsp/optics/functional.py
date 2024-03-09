@@ -2,8 +2,10 @@ import torch
 import numpy as np
 
 def prism_operator(x, shift_sign = 1):
-    """
+    r"""
+
     Prism operator, it shifts the input tensor x according to spectral shift made by a prism
+
     Args:
         x (torch.Tensor): Input tensor with shape (1, L, M, N)
         shift_sign (int): Integer, it can be 1 or -1, it indicates the direction of the shift
@@ -28,8 +30,12 @@ def prism_operator(x, shift_sign = 1):
     return x
 
 def forward_color_cassi(x, ca):
-    """
-    Forward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    r"""
+
+    Forward operator of color coded aperture snapshot spectral imager (Color-CASSI)
+
+    For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+
     Args:
         x (torch.Tensor): Spectral image with shape (1, L, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, L, M, N)
@@ -41,8 +47,12 @@ def forward_color_cassi(x, ca):
     return y.sum(dim=1, keepdim=True)
 
 def backward_color_cassi(y, ca):
-    """
-    Backward operator of color coded aperture snapshot spectral imager (Color-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    r"""
+
+    Backward operator of color coded aperture snapshot spectral imager (Color-CASSI)
+    
+    Fmore information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+
     Args:
         y (torch.Tensor): Measurement with shape (1, 1, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, L, M, N)
@@ -54,8 +64,12 @@ def backward_color_cassi(y, ca):
 
 
 def forward_dd_cassi(x, ca):
-    """
-    Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    r"""
+
+    Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)
+    
+    For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+
     Args:
         x (torch.Tensor): Spectral image with shape (1, L, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N + L - 1)
@@ -71,8 +85,12 @@ def forward_dd_cassi(x, ca):
 
 
 def backward_dd_cassi(y, ca):
-    """
-    Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI), more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    r"""
+
+    Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)
+    
+    For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+
     Args:
         y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N + L - 1)
@@ -87,8 +105,12 @@ def backward_dd_cassi(y, ca):
     return backward_color_cassi(y, ca)
 
 def forward_cassi(x, ca):
-    """
-    Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+    r"""
+
+    Forward operator of coded aperture snapshot spectral imager (CASSI)
+    
+    For more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+
     Args:
         x (torch.Tensor): Spectral image with shape (1, L, M, N,)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)
@@ -103,8 +125,12 @@ def forward_cassi(x, ca):
 
 
 def backward_cassi(y, ca):
-    """
-    Backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+    r"""
+
+    Backward operator of coded aperture snapshot spectral imager (CASSI)
+    
+    For more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
+
     Args:
         y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)
@@ -119,7 +145,8 @@ def backward_cassi(y, ca):
 
 
 def forward_spc(x, H):
-    """
+    r"""
+
     Forward propagation through the SPC model.
 
     Args:
@@ -139,8 +166,10 @@ def forward_spc(x, H):
     return y
 
 def backward_spc(y, H):
-    """
+    r"""
+
     Inverse operation to reconsstruct the image from measurements.
+
 
     Args:
         y (torch.Tensor): Measurement tensor of size (b, m, c).

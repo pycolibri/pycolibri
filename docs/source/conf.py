@@ -29,7 +29,7 @@ extensions = [
 
 exec_code_working_dir = "../.."
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 autodoc_inherit_docstrings = False
@@ -55,6 +55,22 @@ autodoc_mock_imports = [
     "h5py"
     # 'segmentation_models_pytorch.base',
 ]
+
+
+# how to define macros: https://docs.mathjax.org/en/latest/input/tex/macros.html
+mathjax3_config = {
+    "tex": {
+        "equationNumbers": {"autoNumber": "AMS", "useLabelIds": True},
+        "macros": {
+            "forwardLinear": r"\mathbf{H}",
+            "learnedOptics": r"\mathbf{\Phi}",
+            "noise":  r"\epsilon",
+            "xset": r"\mathcal{X}",
+            "thetaset": r"\mathcal{\Omega}",
+            "yset": r"\mathcal{Y}",
+        },
+    }
+}
 
 autoclass_content = "both"
 autodoc_typehints = "description"

@@ -7,7 +7,7 @@ class SPC(nn.Module):
 
     def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None, **kwargs):
         """
-        Initializes the Single Pixel Camera (SPC) model.
+        Single Pixel Camera (SPC).
 
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
