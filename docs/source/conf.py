@@ -38,7 +38,7 @@ napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
 
 html_title = "Colibri"
-html_logo = "logo.png"
+html_logo = os.path.join("figures", "logo.png")
 
 autodoc_mock_imports = [
     "torch",
