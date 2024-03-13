@@ -103,7 +103,7 @@ transform = DCT2D()
 
 fista = Fista(fidelity, prior, acquistion_model, algo_params, transform)
 
-x0 = acquistion_model.forward(y,  type_calculation="backward")
+x0 = acquistion_model.forward(y, type_calculation="backward")
 x_hat = fista(y, x0=x0 ) 
 
 print(x_hat.shape)
