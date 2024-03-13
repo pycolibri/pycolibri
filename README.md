@@ -1,6 +1,5 @@
 ﻿<div style="display:flex;">
   <img src="docs/source/figures/colibri-logo.svg" alt="Image 1" style="width:30%;margin-left:auto;marging-right:auto;">
-  <div style="width:10%;"></div> <!-- Middle space -->
   <img src="docs/source/figures/colibri-banner.svg" alt="Image 2" style="width:60%;margin-left:auto;marging-right:auto;">
 </div>
 
