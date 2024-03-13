@@ -1,5 +1,8 @@
-﻿
-![colibri-banner](docs/source/figures/colibri-banner.png)
+﻿<div style="display:flex;">
+  <img src="docs/source/figures/colibri-logo.svg" alt="Image 1" style="width:30%;margin-left:auto;marging-right:auto;">
+  <div style="width:10%;"></div> <!-- Middle space -->
+  <img src="docs/source/figures/colibri-banner.svg" alt="Image 2" style="width:60%;margin-left:auto;marging-right:auto;">
+</div>
 
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)]()
@@ -45,7 +48,6 @@ plt.axis('off')
 plt.show()
 
 ```
-
 
 ## 🧰 Features
 
