@@ -83,9 +83,9 @@ acquistion_model = {
 y = acquistion_model(sample)
 
 # Reconstruct image
-from colibri_hdsp.recovery.algorithms.fista import Fista
-from colibri_hdsp.recovery.prior import Sparsity
-from colibri_hdsp.recovery.fidelity import L2
+from colibri_hdsp.recovery.fista import Fista
+from colibri_hdsp.recovery.terms.prior import Sparsity
+from colibri_hdsp.recovery.terms.fidelity import L2
 from colibri_hdsp.recovery.transforms import DCT2D
 
 algo_params = {
