@@ -77,8 +77,8 @@ plt.show()
 # %%
 # Optics forward model
 # -----------------------------------------------
-# Define the forward operators :math: ´\mathbf{y} = \mathbf{H}_\phi \mathbf{x}´, in this case, the CASSI and SPC forward models.  
-# Each optics model can comptute the forward and backward operators i.e., :math: ´\mathbf{y} = \mathbf{H}_\phi \mathbf{x}´ and :math: ´\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}´.
+# Define the forward operators :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}`, in this case, the CASSI and SPC forward models.  
+# Each optics model can comptute the forward and backward operators i.e., :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}` and :math:`\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}`.
 
 
 
@@ -120,10 +120,10 @@ plt.show()
 # %%
 # Reconstruction model
 # -----------------------------------------------
-# Define the recovery model :math: ´\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})´, in this case, a simple U-Net model. 
+# Define the recovery model :math:`\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})`, in this case, a simple U-Net model. 
 # You can add you custom model by using the :meth: `build_network` function.
 # Additionally we define the end-to-end model that combines the forward and recovery models.
-# Define the loss function :math: ´\mathcal{L}´, and the regularizers :math: ´\mathcal{R}´ for the forward and recovery models. 
+# Define the loss function :math:`\mathcal{L}`, and the regularizers :math:`\mathcal{R}` for the forward and recovery models. 
 
 
 from colibri_hdsp.models import build_network, Unet, Autoencoder
@@ -190,7 +190,7 @@ results = train_schedule.fit(
 # %%
 # Visualize results
 # -----------------------------------------------
-# Performs the inference :math: ´\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})´ and visualize the results.
+# Performs the inference :math:`\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})` and visualize the results.
 
 x_est = model(sample.to(device)).cpu()
 y = acquistion_model(sample.to(device)).cpu()
