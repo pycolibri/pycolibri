@@ -17,13 +17,11 @@ sys.path.append(os.getcwd())
 print("Current Working Directory " , os.getcwd())
 
 # Libraries
-import numpy as np
 import scipy.io as sio
-from skimage.transform import resize
 import matplotlib.pyplot as plt
 
-import torch
 from colibri_hdsp.optics.tensorial import *
+torch.set_default_dtype(torch.float64)
 
 manual_device = "cpu"
 # Check GPU support
@@ -46,9 +44,10 @@ S = 2
 # %%
 # Data
 # -----------------------------------------------
-d = sio.loadmat('examples/data/lego.mat')['hyperimg']
-d = resize(d[..., ::int(d.shape[-1] / L)], [M, N, L])
-d = torch.tensor(d, dtype=torch.float32).permute(2, 0, 1)
+# d = sio.loadmat('examples/data/lego.mat')['hyperimg']
+# d = resize(d[..., ::int(d.shape[-1] / L)], [M, N, L])
+# d = torch.tensor(d, dtype=torch.float32).permute(2, 0, 1)
+d = torch.from_numpy(sio.loadmat('examples/data/d.mat')['d']).double().permute(2, 0, 1)
 
 plt.figure()
 plt.imshow(d[0])
@@ -58,9 +57,12 @@ plt.show()
 # %%
 # Coded Apertures
 # -----------------------------------------------
-CAs = torch.zeros((S, M, N))
-for s in range(S):
-    CAs[s] = torch.round(torch.rand(M, N))
+# torch.manual_seed(0)
+# CAs = torch.zeros((S, M, N))
+# for s in range(S):
+#     CAs[s] = torch.round(torch.rand(M, N))
+
+CAs = torch.from_numpy(sio.loadmat('examples/data/CAs.mat')['CAs']).double().permute(2, 0, 1)
 
 # %%
 # Sensing and computation of P and Q
@@ -81,6 +83,8 @@ plt.title('P_11')
 plt.figure()
 plt.imshow(Q[0, 0])
 plt.title('Q_11')
+
+plt.show()
 
 # %%
 # We now check formula (5) for HH*b or Pb

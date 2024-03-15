@@ -62,6 +62,6 @@ def computeQ(f, L):
 
 def IMVM(P, b):
     [S, M, N] = b.shape
-    y = torch.sum(P * b[:, None], dim=1)
+    y = torch.sum(P * b[None], dim=1)
 
     return y
