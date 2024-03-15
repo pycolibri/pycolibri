@@ -12,6 +12,7 @@ def sensingH(hyperimg, gdmd):
 
     return y
 
+
 def sensingHt(b, gdmd):
     [_, M, N] = gdmd.shape
     L = b.shape[-1] - N + 1
@@ -21,14 +22,14 @@ def sensingHt(b, gdmd):
         y[k] = y[k] + torch.sum(b[..., k:N + k] * gdmd, dim=0)
 
     return y
-    
+
 
 def computeP(f, L):
     [S, M, N] = f.shape
     P = torch.zeros(S, S, M, N + L - 1)
     for t in range(S):
         for s in range(t, S):
-            # This loop corresponds to the formula (5), i.e. sum_{l=1}^L S^Z_{l-1}(f_t).*S^Z_{l-1}(f_s)
+            # This loop corresponds to the formula: sum_{l=1}^L S^Z_{l-1}(f_t).*S^Z_{l-1}(f_s)
             for l in range(L):
                 P[t, s, :, l:N + l] = P[t, s, :, l:N + l] + f[t] * f[s]
 
@@ -46,8 +47,7 @@ def computeQ(f, L):
     for l in range(L):
         Q[0, l, :, l:N] = torch.sum(f[..., :N - l] * f[..., l:N], dim=0)
 
-    # We now compute remaining indices using the symmetry remarks at
-    # the endo of section 3.4
+    # We now compute remaining indices using the symmetry
     for k in range(L):
         for l in range(k, L):
             # This line uses the Teoplitz structure to get the upper
@@ -65,3 +65,94 @@ def IMVM(P, b):
     y = torch.sum(P * b[None], dim=1)
 
     return y
+
+
+def IMVMS(Q, d):
+    # this is an image - matrix vector multiplication with shifts
+    [L, _, M, N] = Q.shape
+    y = torch.zeros(L, M, N)
+    for k in range(L):
+        for l in range(k + 1):
+            y[k, :, : N + l - k] += Q[k, l, :, :N + l - k] * d[l, :, k - l:N]
+
+        for l in range(k + 1, L):
+            y[k, :, l - k:N] += Q[k, l, :, l - k:N] * d[l, :, :N - l + k]
+
+    return y
+
+
+def ComputePinv(P, rho):
+    [S, _, M, NplusLminus1] = P.shape
+    e = torch.ones(M, NplusLminus1)
+    E = torch.zeros_like(P)
+
+    for t in range(S):
+        E[t, t] = e
+
+    R = rho * E + P
+    A = rho * E + P
+    T = E
+
+    # we first work the lower diagonal rows, just as in standard gaussian elimination
+    for t in range(S):
+        Rtt = R[t, t].clone()
+
+        # this divides the t'th row with r_tt
+        for s in range(S):
+            R[t, s] = R[t, s] / Rtt
+            T[t, s] = T[t, s] / Rtt
+
+        # this withdraws a multiple of the t'th row from the remaining
+        for u in range(t + 1, S):
+            # this is the multiple in question
+            Rut = R[u, t].clone()
+            # and here comes the elimination step
+            for s in range(S):
+                R[u, s] = R[u, s] - Rut * R[t, s]
+                T[u, s] = T[u, s] - Rut * T[t, s]
+
+    # this piece does the final "upper triangular" elimination
+    for s in reversed(range(1, S)):
+        for t in reversed(range(s)):
+            for s1 in range(S):
+                T[t, s1] = T[t, s1] - R[t, s] * T[s, s1]
+
+            R[t, s] = R[t, s] - R[t, s] * R[s, s]
+
+    return T, A
+
+
+def ComputeQinv(Q, rho):
+    [L, _, M, N] = Q.shape
+    e = torch.ones(M, N)
+    E = torch.zeros_like(Q)
+
+    for t in range(L):
+        E[t, t] = e
+
+    R = rho * E + Q
+    A = rho * E + Q
+    T = E
+
+    for t in range(L):
+        Rtt = R[t, t].clone()
+
+        # this divides the tth row with r_tt
+        for s in range(L):
+            R[t, s] = R[t, s] / Rtt
+            T[t, s] = T[t, s] / Rtt
+
+        # this withdraws a suitable multiple of the tth row from the remaining
+        for t1 in range(t + 1, L):
+            Rt1t = R[t1, t].clone()
+            for s in range(L):
+                R[t1, s, :, :N + t - t1] -= Rt1t[:, :N + t - t1] * R[t, s, :, t1 - t: N]
+                T[t1, s, :, :N + t - t1] -= Rt1t[:, :N + t - t1] * T[t, s, :, t1 - t: N]
+
+    # this piece does the final "upper triangular" elimination
+    for s in reversed(range(1, L)):
+        for t in reversed(range(s)):
+            for s1 in range(L):
+                T[t, s1, :, s - t: N] -= R[t, s, :, s - t: N] * T[s, s1, :, : N + t - s]
+
+    return T, A
