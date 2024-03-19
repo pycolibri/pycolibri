@@ -8,6 +8,24 @@ class CASSI(torch.nn.Module):
 
     CASSI systems allow for the capture of spectral information in a compressive manner via the light modulation and dispersion by a coded aperture and a dispersive element, respectively. Fore information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
 
+    
+    Mathematically, CASSI systems can be described as follows. 
+
+    .. math::
+
+        \mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise
+
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for CASSI, :math:`\xset = \mathbb{R}^{L \times M \times N}` and :math:`\yset = \mathbb{R}^{M \times N+L-1}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the prism dispersion and the modulation of the coded aperture, such as
+
+    .. math::
+        \begin{align*}
+        \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
+                        \mathbf{y}_{i, j+l-1} &=  \sum_{l=1}^{L} \learnedOptics_{i, j + l - 1} \mathbf{x}_{i, j, l}
+        \end{align*}
+
+    with :math:`\learnedOptics \in \{0,1\}^{M \times N+L-1}` coded aperture,
+
+
     """
 
     def __init__(self, input_shape, mode = "base", trainable=False, initial_ca=None, **kwargs):

@@ -5,9 +5,32 @@ from .functional import forward_spc, backward_spc
 
 class SPC(nn.Module):
 
+    r"""
+    Single Pixel Camera (SPC).
+
+    
+    Mathematically, SPC systems can be described as follows. 
+
+    .. math::
+
+        \mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise
+
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for SPC, :math:`\xset = \mathbb{R}^{L \times M \times N}` and :math:`\yset = \mathbb{R}^{L \times S}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward single pixel acquisition and the modulation of the coded aperture, such as
+
+    .. math::
+        \begin{align*}
+        \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
+                        \mathbf{y}_{s, l} &=  \sum_{i, j=1}^{M, N} \learnedOptics_{s, i, j} \mathbf{x}_{l, i, j}
+        \end{align*}
+
+    with :math:`\learnedOptics \in \{0,1\}^{S \times L}` coded aperture, with S the number of measurements and L the number of spectral bands.
+
+
+    
+    """
     def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None, **kwargs):
         """
-        Single Pixel Camera (SPC).
+        
 
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
