@@ -7,7 +7,7 @@ class CASSI(torch.nn.Module):
     Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
     """
 
-    def __init__(self, input_shape, mode = "base", trainable=False, initial_ca=None, **kwargs):
+    def __init__(self, input_shape, mode = "dd", trainable=False, initial_ca=None, **kwargs):
         """
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
@@ -43,7 +43,7 @@ class CASSI(torch.nn.Module):
             raise ValueError(f"the mode {self.mode} is not valid")
 
         if self.initial_ca is None:
-            initializer = torch.randn(shape, requires_grad=self.trainable)
+            initializer = torch.randn(shape, requires_grad=self.trainable) 
         else:
             assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
             initializer = torch.from_numpy(self.initial_ca).float()
