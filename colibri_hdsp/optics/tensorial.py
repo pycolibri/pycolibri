@@ -1,27 +1,27 @@
 import torch
 
 
-def sensingH(hyperimg, gdmd):
-    [L, M, N] = hyperimg.shape
+def sensingH(x, gdmd):
+    [b, L, M, N] = x.shape
     S = gdmd.shape[0]
-    y = torch.zeros(S, M, N + L - 1)
+    y = torch.zeros(b, S, M, N + L - 1).to(x.device)
 
-    y_noshift = hyperimg[:, None] * gdmd
+    y_noshift = x[:, :, None] * gdmd
     for k in range(L):
-        y[..., k:N + k] = y[..., k:N + k] + y_noshift[k]
+        y[..., k:N + k] += + y_noshift[:, k]
 
     return y
 
 
-def sensingHt(b, gdmd):
+def sensingHt(y, gdmd):
     [_, M, N] = gdmd.shape
-    L = b.shape[-1] - N + 1
+    L = y.shape[-1] - N + 1
 
-    y = torch.zeros(L, M, N)
+    y1 = torch.zeros(y.shape[0], L, M, N)
     for k in range(L):
-        y[k] = y[k] + torch.sum(b[..., k:N + k] * gdmd, dim=0)
+        y1[:, k] += torch.sum(y[..., k:N + k] * gdmd, dim=1)
 
-    return y
+    return y1
 
 
 def computeP(f, L):
@@ -60,23 +60,20 @@ def computeQ(f, L):
     return Q
 
 
-def IMVM(P, b):
-    [S, M, N] = b.shape
-    y = torch.sum(P * b[None], dim=1)
-
-    return y
+def IMVM(P, y):
+    return torch.sum(P * y[:, None], dim=2)
 
 
 def IMVMS(Q, d):
     # this is an image - matrix vector multiplication with shifts
     [L, _, M, N] = Q.shape
-    y = torch.zeros(L, M, N)
+    y = torch.zeros(d.shape[0], L, M, N)
     for k in range(L):
         for l in range(k + 1):
-            y[k, :, : N + l - k] += Q[k, l, :, :N + l - k] * d[l, :, k - l:N]
+            y[:, k, :, :N + l - k] += Q[k, l, :, :N + l - k] * d[:, l, :, k - l:N]
 
         for l in range(k + 1, L):
-            y[k, :, l - k:N] += Q[k, l, :, l - k:N] * d[l, :, :N - l + k]
+            y[:, k, :, l - k:N] += Q[k, l, :, l - k:N] * d[:, l, :, :N - l + k]
 
     return y
 
