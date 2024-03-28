@@ -17,7 +17,7 @@ def sensingHt(y, gdmd):
     [_, M, N] = gdmd.shape
     L = y.shape[-1] - N + 1
 
-    y1 = torch.zeros(y.shape[0], L, M, N)
+    y1 = torch.zeros(y.shape[0], L, M, N).to(y.device)
     for k in range(L):
         y1[:, k] += torch.sum(y[..., k:N + k] * gdmd, dim=1)
 
@@ -26,7 +26,7 @@ def sensingHt(y, gdmd):
 
 def computeP(f, L):
     [S, M, N] = f.shape
-    P = torch.zeros(S, S, M, N + L - 1)
+    P = torch.zeros(S, S, M, N + L - 1).to(f.device)
     for t in range(S):
         for s in range(t, S):
             # This loop corresponds to the formula: sum_{l=1}^L S^Z_{l-1}(f_t).*S^Z_{l-1}(f_s)
@@ -42,7 +42,7 @@ def computeP(f, L):
 
 def computeQ(f, L):
     [_, M, N] = f.shape
-    Q = torch.zeros(L, L, M, N)
+    Q = torch.zeros(L, L, M, N).to(f.device)
     # we first evaluate the first row of Q's, so k=1 below
     for l in range(L):
         Q[0, l, :, l:N] = torch.sum(f[..., :N - l] * f[..., l:N], dim=0)
@@ -67,7 +67,7 @@ def IMVM(P, y):
 def IMVMS(Q, d):
     # this is an image - matrix vector multiplication with shifts
     [L, _, M, N] = Q.shape
-    y = torch.zeros(d.shape[0], L, M, N)
+    y = torch.zeros(d.shape[0], L, M, N).to(Q.device)
     for k in range(L):
         for l in range(k + 1):
             y[:, k, :, :N + l - k] += Q[k, l, :, :N + l - k] * d[:, l, :, k - l:N]
@@ -81,7 +81,7 @@ def IMVMS(Q, d):
 def ComputePinv(P, rho):
     [S, _, M, NplusLminus1] = P.shape
     e = torch.ones(M, NplusLminus1)
-    E = torch.zeros_like(P)
+    E = torch.zeros_like(P).to(P.device)
 
     for t in range(S):
         E[t, t] = e
@@ -122,7 +122,7 @@ def ComputePinv(P, rho):
 def ComputeQinv(Q, rho):
     [L, _, M, N] = Q.shape
     e = torch.ones(M, N)
-    E = torch.zeros_like(Q)
+    E = torch.zeros_like(Q).to(Q.device)
 
     for t in range(L):
         E[t, t] = e
