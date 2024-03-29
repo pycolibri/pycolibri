@@ -50,6 +50,7 @@ For more information, visit our `GitHub repository <https://github.com/colibri-h
    datasets
    regularizers
    recovery
+   contributing
 
 
    
