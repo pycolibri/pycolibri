@@ -35,11 +35,14 @@ exclude_patterns = []
 
 autodoc_inherit_docstrings = False
 napoleon_google_docstring = True
-napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
 
 html_title = "Colibri"
 html_logo = "logo.png"
+
+autodoc_default_options = {
+    "exclude-members": "__init__"
+}
 
 autodoc_mock_imports = [
     "torch",
@@ -48,13 +51,8 @@ autodoc_mock_imports = [
     "timm",
     "cv2",
     "PIL",
-    "pretrainedmodels",
     "torchvision",
-    "efficientnet-pytorch",
-    "segmentation_models_pytorch.encoders",
-    "segmentation_models_pytorch.utils",
     "h5py"
-    # 'segmentation_models_pytorch.base',
 ]
 
 autoclass_content = "both"
@@ -72,20 +70,6 @@ sphinx_gallery_conf = {
      "filename_pattern": "/demo_",
      "ignore_pattern": r"__init__\.py",
 }
-
-
-class FakeSignature:
-    def __getattribute__(self, *args):
-        raise ValueError
-
-
-def f(app, obj, bound_method):
-    if "__new__" in obj.__name__:
-        obj.__signature__ = FakeSignature()
-
-
-def setup(app):
-    app.connect("autodoc-before-process-signature", f)
 
 autodoc_member_order = "bysource"
 
