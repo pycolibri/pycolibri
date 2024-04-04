@@ -129,8 +129,9 @@ def forward_spc(x, H):
     Returns:
         torch.Tensor: Output tensor after measurement.
     """
+
     b, c, h, w = x.size()
-    x = x.view(b, c, h*w)
+    x = x.reshape(b, c, h*w)
     x = x.permute(0, 2, 1)
 
     # measurement
@@ -156,5 +157,5 @@ def backward_spc(y, H):
     x = x.permute(0, 2, 1)
     b, c, hw = x.size()
     h = int(np.sqrt(hw))
-    x = x.view(b, c, h, h)
+    x = x.reshape(b, c, h, h)
     return x
