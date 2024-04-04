@@ -61,7 +61,7 @@ plt.show()
 # Optics forward model
 
 import math
-from colibri_hdsp.optics import SPC, CASSI
+from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 img_size = sample.shape[1:]
 
@@ -76,7 +76,9 @@ if adquistion_name == 'spc':
 
 acquistion_model = {
     'spc': SPC(**acquisition_config),
-    'cassi': CASSI(**acquisition_config),
+    'sd_cassi': SD_CASSI(**acquisition_config),
+    'dd_cassi': DD_CASSI(**acquisition_config),
+    'c_cassi': C_CASSI(**acquisition_config)
 }[adquistion_name]
 
 y = acquistion_model(sample)

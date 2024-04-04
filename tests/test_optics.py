@@ -4,7 +4,7 @@ include_colibri()
 
 
 import torch
-from colibri_hdsp.optics.cassi import CASSI
+from colibri_hdsp.optics.cassi import SD_CASSI, DD_CASSI, C_CASSI
 from colibri_hdsp.optics.spc import SPC
 
 @pytest.fixture
@@ -35,8 +35,12 @@ def test_cassi(mode, imsize):
     cube = torch.randn(imsize)
     out_shape = cassi_config(imsize, mode)
 
-
-    cassi = CASSI(imsize[1:], mode)
+    if mode == "base":
+        cassi = SD_CASSI(imsize[1:])
+    elif mode == "dd":
+        cassi = DD_CASSI(imsize[1:])
+    elif mode == "color":
+        cassi = C_CASSI(imsize[1:])
 
     cube = cube.float()
     measurement = cassi(cube, type_calculation="forward")

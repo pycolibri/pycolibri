@@ -4,13 +4,13 @@ import numpy as np
 def prism_operator(x, shift_sign = 1):
     r"""
 
-    Prism operator, it shifts the input tensor x according to spectral shift made by a prism
+    Prism operator, shifts linearly the input tensor x in the spectral dimension.
 
     Args:
-        x (torch.Tensor): Input tensor with shape (1, L, M, N)
+        x (torch.Tensor): Input tensor with shape (B, L, M, N)
         shift_sign (int): Integer, it can be 1 or -1, it indicates the direction of the shift
+            if 1 the shift is to the right, if -1 the shift is to the left
     Returns:
-        torch.Tensor: Output tensor with shape (1, L, M, N + L - 1) if shift_sign is 1, or (1, L M, N-L+1) if shift_sign is -1
     """
 
     assert shift_sign == 1 or shift_sign == -1, "The shift sign must be 1 or -1"
@@ -37,11 +37,11 @@ def forward_color_cassi(x, ca):
     For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
 
     Args:
-        x (torch.Tensor): Spectral image with shape (1, L, M, N)
+        x (torch.Tensor): Spectral image with shape (B, L, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, L, M, N)
     
     Returns: 
-        torch.Tensor: Measurement with shape (1, 1, M, N)
+        torch.Tensor: Measurement with shape (B, 1, M, N)
     """
     y = torch.multiply(x, ca)
     return y.sum(dim=1, keepdim=True)
@@ -54,10 +54,10 @@ def backward_color_cassi(y, ca):
     Fmore information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
 
     Args:
-        y (torch.Tensor): Measurement with shape (1, 1, M, N)
+        y (torch.Tensor): Measurement with shape (B, 1, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, L, M, N)
     Returns:
-        torch.Tensor: Spectral image with shape (1, L, M, N)
+        torch.Tensor: Spectral image with shape (B, L, M, N)
     """
     x = torch.multiply(y, ca)
     return x
@@ -71,10 +71,10 @@ def forward_dd_cassi(x, ca):
     For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
 
     Args:
-        x (torch.Tensor): Spectral image with shape (1, L, M, N)
+        x (torch.Tensor): Spectral image with shape (B, L, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N + L - 1)
     Returns:
-        torch.Tensor: Measurement with shape (1, 1, M, N + L - 1)
+        torch.Tensor: Measurement with shape (B, 1, M, N)
     """
     _, L, M, N = x.shape  # Extract spectral image shape
     assert ca.shape[-1] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
@@ -92,7 +92,7 @@ def backward_dd_cassi(y, ca):
     For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
 
     Args:
-        y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
+        y (torch.Tensor): Measurement with shape (B, 1, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N + L - 1)
     Returns:
         torch.Tensor: Spectral image with shape (1, L, M, N)
@@ -104,18 +104,17 @@ def backward_dd_cassi(y, ca):
     ca = prism_operator(ca, shift_sign = -1)
     return backward_color_cassi(y, ca)
 
-def forward_cassi(x, ca):
+def forward_sd_cassi(x, ca):
     r"""
-
-    Forward operator of coded aperture snapshot spectral imager (CASSI)
+    Forward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)
     
     For more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
 
     Args:
-        x (torch.Tensor): Spectral image with shape (1, L, M, N,)
+        x (torch.Tensor): Spectral image with shape (B, L, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)
     Returns:
-        torch.Tensor: Measurement with shape (1, 1, M, N + L - 1)
+        torch.Tensor: Measurement with shape (B, 1, M, N + L - 1)
     """
     y1 = torch.multiply(x, ca)  # Multiplication of the scene by the coded aperture
     _, M, N, L = y1.shape  # Extract spectral image shape
@@ -124,18 +123,18 @@ def forward_cassi(x, ca):
     return y2.sum(dim=1, keepdim=True)
 
 
-def backward_cassi(y, ca):
+def backward_sd_cassi(y, ca):
     r"""
 
-    Backward operator of coded aperture snapshot spectral imager (CASSI)
+    Backward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)
     
     For more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
 
     Args:
-        y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
+        y (torch.Tensor): Measurement with shape (B, 1, M, N + L - 1)
         ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)
     Returns:
-        torch.Tensor: Spectral image with shape (1, L, M, N)
+        torch.Tensor: Spectral image with shape (B, L, M, N)
     """
     _, _, M, N = y.shape  # Extract spectral image shape
     L = N - M + 1  # Number of shifts
@@ -150,18 +149,18 @@ def forward_spc(x, H):
     Forward propagation through the SPC model.
 
     Args:
-        x (torch.Tensor): Input image tensor of size (b, c, h, w).
-        H (torch.Tensor): Measurement matrix of size (m, h*w).
+        x (torch.Tensor): Input image tensor of size (B, L, M, N).
+        H (torch.Tensor): Measurement matrix of size (S, M*N).
 
     Returns:
-        torch.Tensor: Output tensor after measurement.
+        torch.Tensor: Output measurement tensor of size (B, S, L).
     """
-    b, c, h, w = x.size()
-    x = x.view(b, c, h*w)
+    B, L, M, N = x.size()
+    x = x.view(B, L, M*N)
     x = x.permute(0, 2, 1)
 
     # measurement
-    H = H.unsqueeze(0).repeat(b, 1, 1)
+    H = H.unsqueeze(0).repeat(B, 1, 1)
     y = torch.bmm(H, x)
     return y
 
@@ -172,10 +171,10 @@ def backward_spc(y, H):
 
 
     Args:
-        y (torch.Tensor): Measurement tensor of size (b, m, c).
-
+        y (torch.Tensor): Measurement tensor of size (B, S, L).
+        H (torch.Tensor): Measurement matrix of size (S, M*N).
     Returns:
-        torch.Tensor: Reconstructed image tensor.
+        torch.Tensor: Reconstructed image tensor of size (B, L, M, N).
     """
 
     Hinv = torch.pinverse(H)

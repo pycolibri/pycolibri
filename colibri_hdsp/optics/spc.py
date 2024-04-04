@@ -20,10 +20,10 @@ class SPC(nn.Module):
     .. math::
         \begin{align*}
         \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
-                        \mathbf{y}_{s, l} &=  \sum_{i, j=1}^{M, N} \learnedOptics_{s, i, j} \mathbf{x}_{l, i, j}
+                        \mathbf{y}_{s, l} &=  \sum_{i=1}^{M}\sum_{j = 1}^{N} \learnedOptics_{s, i, j} \mathbf{x}_{l, i, j}
         \end{align*}
 
-    with :math:`\learnedOptics \in \{0,1\}^{S \times L}` coded aperture, with S the number of measurements and L the number of spectral bands.
+    with :math:`\learnedOptics \in \{0,1\}^{S \times M \times N}` coded aperture, with :math:`S` the number of measurements and :math:`L` the number of spectral bands.
 
 
     
@@ -36,7 +36,7 @@ class SPC(nn.Module):
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
             n_measurements (int): Number of measurements.
             trainable (bool): Boolean, if True the coded aperture is trainable
-            initial_ca (torch.Tensor): Initial coded aperture with shape (1, M, N, 1)
+            initial_ca (torch.Tensor): Initial coded aperture with shape (S, M*N)
         """
         super(SPC, self).__init__()
         _, M, N = input_shape
@@ -56,7 +56,7 @@ class SPC(nn.Module):
         Forward propagation through the SPC model.
 
         Args:
-            x (torch.Tensor): Input image tensor of size (b, c, h, w).
+            x (torch.Tensor): Input image tensor of size (B, L, M, N).
 
         Returns:
             torch.Tensor: Output tensor after measurement.
@@ -91,7 +91,7 @@ class SPC(nn.Module):
 
         Args:
             reg (function): Regularization function.
-            x (torch.Tensor): Input image tensor of size (b, c, h, w).
+            x (torch.Tensor): Input image tensor of size (B, L, M, N).
 
         Returns:
             torch.Tensor: Regularization value.
