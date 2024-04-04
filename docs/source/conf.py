@@ -25,6 +25,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
     "autodocsumm",
+    'sphinx_gallery.gen_gallery'
 ]
 
 exec_code_working_dir = "../.."
@@ -34,11 +35,14 @@ exclude_patterns = []
 
 autodoc_inherit_docstrings = False
 napoleon_google_docstring = True
-napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
 
 html_title = "Colibri"
 html_logo = "logo.png"
+
+autodoc_default_options = {
+    "exclude-members": "__init__"
+}
 
 autodoc_mock_imports = [
     "torch",
@@ -47,13 +51,8 @@ autodoc_mock_imports = [
     "timm",
     "cv2",
     "PIL",
-    "pretrainedmodels",
     "torchvision",
-    "efficientnet-pytorch",
-    "segmentation_models_pytorch.encoders",
-    "segmentation_models_pytorch.utils",
     "h5py"
-    # 'segmentation_models_pytorch.base',
 ]
 
 autoclass_content = "both"
@@ -65,19 +64,12 @@ html_theme = 'furo'
 html_static_path = ['_static']
 
 
-
-class FakeSignature:
-    def __getattribute__(self, *args):
-        raise ValueError
-
-
-def f(app, obj, bound_method):
-    if "__new__" in obj.__name__:
-        obj.__signature__ = FakeSignature()
-
-
-def setup(app):
-    app.connect("autodoc-before-process-signature", f)
+sphinx_gallery_conf = {
+     'examples_dirs': '../../examples',   # path to your example scripts
+     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+     "filename_pattern": "/demo_",
+     "ignore_pattern": r"__init__\.py",
+}
 
 autodoc_member_order = "bysource"
 
