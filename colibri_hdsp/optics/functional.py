@@ -97,8 +97,8 @@ def backward_dd_cassi(y, ca):
     Returns:
         torch.Tensor: Spectral image with shape (1, L, M, N)
     """
-    _, M, N, _ = ca.shape  # Extract spectral image shape
-    L = N - M + 1  # Number of shifts
+    _, _, M, N_hat = ca.shape  # Extract spectral image shape
+    L = N_hat - M + 1  # Number of shifts
     y = torch.tile(y, [1, L, 1, 1])
     ca = torch.tile(ca, [1, L, 1, 1])
     ca = prism_operator(ca, shift_sign = -1)

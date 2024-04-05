@@ -1,9 +1,8 @@
 import torch
-import torch.nn as nn
 from .functional import forward_spc, backward_spc
+from .utils import BaseOpticsLayer
 
-
-class SPC(nn.Module):
+class SPC(BaseOpticsLayer):
 
     r"""
     Single Pixel Camera (SPC).
@@ -29,8 +28,7 @@ class SPC(nn.Module):
     
     """
     def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None, **kwargs):
-        """
-        
+        f"""       
 
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
@@ -38,7 +36,7 @@ class SPC(nn.Module):
             trainable (bool): Boolean, if True the coded aperture is trainable
             initial_ca (torch.Tensor): Initial coded aperture with shape (S, M*N)
         """
-        super(SPC, self).__init__()
+        #super(SPC, self).__init__()
         _, M, N = input_shape
         self.trainable = trainable
         self.initial_ca = initial_ca
@@ -48,54 +46,19 @@ class SPC(nn.Module):
             initializer = torch.from_numpy(self.initial_ca).float()
 
         #Add parameter CA in pytorch manner
-        self.ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
+        ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
+        super(SPC, self).__init__(learnable_optics=ca, sensing=forward_spc, backward=backward_spc)
 
 
     def forward(self, x, type_calculation="forward"):
-        """
+        f"""
         Forward propagation through the SPC model.
 
         Args:
             x (torch.Tensor): Input image tensor of size (B, L, M, N).
 
         Returns:
-            torch.Tensor: Output tensor after measurement.
+            torch.Tensor: Output tensor after measurement of size (B, S, L).
         """
-        if type_calculation == "forward":
-            return forward_spc(x, self.ca)
-        elif type_calculation == "backward":
-            return backward_spc(x, self.ca)
-        elif type_calculation == "forward_backward":
-            return backward_spc(forward_spc(x, self.ca), self.ca)
+        return super(SPC, self).forward(x, type_calculation)
         
-        else:
-            raise ValueError("type_calculation must be 'forward', 'backward' or 'forward_backward'")
-        
-        
-    def weights_reg(self,reg):
-        """
-        Regularization of the coded aperture.
-
-        Args:
-            reg (function): Regularization function.
-        
-        Returns:
-            torch.Tensor: Regularization value.
-        """
-        reg_value = reg(self.ca)
-        return reg_value
-
-    def output_reg(self,reg,x):
-        """
-        Regularization of the measurements.
-
-        Args:
-            reg (function): Regularization function.
-            x (torch.Tensor): Input image tensor of size (B, L, M, N).
-
-        Returns:
-            torch.Tensor: Regularization value.
-        """
-        y = self(x, type_calculation="forward")
-        reg_value = reg(y)
-        return reg_value

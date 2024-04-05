@@ -39,7 +39,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 128
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'cassi' #  ['spc', 'cassi']
+adquistion_name = 'dd_cassi' #  ['spc', 'cassi']
 
 
 # %%
@@ -191,8 +191,8 @@ for i, (title, img) in enumerate(imgs_dict.items()):
 
 if adquistion_name == 'spc':
     ca = acquistion_model.ca.reshape(n_measurements, 32, 32, 1).cpu().detach().numpy().squeeze()[0]
-elif adquistion_name == 'cassi':
-    ca = acquistion_model.ca.cpu().detach().numpy().squeeze()
+elif 'cassi' in adquistion_name:
+    ca = acquistion_model.learnable_optics.cpu().detach().numpy()[0,0]
 
 plt.subplot(1, 4, 4)
 plt.imshow(ca, cmap='gray')
