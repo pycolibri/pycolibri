@@ -1,3 +1,9 @@
+r"""
+Demo Algorithms.
+===================================================
+
+"""
+
 # %%
 # Select Working Directory and Device
 # -----------------------------------------------
@@ -32,7 +38,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 1
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'spc' #  ['spc', 'cassi']
+acquisition_name = 'spc' #  ['spc', 'cassi']
 
 
 
@@ -62,7 +68,7 @@ print("Error: ", error  )
 # Optics forward model
 
 import math
-from colibri_hdsp.optics import SPC, CASSI
+from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 img_size = sample.shape[1:]
 
@@ -70,17 +76,19 @@ acquisition_config = dict(
     input_shape = img_size,
 )
 
-if adquistion_name == 'spc':
+if acquisition_name == 'spc':
     n_measurements  = 25**2 
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
-acquistion_model = {
+acquisition_model = {
     'spc': SPC(**acquisition_config),
-    'cassi': CASSI(**acquisition_config),
-}[adquistion_name]
+    'sd_cassi': SD_CASSI(**acquisition_config),
+    'dd_cassi': DD_CASSI(**acquisition_config),
+    'c_cassi': C_CASSI(**acquisition_config)
+}[acquisition_name]
 
-y = acquistion_model(sample)
+y = acquisition_model(sample)
 
 # Reconstruct image
 from colibri_hdsp.recovery.fista import Fista
@@ -101,9 +109,9 @@ fidelity = L2()
 prior = Sparsity()
 transform = DCT2D()
 
-fista = Fista(fidelity, prior, acquistion_model, algo_params, transform)
+fista = Fista(fidelity, prior, acquisition_model, algo_params, transform)
 
-x0 = acquistion_model.forward(y, type_calculation="backward")
+x0 = acquisition_model.forward(y, type_calculation="backward")
 x_hat = fista(y, x0=x0 ) 
 
 print(x_hat.shape)
@@ -123,7 +131,7 @@ plt.xticks([])
 plt.yticks([])
 
 
-if adquistion_name == 'spc':
+if acquisition_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 
