@@ -11,6 +11,9 @@ import os
 os.chdir(os.path.dirname(os.getcwd()))
 print("Current Working Directory " , os.getcwd())
 
+import sys
+sys.path.append(os.path.join(os.getcwd()))
+
 #General imports
 import matplotlib.pyplot as plt
 import torch

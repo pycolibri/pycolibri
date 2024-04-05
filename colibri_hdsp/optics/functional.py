@@ -156,7 +156,7 @@ def forward_spc(x, H):
         torch.Tensor: Output measurement tensor of size (B, S, L).
     """
     B, L, M, N = x.size()
-    x = x.view(B, L, M*N)
+    x = x.contiguous().view(B, L, M*N)
     x = x.permute(0, 2, 1)
 
     # measurement
