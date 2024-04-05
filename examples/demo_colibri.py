@@ -39,7 +39,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 128
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'dd_cassi' #  ['spc', 'cassi']
+adquistion_name = 'c_cassi' #  ['spc', 'cassi']
 
 
 # %%
@@ -74,14 +74,14 @@ if adquistion_name == 'spc':
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
-acquistion_model = {
+acquisition_model = {
     'spc': SPC(**acquisition_config),
     'sd_cassi': SD_CASSI(**acquisition_config),
     'dd_cassi': DD_CASSI(**acquisition_config),
     'c_cassi': C_CASSI(**acquisition_config)
 }[adquistion_name]
 
-y = acquistion_model(sample)
+y = acquisition_model(sample)
 
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
@@ -120,7 +120,7 @@ network_config = dict(
 
 recovery_model = build_network(Unet, **network_config)
 
-model = E2E(acquistion_model, recovery_model)
+model = E2E(acquisition_model, recovery_model)
 model = model.to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -166,7 +166,7 @@ results = train_schedule.fit(
 # -----------------------------------------------
 
 x_est = model(sample.to(device)).cpu()
-y = acquistion_model(sample.to(device)).cpu()
+y = acquisition_model(sample.to(device)).cpu()
 
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
@@ -189,11 +189,11 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.title(title)
     plt.axis('off')
 
+ca = acquisition_model.learnable_optics.cpu().detach().numpy().squeeze()
 if adquistion_name == 'spc':
-    ca = acquistion_model.ca.reshape(n_measurements, 32, 32, 1).cpu().detach().numpy().squeeze()[0]
-elif 'cassi' in adquistion_name:
-    ca = acquistion_model.learnable_optics.cpu().detach().numpy()[0,0]
-
+    ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
+elif adquistion_name == 'c_cassi':
+    ca = ca.transpose(1, 2, 0)
 plt.subplot(1, 4, 4)
 plt.imshow(ca, cmap='gray')
 plt.axis('off')

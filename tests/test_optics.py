@@ -12,7 +12,7 @@ def imsize():
     b = 8
     h = 32
     w = 32
-    c = 3
+    c = 31
     return b, c, h, w
 
 def cassi_config(imsize, mode):
