@@ -2,7 +2,24 @@ r"""
 Demo Colibri.
 ===================================================
 
-In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models.
+In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models. Mainly, the forward model is defined,
+
+.. math::
+    \mathbf{y} = \mathbf{H}_\phi \mathbf{x}
+
+where :math:`\mathbf{H}` is the forward model, :math:`\mathbf{x}` is the input image and :math:`\mathbf{y}` is the measurement and :math:`\phi` are the coding elements of the forward model. The recovery model is defined as,
+
+.. math::
+    \mathbf{x} = \mathcal{G}_\theta( \mathbf{y})
+
+where :math:`\mathcal{G}` is the recovery model and :math:`\theta` are the parameters of the recovery model.
+
+The training is performed by minimizing the following loss function,
+
+.. math::
+    \{\phi^*,\theta^*\} = \arg \min_{\phi,\theta} \sum_{p=1}^{P}\mathcal{L}(\mathbf{x}_p, \mathcal{G}_\theta( \mathbf{H}_\phi \mathbf{x}_p)) + \lambda \mathcal{R}(\phi) + \mu \mathcal{R}(\mathbf{H}_\phi \mathbf{x}) 
+
+where :math:`\mathcal{L}` is the loss function, :math:`\mathcal{R}` is the regularizer, :math:`\lambda` and :math:`\mu` are the regularization weights, and :math:`P` is the number of samples in the training dataset.
 
 """
 
@@ -49,7 +66,7 @@ from torchvision.utils import make_grid
 
 sample = next(iter(dataset.train_dataset))[0]
 
-img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
+img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10,10))
 plt.imshow(img.permute(1, 2, 0))
@@ -59,6 +76,11 @@ plt.show()
 
 # %%
 # Optics forward model
+# -----------------------------------------------
+# Define the forward operators :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}`, in this case, the CASSI and SPC forward models.  
+# Each optics model can comptute the forward and backward operators i.e., :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}` and :math:`\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}`.
+
+
 
 import math
 from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
@@ -87,7 +109,7 @@ if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 
-img = make_grid(y[:32], nrow=8, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
+img = make_grid(y[:32], nrow=8, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
 
 
 plt.figure(figsize=(10,10))
@@ -100,6 +122,12 @@ plt.show()
 # %%
 # Reconstruction model
 # -----------------------------------------------
+# Define the recovery model :math:`\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})`, in this case, a simple U-Net model. 
+# You can add you custom model by using the :meth: `build_network` function.
+# Additionally we define the end-to-end model that combines the forward and recovery models.
+# Define the loss function :math:`\mathcal{L}`, and the regularizers :math:`\mathcal{R}` for the forward and recovery models. 
+
+
 from colibri_hdsp.models import build_network, Unet, Autoencoder
 from colibri_hdsp.archs import E2E
 from colibri_hdsp.train import Training
@@ -164,6 +192,7 @@ results = train_schedule.fit(
 # %%
 # Visualize results
 # -----------------------------------------------
+# Performs the inference :math:`\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})` and visualize the results.
 
 x_est = model(sample.to(device)).cpu()
 y = acquisition_model(sample.to(device)).cpu()
@@ -171,9 +200,9 @@ y = acquisition_model(sample.to(device)).cpu()
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
-img      = make_grid(sample[:16], nrow=4, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
-img_est  = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
-img_y    = make_grid(y[:16], nrow=4, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
+img      = make_grid(sample[:16], nrow=4, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
+img_est  = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
+img_y    = make_grid(y[:16], nrow=4, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
 
 imgs_dict = {
     "CIFAR10 dataset": img, 

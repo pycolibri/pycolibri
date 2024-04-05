@@ -49,6 +49,5 @@ For more information, visit our `GitHub repository <https://github.com/colibri-h
    optics
    datasets
    regularizers
-
-
-   
+   auto_examples/index
+   recovery

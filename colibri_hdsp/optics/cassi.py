@@ -46,7 +46,7 @@ class SD_CASSI(BaseOpticsLayer):
 
         shape = (1, 1, self.M, self.N)
         if self.initial_ca is None:
-            initializer = torch.randn(shape, requires_grad=self.trainable)
+            initializer = torch.randn(shape, requires_grad=self.trainable) 
         else:
             assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
             initializer = torch.from_numpy(self.initial_ca).float()

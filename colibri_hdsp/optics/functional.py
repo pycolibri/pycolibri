@@ -184,5 +184,5 @@ def backward_spc(y, H):
     x = x.permute(0, 2, 1)
     b, c, hw = x.size()
     h = int(np.sqrt(hw))
-    x = x.view(b, c, h, h)
+    x = x.reshape(b, c, h, h)
     return x
