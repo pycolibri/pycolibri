@@ -51,3 +51,4 @@ For more information, visit our `GitHub repository <https://github.com/colibri-h
    regularizers
    auto_examples/index
    recovery
+   contributing
