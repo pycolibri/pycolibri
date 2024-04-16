@@ -23,7 +23,7 @@ def cassi_config(imsize, mode):
     elif mode == "dd":
         out = (b, 1, h, w)
     elif mode == "color":
-        out = (b, 1, h, w)
+        out = (b, 1, h, w + c - 1)
     
     return out
 
