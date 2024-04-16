@@ -30,20 +30,22 @@ def prism_operator(x, shift_sign = 1):
     return x
 
 def forward_color_cassi(x, ca):
+
     r"""
 
     Forward operator of color coded aperture snapshot spectral imager (Color-CASSI)
 
-    For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    For more information refer to: Colored Coded Aperture Design by Concentration of Measure in Compressive Spectral Imaging https://doi.org/10.1109/TIP.2014.2310125
 
     Args:
         x (torch.Tensor): Spectral image with shape (B, L, M, N)
         ca (torch.Tensor): Coded aperture with shape (1, L, M, N)
     
     Returns: 
-        torch.Tensor: Measurement with shape (B, 1, M, N)
+        torch.Tensor: Measurement with shape (B, 1, M, N + L - 1)
     """
     y = torch.multiply(x, ca)
+    y = prism_operator(y, shift_sign = 1)
     return y.sum(dim=1, keepdim=True)
 
 def backward_color_cassi(y, ca):
@@ -51,14 +53,16 @@ def backward_color_cassi(y, ca):
 
     Backward operator of color coded aperture snapshot spectral imager (Color-CASSI)
     
-    Fmore information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    For more information refer to: Colored Coded Aperture Design by Concentration of Measure in Compressive Spectral Imaging https://doi.org/10.1109/TIP.2014.2310125
 
     Args:
-        y (torch.Tensor): Measurement with shape (B, 1, M, N)
+        y (torch.Tensor): Measurement with shape (B, 1, M, N + L - 1)
         ca (torch.Tensor): Coded aperture with shape (1, L, M, N)
     Returns:
         torch.Tensor: Spectral image with shape (B, L, M, N)
     """
+    y = torch.tile(y, [1, ca.shape[1], 1, 1])
+    y = prism_operator(y, shift_sign = -1)
     x = torch.multiply(y, ca)
     return x
 
@@ -68,7 +72,7 @@ def forward_dd_cassi(x, ca):
 
     Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)
     
-    For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    For more information refer to: Single-shot compressive spectral imaging with a dual-disperser architecture https://doi.org/10.1364/OE.15.014013
 
     Args:
         x (torch.Tensor): Spectral image with shape (B, L, M, N)
@@ -80,8 +84,8 @@ def forward_dd_cassi(x, ca):
     assert ca.shape[-1] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
     ca = torch.tile(ca, [1, L, 1, 1])
     ca = prism_operator(ca, shift_sign = -1)
-    y = forward_color_cassi(x, ca)
-    return y
+    y = torch.multiply(x, ca)
+    return y.sum(dim=1, keepdim=True)
 
 
 def backward_dd_cassi(y, ca):
@@ -89,7 +93,7 @@ def backward_dd_cassi(y, ca):
 
     Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)
     
-    For more information refer to: Computational snapshot multispectral cameras: Toward dynamic capture of the spectral world https://doi.org/10.1109/MSP.2016.2582378
+    For more information refer to: Single-shot compressive spectral imaging with a dual-disperser architecture https://doi.org/10.1364/OE.15.014013
 
     Args:
         y (torch.Tensor): Measurement with shape (B, 1, M, N)
@@ -102,7 +106,7 @@ def backward_dd_cassi(y, ca):
     y = torch.tile(y, [1, L, 1, 1])
     ca = torch.tile(ca, [1, L, 1, 1])
     ca = prism_operator(ca, shift_sign = -1)
-    return backward_color_cassi(y, ca)
+    return torch.multiply(y, ca)
 
 def forward_sd_cassi(x, ca):
     r"""
@@ -146,7 +150,9 @@ def backward_sd_cassi(y, ca):
 def forward_spc(x, H):
     r"""
 
-    Forward propagation through the SPC model.
+    Forward propagation through the Single Pixel Camera (SPC) model.
+
+    For more information refer to: Optimized Sensing Matrix for Single Pixel Multi-Resolution Compressive Spectral Imaging 10.1109/TIP.2020.2971150
 
     Args:
         x (torch.Tensor): Input image tensor of size (B, L, M, N).
@@ -169,6 +175,7 @@ def backward_spc(y, H):
 
     Inverse operation to reconsstruct the image from measurements.
 
+    For more information refer to: Optimized Sensing Matrix for Single Pixel Multi-Resolution Compressive Spectral Imaging  10.1109/TIP.2020.2971150
 
     Args:
         y (torch.Tensor): Measurement tensor of size (B, S, L).

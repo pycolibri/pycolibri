@@ -44,16 +44,16 @@ autodoc_default_options = {
     "exclude-members": "__init__"
 }
 
-autodoc_mock_imports = [
-    "torch",
-    "tqdm",
-    "numpy",
-    "timm",
-    "cv2",
-    "PIL",
-    "torchvision",
-    "h5py"
-]
+# autodoc_mock_imports = [
+#     "torch",
+#     "tqdm",
+#     "numpy",
+#     "timm",
+#     "cv2",
+#     "PIL",
+#     "torchvision",
+#     "h5py"
+# ]
 
 
 # how to define macros: https://docs.mathjax.org/en/latest/input/tex/macros.html
@@ -77,15 +77,37 @@ autodoc_typehints = "description"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = 'furo'
-html_static_path = ['_static']
+html_static_path = []
 
+
+# sphinx_gallery_conf = {
+#      'examples_dirs': '../../examples',   # path to your example scripts
+#      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+#      "filename_pattern": "/demo_",
+#      "ignore_pattern": r"__init__.py",
+# }
 
 sphinx_gallery_conf = {
-     'examples_dirs': '../../examples',   # path to your example scripts
-     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
-     "filename_pattern": "/demo_",
-     "ignore_pattern": r"__init__\.py",
+    "examples_dirs": ["../../examples/"],
+    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "filename_pattern": "/demo_",
+    "run_stale_examples": True,
+    "ignore_pattern": r"__init__\.py",
+    "reference_url": {
+        # The module you locally document uses None
+        "sphinx_gallery": None
+    },
+    # directory where function/class granular galleries are stored
+    "backreferences_dir": "gen_modules/backreferences",
+    # Modules for which function/class level galleries are created. In
+    # this case sphinx_gallery and numpy in a tuple of strings.
+    "doc_module": ("colibri_hdsp"),
+    # objects to exclude from implicit backreferences. The default option
+    # is an empty set, i.e. exclude nothing.
+    "exclude_implicit_doc": {},
+    "nested_sections": False,
 }
+
 
 autodoc_member_order = "bysource"
 

@@ -1,3 +1,5 @@
+.. _optics:
+
 Optics
 ======
 
@@ -21,7 +23,7 @@ Spectral Imaging systems
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
-
+    :toctree: stubs
     :template: class_template.rst
     :nosignatures:
 
@@ -35,6 +37,7 @@ Functional operators of the optical systems
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
+    :toctree: stubs
     :template: methods_template.rst
     :nosignatures:
 
@@ -52,7 +55,10 @@ Functional operators of optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
+    :toctree: stubs
     :template: methods_template.rst
     :nosignatures:
 
     colibri_hdsp.optics.functional.prism_operator
+
+

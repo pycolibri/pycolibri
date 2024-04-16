@@ -28,7 +28,7 @@ class SPC(BaseOpticsLayer):
     
     """
     def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None, **kwargs):
-        f"""       
+        r"""       
 
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
@@ -51,7 +51,7 @@ class SPC(BaseOpticsLayer):
 
 
     def forward(self, x, type_calculation="forward"):
-        f"""
+        r"""
         Forward propagation through the SPC model.
 
         Args:

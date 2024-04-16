@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 .vscode
 docs/source/stubs
+docs/source/gen_modules
 # C extensions
 *.so
 

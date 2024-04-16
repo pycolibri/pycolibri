@@ -74,7 +74,25 @@ class SD_CASSI(BaseOpticsLayer):
 class DD_CASSI(BaseOpticsLayer):
     r"""
     
-    Coming soon
+    Dual Disperser Coded Aperture Snapshot Spectral Imager (DD-CASSI)
+
+    DD-CASSI enabling the capture of spatio-spectral information through a double spectral dispersion with a pair of prisms and the codification using a coded aperture. 
+    
+    Mathematically, DD-CASSI systems as follows
+
+    .. math::
+
+        \mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise
+
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, and :math:`\mathbf{y}\in\yset` are the acquired signal. For DD-CASSI, :math:`\xset = \mathbb{R}^{L \times M \times N}` and :math:`\yset = \mathbb{R}^{M \times N}`. The forward operator :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` represents the dual dispersion and modulation processes, defined as:
+
+    .. math::
+        \begin{align*}
+        \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
+                        \mathbf{y}_{i, j} &=  \sum_{l=1}^{L} \learnedOptics_{i, j + l -1} \mathbf{x}_{i, j, l}
+        \end{align*}
+
+    The dual dispersion of the scene :math:`\mathbf{x}` is achieved by two prisms, and mathematically can be represented as a single dispersion to the coded aperture:math:`\learnedOptics \in \{0,1\}^{M \times N + L-1}`. 
     """
 
     def __init__(self, input_shape, trainable=False, initial_ca=None, **kwargs):
@@ -123,7 +141,27 @@ class DD_CASSI(BaseOpticsLayer):
 
 class C_CASSI(BaseOpticsLayer):
     r"""
-    Coming soon
+
+    Color Coded Aperture Snapshot Spectral Imager (C-CASSI)
+
+    C-CASSI systems allow for the capture of spatio-spectral information through spatial-spectral coding of light and spectral dispersion through a prism.
+
+    Mathematically, C-CASSI systems can be described as follows.
+
+    .. math::
+
+        \mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise
+
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, and :math:`\mathbf{y}\in\yset` are the acquired signal. For C-CASSI, :math:`\xset = \mathbb{R}^{L \times M \times N}` and :math:`\yset = \mathbb{R}^{M \times N + L -1}`. The forward operator :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` represents the spectral dispersion and spatial-spectral modulation processes, defined as:
+
+    .. math::
+        \begin{align*}
+        \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
+                        \mathbf{y}_{i, j+l-1} &=  \sum_{l=1}^{L} \learnedOptics_{i, j} \mathbf{x}_{i, j, l}
+        \end{align*}
+
+
+    with :math:`\learnedOptics \in \{0,1\}^{M \times N + L -1}` coded aperture,
 
     """
 
