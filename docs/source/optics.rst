@@ -49,7 +49,6 @@ Functional operators of the optical systems
     colibri_hdsp.optics.functional.backward_sd_cassi
     colibri_hdsp.optics.functional.forward_spc
     colibri_hdsp.optics.functional.backward_spc
-    colibri_hdsp.optics.functional.prism_operator
 
 Functional operators of optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

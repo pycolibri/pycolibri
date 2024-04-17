@@ -11,6 +11,8 @@ def prism_operator(x, shift_sign = 1):
         shift_sign (int): Integer, it can be 1 or -1, it indicates the direction of the shift
             if 1 the shift is to the right, if -1 the shift is to the left
     Returns:
+        torch.Tensor: Output tensor with shape (1, L, M, N + L - 1) if shift_sign is 1, or (1, L M, N-L+1) if shift_sign is -1
+
     """
 
     assert shift_sign == 1 or shift_sign == -1, "The shift sign must be 1 or -1"
