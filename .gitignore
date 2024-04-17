@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 .vscode
+docs/source/stubs
+docs/source/gen_modules
 # C extensions
 *.so
 

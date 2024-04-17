@@ -56,7 +56,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 128
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'cassi' #  ['spc', 'cassi']
+adquistion_name = 'c_cassi' #  ['spc', 'cassi']
 
 
 # %%
@@ -83,7 +83,7 @@ plt.show()
 
 
 import math
-from colibri_hdsp.optics import SPC, CASSI
+from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 img_size = sample.shape[1:]
 
@@ -96,12 +96,14 @@ if adquistion_name == 'spc':
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
-acquistion_model = {
+acquisition_model = {
     'spc': SPC(**acquisition_config),
-    'cassi': CASSI(**acquisition_config),
+    'sd_cassi': SD_CASSI(**acquisition_config),
+    'dd_cassi': DD_CASSI(**acquisition_config),
+    'c_cassi': C_CASSI(**acquisition_config)
 }[adquistion_name]
 
-y = acquistion_model(sample)
+y = acquisition_model(sample)
 
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
@@ -146,7 +148,7 @@ network_config = dict(
 
 recovery_model = build_network(Unet, **network_config)
 
-model = E2E(acquistion_model, recovery_model)
+model = E2E(acquisition_model, recovery_model)
 model = model.to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -193,7 +195,7 @@ results = train_schedule.fit(
 # Performs the inference :math:`\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})` and visualize the results.
 
 x_est = model(sample.to(device)).cpu()
-y = acquistion_model(sample.to(device)).cpu()
+y = acquisition_model(sample.to(device)).cpu()
 
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
@@ -216,11 +218,11 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.title(title)
     plt.axis('off')
 
+ca = acquisition_model.learnable_optics.cpu().detach().numpy().squeeze()
 if adquistion_name == 'spc':
-    ca = acquistion_model.ca.reshape(n_measurements, 32, 32, 1).cpu().detach().numpy().squeeze()[0]
-elif adquistion_name == 'cassi':
-    ca = acquistion_model.ca.cpu().detach().numpy().squeeze()
-
+    ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
+elif adquistion_name == 'c_cassi':
+    ca = ca.transpose(1, 2, 0)
 plt.subplot(1, 4, 4)
 plt.imshow(ca, cmap='gray')
 plt.axis('off')
