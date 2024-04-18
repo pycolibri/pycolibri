@@ -67,6 +67,8 @@ mathjax3_config = {
             "xset": r"\mathcal{X}",
             "thetaset": r"\mathcal{\Omega}",
             "yset": r"\mathcal{Y}",
+            'argmin': '\\operatorname{arg\\,min}',
+            'coloneqq': '\\mathrel{:=}',
         },
     }
 }

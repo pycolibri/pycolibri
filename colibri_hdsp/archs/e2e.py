@@ -4,6 +4,7 @@ import torch.nn as nn
 class E2E(nn.Module):
     def __init__(self, optical_layer: nn.Module, decoder: nn.Module):
         """ End-to-end model for image reconstruction from compressed measurements.
+        For more information refer to: Deep Optical Coding Design in Computational Imaging: A data-driven framework https://doi.org/10.1109/MSP.2022.3200173
         
         Args:
             optical_layer (nn.Module): Optical Layer module.
