@@ -8,8 +8,21 @@ class Fista(nn.Module):
 
     .. math::
         \begin{equation}
-            \underset{x}{\text{min}} \quad \frac{1}{2}||y - Hx||^2 + \lambda||x||_1
+            \underset{\mathbf{x}}{\text{min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda||\mathbf{x}||_1
         \end{equation}
+
+    where :math:`\forwardLinear` is the forward model, :math:`\mathbf{y}` is the data to be reconstructed, :math:`\lambda` is the regularization parameter and :math:`||\cdot||_1` is the L1 norm.
+
+    The FISTA algorithm is an iterative algorithm that solves the optimization problem by performing a gradient step and a proximal step.
+
+    .. math::
+        \begin{align*}
+         \mathbf{x}_{k+1} &= \text{prox}_{\lambda||\cdot||_1}( \mathbf{z}_k - \alpha \nabla f( \mathbf{z}_k)) \\
+        t_{k+1} &= \frac{1 + (1 + 4t_k^2)^{0.5}}{2} \\
+        \mathbf{z}_{k+1} &=  \mathbf{x}_{k+1} + \frac{t_k-1}{t_{k+1}}( \mathbf{x}_{k} - \mathbf{x}_{k-1})
+        \end{align*}
+
+    where :math:`\alpha` is the step size and :math:`f` is the fidelity term.
 
     """
 

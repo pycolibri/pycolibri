@@ -4,17 +4,50 @@ Recovery
 The recovery module provides an implementation of state-of-the-art recovery algorithms widely used 
 in image restoration on inverse problems.
 
+.. math::
 
-FISTA
-~~~~~~~~~~~
+    \min_{x} f(\mathbf{x})+ \lambda g(\mathbf{x})
 
-.. autoclass:: colibri_hdsp.recovery.fista.Fista
-    :members:
+where :math:`f(\mathbf{x})` is the fidelity term and :math:`g(\mathbf{x})` is the prior term.
+
+List of Algorithms
+--------------------
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri_hdsp.recovery.fista.Fista
+    
 
 
 
-DCT2D
-~~~~~~~~~~~
+Fidelity Terms
+--------------------
+The modelue contains differents fidelity terms :math:`f(\mathbf{x})` that can be used in the recovery algorithms.
 
-.. autoclass:: colibri_hdsp.recovery.transforms.DCT2D
-    :members:
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri_hdsp.recovery.terms.fidelity.L2
+    colibri_hdsp.recovery.terms.fidelity.L1
+
+
+
+Prior Terms
+--------------------
+The modelue contains differents prior terms :math:`g(\mathbf{x})` that can be used in the recovery algorithms.
+
+
+    
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri_hdsp.recovery.terms.prior.Sparsity
+    

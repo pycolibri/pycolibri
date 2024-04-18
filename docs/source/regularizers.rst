@@ -1,8 +1,29 @@
 Regularizers
 ============
 
-The regularizers module is designed to enhance the training of deep learning models by incorporating various regularization techniques. These techniques help to prevent overfitting, improve model generalization, and encourage specific properties in the learned models, such as sparsity or smoothness.
+Various regularization techniques are implemented regarding the design of optical coding elements. These regularizations force certain physical constraints on the learning parameters. Also, there are regularizers that promotes certain bhaivour onthe coded measurements to imporve the task perfomance.
+
+The regularizers are used in the optimization problem of the form:
+
+.. math::
+    \{\Phi^*,\theta^*\} = \arg \min_{\Phi,\theta} \sum_{p=1}^{P}\mathcal{L}(\mathbf{x}_p, \mathcal{G}_\theta( \forwardLinear_{\learnedOptics}(\mathbf{x}_p))) + \lambda \mathcal{R}_1(\phi) + \mu \mathcal{R}_1(\mathbf{H}_\phi \mathbf{x}) 
+
+where :math:`\mathcal{L}` is the task loss function, :math:`\mathcal{R}_1` is a regularizer over the coding elements, and  :math:`\mathcal{R}_2` is a regularizer over the coded measurements :math:`\lambda` and :math:`\mu` are the regularization weights, and :math:`P` is the number of samples in the training dataset.
 
 List of Regularizers
 --------------------
 
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri_hdsp.regularizers.Reg_Binary
+    colibri_hdsp.regularizers.Correlation
+
+    colibri_hdsp.regularizers.Reg_Transmittance
+
+    colibri_hdsp.regularizers.KLGaussian
+    colibri_hdsp.regularizers.MinVariance
+
+    
