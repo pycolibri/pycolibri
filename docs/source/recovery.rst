@@ -25,7 +25,7 @@ List of Algorithms
 
 Fidelity Terms
 --------------------
-The modelue contains differents fidelity terms :math:`f(\mathbf{x})` that can be used in the recovery algorithms.
+The module contains differents fidelity terms :math:`f(\mathbf{x})` that can be used in the recovery algorithms.
 
 
 .. autosummary::
@@ -40,7 +40,7 @@ The modelue contains differents fidelity terms :math:`f(\mathbf{x})` that can be
 
 Prior Terms
 --------------------
-The modelue contains differents prior terms :math:`g(\mathbf{x})` that can be used in the recovery algorithms.
+The module contains differents prior terms :math:`g(\mathbf{x})` that can be used in the recovery algorithms.
 
 
     
@@ -51,3 +51,15 @@ The modelue contains differents prior terms :math:`g(\mathbf{x})` that can be us
 
     colibri_hdsp.recovery.terms.prior.Sparsity
     
+Transormation
+--------------------
+
+The module contains differents signal transforms that can be used in the recovery algorithms.
+
+    
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri_hdsp.recovery.transforms.DCT2D

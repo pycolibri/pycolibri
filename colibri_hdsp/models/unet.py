@@ -6,7 +6,7 @@ import torch.nn as nn
 
 class Unet(nn.Module):
     """
-    Unet Layer
+    Unet Model
 
     """
 
@@ -18,7 +18,7 @@ class Unet(nn.Module):
         last_activation="sigmoid",
         **kwargs,
     ):
-        """Unet Layer
+        """
 
         Args:
             in_channels (int): number of input channels
@@ -27,7 +27,7 @@ class Unet(nn.Module):
             last_activation (str, optional): activation function for the last layer. Defaults to 'sigmoid'.
 
         Returns:
-            tf.keras.Layer: Unet model
+            torch.nn.Module: Unet model
 
         """
 
@@ -61,6 +61,15 @@ class Unet(nn.Module):
         self.outc = custom_layers.outBlock(features[0], out_channels, last_activation)
 
     def forward(self, x):
+
+        """
+        Args :
+
+            x (torch.Tensor): Input tensor
+        
+        Returns:
+            torch.Tensor: Output tensor
+        """
         outputs = []
 
         x = self.inc(x)
