@@ -6,11 +6,33 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)]()
 
-Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers to state-of-the-art algorithms in a straightforward and friendly manner.
+Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and
+state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose
+of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers
+to state-of-the-art algorithms in a straightforward and friendly manner.
 
 ## 💿 Installation
 
-Installation process is in development ... 🚧🚧🚧
+1. Clone the repository:
+
+```bash
+https://github.com/pycolibri/pycolibri.git
+```
+
+2. Create a virtual environment with conda:
+
+```bash
+conda create -n colibri python=3.10
+conda activate colibri
+```
+
+3. Install the requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Enjoy! 😄
 
 ## 🚀 Quick Start
 
@@ -82,29 +104,36 @@ We welcome contributions from the community! If you have something you'd like to
 
 ## 🛡️ License
 
-This section is in development  ... 🚧🚧🚧 
+This section is in development ... 🚧🚧🚧
 
 ---
-# how to execute the sphinx documentation 
 
-This documentation is built using [Sphinx](https://www.sphinx-doc.org/en/master/), a tool that makes it easy to create intelligent and beautiful documentation, for execute the documentation you need to follow the next steps. U need a terminal to execute the commands in this directory.
+# how to execute the sphinx documentation
+
+This documentation is built using [Sphinx](https://www.sphinx-doc.org/en/master/), a tool that makes it easy to create
+intelligent and beautiful documentation, for execute the documentation you need to follow the next steps. U need a
+terminal to execute the commands in this directory.
 
 1. Install the requirements
+
 ```bash
 pip install -r requirements.txt
 ```
 
 2. Build the documentation
+
 ```bash
 make html
 ```
 
 3. Open the documentation
+
 ```bash
 open _build/html/index.html
 ```
 
 4. Clean the documentation
+
 ```bash
 make clean
 ```
