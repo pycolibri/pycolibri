@@ -42,7 +42,8 @@ You can go to ``examples`` folder and run cells of the notebook ``demo_colibri.i
 
 #### Dataset Visualization
 
-```
+```python
+import matplotlib.pyplot as plt
 from colibri_hdsp.data.datasets import Dataset
 from torchvision.utils import make_grid
 
@@ -104,36 +105,16 @@ We welcome contributions from the community! If you have something you'd like to
 
 ## 🛡️ License
 
-This section is in development ... 🚧🚧🚧
-
----
-
-# how to execute the sphinx documentation
-
-This documentation is built using [Sphinx](https://www.sphinx-doc.org/en/master/), a tool that makes it easy to create
-intelligent and beautiful documentation, for execute the documentation you need to follow the next steps. U need a
-terminal to execute the commands in this directory.
-
-1. Install the requirements
-
-```bash
-pip install -r requirements.txt
 ```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-2. Build the documentation
+   http://www.apache.org/licenses/LICENSE-2.0
 
-```bash
-make html
-```
-
-3. Open the documentation
-
-```bash
-open _build/html/index.html
-```
-
-4. Clean the documentation
-
-```bash
-make clean
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
