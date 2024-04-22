@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 
-def prism_operator(x, shift_sign = 1):
+
+def prism_operator(x, shift_sign=1):
     """
     Prism operator, it shifts the input tensor x according to spectral shift made by a prism
     Args:
@@ -16,16 +17,16 @@ def prism_operator(x, shift_sign = 1):
 
     x = torch.unbind(x, dim=1)
 
-
     if shift_sign == 1:
         # Shifting produced by the prism 
         x = [torch.nn.functional.pad(x[l], (l, L - l - 1)) for l in range(L)]
     else:
         # Unshifting produced by the prism
-        x = [x[l][:, :, l:N - (L- 1)+l] for l in range(L)]
+        x = [x[l][:, :, l:N - (L - 1) + l] for l in range(L)]
 
     x = torch.stack(x, dim=1)
     return x
+
 
 def forward_color_cassi(x, ca):
     """
@@ -39,6 +40,7 @@ def forward_color_cassi(x, ca):
     """
     y = torch.multiply(x, ca)
     return y.sum(dim=1, keepdim=True)
+
 
 def backward_color_cassi(y, ca):
     """
@@ -65,7 +67,7 @@ def forward_dd_cassi(x, ca):
     _, L, M, N = x.shape  # Extract spectral image shape
     assert ca.shape[-1] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
     ca = torch.tile(ca, [1, L, 1, 1])
-    ca = prism_operator(ca, shift_sign = -1)
+    ca = prism_operator(ca, shift_sign=-1)
     y = forward_color_cassi(x, ca)
     return y
 
@@ -83,8 +85,9 @@ def backward_dd_cassi(y, ca):
     L = N - M + 1  # Number of shifts
     y = torch.tile(y, [1, L, 1, 1])
     ca = torch.tile(ca, [1, L, 1, 1])
-    ca = prism_operator(ca, shift_sign = -1)
+    ca = prism_operator(ca, shift_sign=-1)
     return backward_color_cassi(y, ca)
+
 
 def forward_cassi(x, ca):
     """
@@ -98,7 +101,7 @@ def forward_cassi(x, ca):
     y1 = torch.multiply(x, ca)  # Multiplication of the scene by the coded aperture
     _, M, N, L = y1.shape  # Extract spectral image shape
     # shift and sum
-    y2 = prism_operator(y1, shift_sign = 1)
+    y2 = prism_operator(y1, shift_sign=1)
     return y2.sum(dim=1, keepdim=True)
 
 
@@ -114,8 +117,47 @@ def backward_cassi(y, ca):
     _, _, M, N = y.shape  # Extract spectral image shape
     L = N - M + 1  # Number of shifts
     y = torch.tile(y, [1, L, 1, 1])
-    y = prism_operator(y, shift_sign = -1)
+    y = prism_operator(y, shift_sign=-1)
     return torch.multiply(y, ca)
+
+
+def forward_tensor_cassi(x, ca):
+    """
+    Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Fast matrix inversion in compressive spectral imaging based on a tensorial representation: https://doi.org/10.1117/1.JEI.33.1.013034
+    Args:
+        x (torch.Tensor): Spectral image with shape (1, L, M, N)
+        ca (torch.Tensor): Coded aperture with shape (1, M, N)
+    Returns:
+        torch.Tensor: Measurement with shape (1, 1, M, N + L - 1)
+    """
+    [b, L, M, N] = x.shape
+    S = ca.shape[0]
+    y = torch.zeros(b, S, M, N + L - 1).to(x.device)
+
+    y_noshift = x[:, :, None] * ca
+    for k in range(L):
+        y[..., k:N + k] += + y_noshift[:, k]
+
+    return y
+
+
+def backward_tensor_cassi(y, ca):
+    """
+    Backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Fast matrix inversion in compressive spectral imaging based on a tensorial representation: https://doi.org/10.1117/1.JEI.33.1.013034
+    Args:
+        y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
+        ca (torch.Tensor): Coded aperture with shape (1, M, N)
+    Returns:
+        torch.Tensor: Spectral image with shape (1, L, M, N)
+    """
+    [_, M, N] = ca.shape
+    L = y.shape[-1] - N + 1
+
+    y1 = torch.zeros(y.shape[0], L, M, N).to(y.device)
+    for k in range(L):
+        y1[:, k] += torch.sum(y[..., k:N + k] * ca, dim=1)
+
+    return y1
 
 
 def forward_spc(x, H):
@@ -130,13 +172,14 @@ def forward_spc(x, H):
         torch.Tensor: Output tensor after measurement.
     """
     b, c, h, w = x.size()
-    x = x.view(b, c, h*w)
+    x = x.view(b, c, h * w)
     x = x.permute(0, 2, 1)
 
     # measurement
     H = H.unsqueeze(0).repeat(b, 1, 1)
     y = torch.bmm(H, x)
     return y
+
 
 def backward_spc(y, H):
     """
