@@ -6,16 +6,26 @@ import torch.nn.functional as F
 
 
 class Reg_Binary(nn.Module):
-    """
-    Binary Regularization for Neural Network Weights.
+    r"""
+    Binary Regularization for Coded Aperture Design.
+
     Code adapted from  Bacca, Jorge, Tatiana Gelvez-Barrera, and Henry Arguello. 
     "Deep coded aperture design: An end-to-end approach for computational imaging tasks." 
     IEEE Transactions on Computational Imaging 7 (2021): 1148-1160.
+    The regularizer computes:
+
+    .. math::
+
+        \begin{equation*}
+        R(\learnedOptics) = \mu\sum_{i=1}^{n} (\learnedOptics_i - \text{min_v})^2(\learnedOptics_i - \text{max_v})^2  
+        \end{equation*}
+
+    where :math:`\mu` is the regularization parameter and :math:`\text{min_v}` and :math:`\text{max_v}` are the minimum and maximum values for the weights, respectively.
     """
+
 
     def __init__(self, parameter=10, min_v=0, max_v=1):
         """
-        Binary Regularization for Neural Network Weights.
 
         Args:
             parameter (float): Regularization parameter.
@@ -30,9 +40,9 @@ class Reg_Binary(nn.Module):
         self.type_reg = 'ca'
 
     def forward(self, x):
-        """
+        r"""
         Compute binary regularization term.
-
+        
         Args:
             x (torch.Tensor): Input tensor (layer's weight).
 
@@ -43,17 +53,26 @@ class Reg_Binary(nn.Module):
         return regularization
 
 class Reg_Transmittance(nn.Module):
-    """
-    Transmittance Regularization for Neural Network Weights.
+    r"""
+    Transmittance Regularization for Coded Apeuture Design.
+    
+
     Code adapted from  Bacca, Jorge, Tatiana Gelvez-Barrera, and Henry Arguello. 
     "Deep coded aperture design: An end-to-end approach for computational imaging tasks." 
     IEEE Transactions on Computational Imaging 7 (2021): 1148-1160.
+    
+    The regularizer computes:
+
+    .. math::
+        \begin{equation}
+        R(\learnedOptics) = \mu \left(\sum_{i=1}^{n}\frac{\learnedOptics_i}{n}-t\right)^2 
+        \end{equation}
+
+    where :math:`\mu` is the regularization parameter and :math:`t` is the target transmittance value.
     """
 
     def __init__(self, parameter=10, t=0.8):
         """
-        Transmittance Regularization for Neural Network Weights.
-
         Args:
             parameter (float): Regularization parameter.
             t (float): Target transmittance value.
@@ -78,14 +97,24 @@ class Reg_Transmittance(nn.Module):
         return transmittance
 
 class Correlation(nn.Module):
-    """
-    Correlation Regularization for Neural Network Layers.
+    r"""
+    Correlation Regularization for the outputs of optical layers.
+
+    This regularizer computes 
+
+    .. math::
+        \begin{equation*}
+        R(\mathbf{y}_1,\mathbf{y}_2) = \mu\left\|\mathbf{C_{yy_1}} - \mathbf{C_{yy_2}}\right\|_2
+        \end{equation*}
+    
+    where :math:`\mathbf{C_{yy_1}}` and :math:`\mathbf{C_{yy_2}}` are the correlation matrices of the measurements tensors :math:`\mathbf{y}_1,\mathbf{y}_2 \in \yset` and `\mu` is a regularization parameter .
+
+    
 
     """
 
     def __init__(self, batch_size=128, param=0.001):
         """
-        Correlation Regularization for Neural Network Layers.
 
         Args:
             batch_size (int): Batch size used for reshaping.
@@ -117,16 +146,25 @@ class Correlation(nn.Module):
         return loss
 
 class KLGaussian(nn.Module):
-    """
+    r"""
     KL Divergence Regularization for Gaussian Distributions.
+    
     Code adapted from [2] Jacome, Roman, Pablo Gomez, and Henry Arguello.
     "Middle output regularized end-to-end optimization for computational imaging." 
     Optica 10.11 (2023): 1421-1431.
+
+    .. math::
+        \begin{equation*}
+        R(\mathbf{y}) = \text{KL}(p_\mathbf{y},p_\mathbf{z}) = -\frac{1}{2}\sum_{i=1}^{n} \left(1 + \log(\sigma_{\mathbf{y}_i}^2) - \log(\sigma_{\mathbf{z}_i}^2) - \frac{\sigma_{\mathbf{y}_i}^2 + (\mu_{\mathbf{y}_i} - \mu_{\mathbf{z}_i})^2}{\sigma_{\mathbf{z}_i}^2}\right)
+        \end{equation*}
+    
+    where :math:`\mu_{\mathbf{y}_i}` and :math:`\sigma_{\mathbf{y}_i}` are the mean and standard deviation of the input tensor :math:`\mathbf{y}\in\yset`, respectively, and :math:`\mu_{\mathbf{z}_i}` and :math:`\sigma_{\mathbf{z}_i}` are the target mean and standard deviation, respectively.
+
     """
 
     def __init__(self, mean=1e-2, stddev=2.0):
         super(KLGaussian, self).__init__()
-        """ KL Divergence Regularization for Gaussian Distributions.
+        """ 
             Args:
                 mean (float): Target mean for the Gaussian distribution.
                 stddev (float): Target standard deviation for the Gaussian distribution.
@@ -156,25 +194,32 @@ class KLGaussian(nn.Module):
         return kl_loss
 
 class MinVariance(nn.Module):
-    """
-    Minimum Variance Regularization for Neural Network Layers.
-    KL Divergence Regularization for Gaussian Distributions.
+    r"""
+    Minimum Variance Regularization.
+
+
     Code adapted from [2] Jacome, Roman, Pablo Gomez, and Henry Arguello.
     "Middle output regularized end-to-end optimization for computational imaging." 
     Optica 10.11 (2023): 1421-1431.
+
+    .. math::
+        \begin{equation*}
+        R(\mathbf{y}) = \mu\left\|\sigma_{\mathbf{y}}\right\|_2
+        \end{equation*}
+    
+    where :math:`\sigma_{\mathbf{y}}` is the standard deviation of the input tensor :math:`\mathbf{y}\in\yset`.
     """
 
     def __init__(self, param=1e-2):
+        
+        """
+        Args:
+            param (float): Regularization parameter.
+        """   
         super(MinVariance, self).__init__()
         self.param = param
         self.type_reg = 'measurements'
-
-    """
-    Minimum Variance Regularization for Neural Network Layers.
-
-    Args:
-        param (float): Regularization parameter.
-    """        
+     
 
     def forward(self, y):
         """

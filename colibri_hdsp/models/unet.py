@@ -6,8 +6,11 @@ import torch.nn as nn
 
 class Unet(nn.Module):
     """
-    Unet Layer
+    Unet Model
 
+    Adapted from
+
+    Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
     """
 
     def __init__(
@@ -18,7 +21,7 @@ class Unet(nn.Module):
         last_activation="sigmoid",
         **kwargs,
     ):
-        """Unet Layer
+        """
 
         Args:
             in_channels (int): number of input channels
@@ -27,7 +30,7 @@ class Unet(nn.Module):
             last_activation (str, optional): activation function for the last layer. Defaults to 'sigmoid'.
 
         Returns:
-            tf.keras.Layer: Unet model
+            torch.nn.Module: Unet model
 
         """
 
@@ -61,6 +64,15 @@ class Unet(nn.Module):
         self.outc = custom_layers.outBlock(features[0], out_channels, last_activation)
 
     def forward(self, x):
+
+        """
+        Args :
+
+            x (torch.Tensor): Input tensor
+        
+        Returns:
+            torch.Tensor: Output tensor
+        """
         outputs = []
 
         x = self.inc(x)

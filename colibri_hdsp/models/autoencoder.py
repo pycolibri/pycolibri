@@ -6,7 +6,12 @@ import torch.nn as nn
 
 class Autoencoder(nn.Module):
     """
-    Autoencoder layer
+    Autoencoder Model
+
+    Adapted from 
+
+    Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. MIT press, 2016.
+    
     """
 
     def __init__(
@@ -18,7 +23,7 @@ class Autoencoder(nn.Module):
         reduce_spatial=False,
         **kwargs,
     ):
-        """Autoencoder Layer
+        """
 
         Args:
 
@@ -77,6 +82,16 @@ class Autoencoder(nn.Module):
         self.outc = custom_layers.outBlock(features[0], out_channels, last_activation)
 
     def forward(self, inputs, get_latent=False, **kwargs):
+        """
+        Forward pass of the autoencoder
+
+        Args:
+            inputs (torch.Tensor): input tensor
+            get_latent (bool): if True, return the latent space
+        
+        Returns:
+            torch.Tensor: output tensor
+        """
 
         x = self.inc(inputs)
 
