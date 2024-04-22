@@ -10,6 +10,10 @@ state-of-the-art deep neural networks are implemented to be easily used or modif
 of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers
 to state-of-the-art algorithms in a straightforward and friendly manner.
 
+## 📑 Documentation
+
+The documentation is available at [pycolibri.github.io/pycolibri](https://pycolibri.github.io/pycolibri/).
+
 ## 💿 Installation
 
 1. Clone the repository:
