@@ -4,7 +4,7 @@
 Architectures
 =============
 
-Architectures represents a collection of advanced architectures for computational imaging that integrates optical systems with deep learning models. These architectures are designed for flexibility and performance across a variety of imaging applications. 
+A collection of advanced architectures for computational imaging, integrating optical systems with deep learning models. Designed for flexibility and performance across various imaging applications. 
 
 
 
