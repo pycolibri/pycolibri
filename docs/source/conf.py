@@ -10,9 +10,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-project = 'colibri'
-copyright = '2023, hdsp'
-author = 'hdsp'
+project = 'pycolibri'
+copyright = '2024, colibri'
+author = 'colibri'
 version  = '0.1'
 
 # -- General configuration ---------------------------------------------------
@@ -38,7 +38,7 @@ napoleon_google_docstring = True
 napoleon_numpy_docstring = False
 
 html_title = "Colibri"
-html_logo = os.path.join("figures", "logo.png")
+html_logo = os.path.join("figures", "colibri-logo.svg")
 
 autodoc_default_options = {
     "exclude-members": "__init__"

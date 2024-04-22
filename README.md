@@ -1,6 +1,5 @@
 ﻿<div style="display:flex;">
-  <img src="docs/source/figures/colibri-logo.svg" alt="Image 1" style="width:30%;margin-left:auto;marging-right:auto;">
-  <img src="docs/source/figures/colibri-banner.svg" alt="Image 2" style="width:60%;margin-left:auto;marging-right:auto;">
+  <img src="docs/source/figures/colibri-banner.svg" alt="colibri-banner-full" style="width:100%;margin-left:auto;marging-right:auto;">
 </div>
 
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
@@ -16,7 +15,7 @@ to state-of-the-art algorithms in a straightforward and friendly manner.
 1. Clone the repository:
 
 ```bash
-https://github.com/pycolibri/pycolibri.git
+git clone https://github.com/pycolibri/pycolibri.git
 ```
 
 2. Create a virtual environment with conda:
@@ -84,24 +83,33 @@ plt.show()
 ### 📷 Optical Systems
 
 - Coded Aperture Snapshot Spectral Imager (CASSI).
-- Single Pixel Snapshot Imager (SPSI).
+    - Single Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.SD_CASSI.html#colibri_hdsp.optics.cassi.SD_CASSI)
+    - Dual Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.DD_CASSI.html)
+    - Color CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.C_CASSI.html)
+- Single Pixel Camera [(SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.spc.SPC.html)
 
-### 🖥️ Deep Neural Networks
+### 💻️ Deep Neural Networks
 
-- Autoencoder.
-- Unet.
+- [Autoencoder](https://pycolibri.github.io/pycolibri/models.html)
+- [Unet](https://pycolibri.github.io/pycolibri/models.html)
+
+### 🖥 Recovery Algorithms
+
+- Fast Iterative Shrinkage-Thresholding Algorithm [(FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
 
 ## 🎆 Frameworks
 
-- End-to-end framework with optical systems as encoder models and deep neural networks as decoder models.
+- [End-to-end framework](https://pycolibri.github.io/pycolibri/architectures.html) with optical systems as encoder models and deep neural networks as decoder models.
 
 ## 💡 Contributing
 
-We welcome contributions from the community! If you have something you'd like to share, please follow these steps:
+Contributions are welcome! If you're interested in improving Colibri, please:
 
-1. **Fork** the repository.
-2. **Add** your improvement.
-3. **Submit** a Pull Request.
+1. Fork the repository.
+2. Create your feature branch (``git checkout -b feature/AmazingFeature``).
+3. Commit your changes (``git commit -am 'Add some AmazingFeature'``).
+4. Push to the branch (``git push origin feature/AmazingFeature``).
+5. Open a Pull Request.
 
 ## 🛡️ License
 
