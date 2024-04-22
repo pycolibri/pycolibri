@@ -1,7 +1,7 @@
 Regularizers
 ============
 
-Various regularization techniques are implemented regarding the design of optical coding elements. These regularizations force certain physical constraints on the learning parameters. Also, there are regularizers that promotes certain bhaivour onthe coded measurements to imporve the task perfomance.
+Various regularization techniques are implemented regarding the design of optical coding elements. These regularizations force certain physical constraints on the learning parameters. Also, there are regularizers that promotes certain behaviour on the coded measurements to imporve the task perfomance.
 
 The regularizers are used in the optimization problem of the form:
 

@@ -7,6 +7,11 @@ import torch.nn as nn
 class Autoencoder(nn.Module):
     """
     Autoencoder Model
+
+    Adapted from 
+
+    Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. MIT press, 2016.
+    
     """
 
     def __init__(

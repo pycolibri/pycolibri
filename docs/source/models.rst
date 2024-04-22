@@ -1,7 +1,7 @@
 Models
 ======
 
-The models module within our library provides implementations of deep learning models tailored for computational imaging tasks. These models leverage the latest advancements in neural networks to offer robust solutions for image reconstruction, enhancement, and segmentation.
+The models module within our library provides implementations of deep learning models tailored for computational imaging :math:`\mathcal{G}_\theta`. These models leverage the latest advancements in neural networks to offer robust solutions for image reconstruction, enhancement, and segmentation.
 
 
 List of models

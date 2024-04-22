@@ -8,6 +8,9 @@ class Unet(nn.Module):
     """
     Unet Model
 
+    Adapted from
+
+    Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
     """
 
     def __init__(
