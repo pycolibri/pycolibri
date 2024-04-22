@@ -5,13 +5,13 @@ class E2E(nn.Module):
     def __init__(self, optical_layer: nn.Module, decoder: nn.Module):
         r""" End-to-end model (E2E) for image reconstruction from compressed measurements.
         
-        In E2E models, the optical system and the computational decoder are modeled as layers of a neural network, denoted as :math:`\forwardLinear_{\learnedOptics}` and :math:`\mathcal{G}_\theta`, respectively. The optimization problem is formulated as following:
+        In E2E models, the optical system and the computational decoder are modeled as layers of a neural network, denoted as :math:`\forwardLinear_{\learnedOptics}` and :math:`\reconnet`, respectively. The optimization problem is formulated as following:
 
         .. math::
             \begin{equation}
                 \begin{aligned}
                     \{ \learnedOptics^*, \theta^* \} &= \arg \min_{\learnedOptics, \theta} \mathcal{L}(\learnedOptics, \theta) \\
-                    & \coloneqq \sum_{p=1}^P \mathcal{L}_{\text{task}} ( \mathcal{G}_\theta(\forwardLinear_\learnedOptics(\mathbf{x}_p)), \mathbf{x}_p) + \lambda \mathcal{R}_1(\learnedOptics) + \mu \mathcal{R}_2(\theta)
+                    & \coloneqq \sum_{p=1}^P \mathcal{L}_{\text{task}} (\reconnet(\forwardLinear_\learnedOptics(\mathbf{x}_p)), \mathbf{x}_p) + \lambda \mathcal{R}_1(\learnedOptics) + \mu \mathcal{R}_2(\theta)
                 \end{aligned}
             \end{equation}
         
@@ -35,7 +35,7 @@ class E2E(nn.Module):
                 \begin{aligned}
                     \mathbf{y} &= \forwardLinear_{\learnedOptics}(\mathbf{x}) \\
                     \mathbf{x}_{\text{init}} &= \forwardLinear_{\learnedOptics}^\top(\forwardLinear_{\learnedOptics}(\mathbf{y}))\\
-                    \hat{\mathbf{x}} &= \mathcal{G}_\theta(\mathbf{x}_{\text{init}})
+                    \hat{\mathbf{x}} &=\reconnet(\mathbf{x}_{\text{init}})
                 \end{aligned}
             \end{equation}
         Args:

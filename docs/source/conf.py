@@ -69,6 +69,7 @@ mathjax3_config = {
             "yset": r"\mathcal{Y}",
             'argmin': '\\operatorname{arg\\,min}',
             'coloneqq': '\\mathrel{:=}',
+            'reconnet': '\\mathcal{N}_{\\theta}',
         },
     }
 }

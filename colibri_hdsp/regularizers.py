@@ -17,7 +17,7 @@ class Reg_Binary(nn.Module):
     .. math::
 
         \begin{equation*}
-        R(x) = \mu\sum_{i=1}^{n} (x_i - \text{min_v})^2(x_i - \text{max_v})^2  
+        R(\learnedOptics) = \mu\sum_{i=1}^{n} (\learnedOptics_i - \text{min_v})^2(\learnedOptics_i - \text{max_v})^2  
         \end{equation*}
 
     where :math:`\mu` is the regularization parameter and :math:`\text{min_v}` and :math:`\text{max_v}` are the minimum and maximum values for the weights, respectively.
@@ -64,9 +64,9 @@ class Reg_Transmittance(nn.Module):
     The regularizer computes:
 
     .. math::
-        \begin{equation*}
-        R(x) = \mu \left(\sum_{i=1}^{n}\frac{x_i}{n}-t\right)^2 
-        \end{equation*}
+        \begin{equation}
+        R(\learnedOptics) = \mu \left(\sum_{i=1}^{n}\frac{\learnedOptics_i}{n}-t\right)^2 
+        \end{equation}
 
     where :math:`\mu` is the regularization parameter and :math:`t` is the target transmittance value.
     """
@@ -104,10 +104,10 @@ class Correlation(nn.Module):
 
     .. math::
         \begin{equation*}
-        R(\mathbf{x},\mathbf{y}) = \mu\left\|\mathbf{C_{xx}} - \mathbf{C_{yy}}\right\|_2
+        R(\mathbf{y}_1,\mathbf{y}_2) = \mu\left\|\mathbf{C_{yy_1}} - \mathbf{C_{yy_2}}\right\|_2
         \end{equation*}
     
-    where :math:`\mathbf{C_{xx}}` and :math:`\mathbf{C_{yy}}` are the correlation matrices of the input tensors :math:`\mathbf{x}` and :math:`\mathbf{y}`, respectively and `\mu` is a regularization parameter .
+    where :math:`\mathbf{C_{yy_1}}` and :math:`\mathbf{C_{yy_2}}` are the correlation matrices of the measurements tensors :math:`\mathbf{y}_1,\mathbf{y}_2 \in \yset` and `\mu` is a regularization parameter .
 
     
 
@@ -158,7 +158,7 @@ class KLGaussian(nn.Module):
         R(\mathbf{y}) = \text{KL}(p_\mathbf{y},p_\mathbf{z}) = -\frac{1}{2}\sum_{i=1}^{n} \left(1 + \log(\sigma_{\mathbf{y}_i}^2) - \log(\sigma_{\mathbf{z}_i}^2) - \frac{\sigma_{\mathbf{y}_i}^2 + (\mu_{\mathbf{y}_i} - \mu_{\mathbf{z}_i})^2}{\sigma_{\mathbf{z}_i}^2}\right)
         \end{equation*}
     
-    where :math:`\mu_{\mathbf{y}_i}` and :math:`\sigma_{\mathbf{y}_i}` are the mean and standard deviation of the input tensor :math:`\mathbf{y}`, respectively, and :math:`\mu_{\mathbf{z}_i}` and :math:`\sigma_{\mathbf{z}_i}` are the target mean and standard deviation, respectively.
+    where :math:`\mu_{\mathbf{y}_i}` and :math:`\sigma_{\mathbf{y}_i}` are the mean and standard deviation of the input tensor :math:`\mathbf{y}\in\yset`, respectively, and :math:`\mu_{\mathbf{z}_i}` and :math:`\sigma_{\mathbf{z}_i}` are the target mean and standard deviation, respectively.
 
     """
 
@@ -207,7 +207,7 @@ class MinVariance(nn.Module):
         R(\mathbf{y}) = \mu\left\|\sigma_{\mathbf{y}}\right\|_2
         \end{equation*}
     
-    where :math:`\sigma_{\mathbf{y}}` is the standard deviation of the input tensor :math:`\mathbf{y}`.
+    where :math:`\sigma_{\mathbf{y}}` is the standard deviation of the input tensor :math:`\mathbf{y}\in\yset`.
     """
 
     def __init__(self, param=1e-2):
