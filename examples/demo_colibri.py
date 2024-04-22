@@ -65,8 +65,7 @@ adquistion_name = 'c_cassi' #  ['spc', 'cassi']
 from torchvision.utils import make_grid
 
 sample = next(iter(dataset.train_dataset))[0]
-
-img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
+img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10,10))
 plt.imshow(img.permute(1, 2, 0))
@@ -108,9 +107,7 @@ y = acquisition_model(sample)
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
-
-img = make_grid(y[:32], nrow=8, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
-
+img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10,10))
 plt.imshow(img.permute(1, 2, 0))
@@ -200,9 +197,9 @@ y = acquisition_model(sample.to(device)).cpu()
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
-img      = make_grid(sample[:16], nrow=4, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
-img_est  = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
-img_y    = make_grid(y[:16], nrow=4, padding=1, normalize=True, value_range=None, scale_each=False, pad_value=0)
+img      = make_grid(sample[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+img_est  = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+img_y    = make_grid(y[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 imgs_dict = {
     "CIFAR10 dataset": img, 

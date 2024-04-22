@@ -1,1 +1,6 @@
+tqdm
+h5py
+matplotlib
+torch
+torchvision
 torchmetrics

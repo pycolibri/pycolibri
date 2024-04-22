@@ -1,14 +1,41 @@
-﻿
-![colibri-banner](docs/source/figures/colibri-banner.png)
+﻿<div style="display:flex;">
+  <img src="docs/source/figures/colibri-banner.svg" alt="colibri-banner-full" style="width:100%;margin-left:auto;marging-right:auto;">
+</div>
 
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)]()
 
-Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers to state-of-the-art algorithms in a straightforward and friendly manner.
+Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and
+state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose
+of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers
+to state-of-the-art algorithms in a straightforward and friendly manner.
+
+## 📑 Documentation
+
+The documentation is available at [pycolibri.github.io/pycolibri](https://pycolibri.github.io/pycolibri/).
 
 ## 💿 Installation
 
-Installation process is in development ... 🚧🚧🚧
+1. Clone the repository:
+
+```bash
+git clone https://github.com/pycolibri/pycolibri.git
+```
+
+2. Create a virtual environment with conda:
+
+```bash
+conda create -n colibri python=3.10
+conda activate colibri
+```
+
+3. Install the requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Enjoy! 😄
 
 ## 🚀 Quick Start
 
@@ -18,7 +45,8 @@ You can go to ``examples`` folder and run cells of the notebook ``demo_colibri.i
 
 #### Dataset Visualization
 
-```
+```python
+import matplotlib.pyplot as plt
 from colibri_hdsp.data.datasets import Dataset
 from torchvision.utils import make_grid
 
@@ -46,7 +74,6 @@ plt.show()
 
 ```
 
-
 ## 🧰 Features
 
 - Flexible and customizable code.
@@ -60,25 +87,46 @@ plt.show()
 ### 📷 Optical Systems
 
 - Coded Aperture Snapshot Spectral Imager (CASSI).
-- Single Pixel Snapshot Imager (SPSI).
+    - Single Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.SD_CASSI.html#colibri_hdsp.optics.cassi.SD_CASSI)
+    - Dual Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.DD_CASSI.html)
+    - Color CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.C_CASSI.html)
+- Single Pixel Camera [(SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.spc.SPC.html)
 
-### 🖥️ Deep Neural Networks
+### 💻️ Deep Neural Networks
 
-- Autoencoder.
-- Unet.
+- [Autoencoder](https://pycolibri.github.io/pycolibri/models.html)
+- [Unet](https://pycolibri.github.io/pycolibri/models.html)
+
+### 🖥 Recovery Algorithms
+
+- Fast Iterative Shrinkage-Thresholding Algorithm [(FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
 
 ## 🎆 Frameworks
 
-- End-to-end framework with optical systems as encoder models and deep neural networks as decoder models.
+- [End-to-end framework](https://pycolibri.github.io/pycolibri/architectures.html) with optical systems as encoder models and deep neural networks as decoder models.
 
 ## 💡 Contributing
 
-We welcome contributions from the community! If you have something you'd like to share, please follow these steps:
+Contributions are welcome! If you're interested in improving Colibri, please:
 
-1. **Fork** the repository.
-2. **Add** your improvement.
-3. **Submit** a Pull Request.
+1. Fork the repository.
+2. Create your feature branch (``git checkout -b feature/AmazingFeature``).
+3. Commit your changes (``git commit -am 'Add some AmazingFeature'``).
+4. Push to the branch (``git push origin feature/AmazingFeature``).
+5. Open a Pull Request.
 
 ## 🛡️ License
 
-This section is in development  ... 🚧🚧🚧 
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
