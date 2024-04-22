@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 .vscode
+docs/source/stubs
+docs/source/gen_modules
 # C extensions
 *.so
 
@@ -162,3 +164,5 @@ cython_debug/
 .idea/
 
 data/
+docs/source/auto_examples/*
+docs/source/sg_execution_times.rst

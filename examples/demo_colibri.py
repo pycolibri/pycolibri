@@ -2,7 +2,24 @@ r"""
 Demo Colibri.
 ===================================================
 
-In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models.
+In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models. Mainly, the forward model is defined,
+
+.. math::
+    \mathbf{y} = \mathbf{H}_\phi \mathbf{x}
+
+where :math:`\mathbf{H}` is the forward model, :math:`\mathbf{x}` is the input image and :math:`\mathbf{y}` is the measurement and :math:`\phi` are the coding elements of the forward model. The recovery model is defined as,
+
+.. math::
+    \mathbf{x} = \mathcal{G}_\theta( \mathbf{y})
+
+where :math:`\mathcal{G}` is the recovery model and :math:`\theta` are the parameters of the recovery model.
+
+The training is performed by minimizing the following loss function,
+
+.. math::
+    \{\phi^*,\theta^*\} = \arg \min_{\phi,\theta} \sum_{p=1}^{P}\mathcal{L}(\mathbf{x}_p, \mathcal{G}_\theta( \mathbf{H}_\phi \mathbf{x}_p)) + \lambda \mathcal{R}(\phi) + \mu \mathcal{R}(\mathbf{H}_\phi \mathbf{x}) 
+
+where :math:`\mathcal{L}` is the loss function, :math:`\mathcal{R}` is the regularizer, :math:`\lambda` and :math:`\mu` are the regularization weights, and :math:`P` is the number of samples in the training dataset.
 
 """
 
@@ -39,7 +56,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 128
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'cassi' #  ['spc', 'cassi']
+adquistion_name = 'c_cassi' #  ['spc', 'cassi']
 
 
 # %%
@@ -48,7 +65,6 @@ adquistion_name = 'cassi' #  ['spc', 'cassi']
 from torchvision.utils import make_grid
 
 sample = next(iter(dataset.train_dataset))[0]
-
 img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10,10))
@@ -59,9 +75,14 @@ plt.show()
 
 # %%
 # Optics forward model
+# -----------------------------------------------
+# Define the forward operators :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}`, in this case, the CASSI and SPC forward models.  
+# Each optics model can comptute the forward and backward operators i.e., :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}` and :math:`\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}`.
+
+
 
 import math
-from colibri_hdsp.optics import SPC, CASSI
+from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 img_size = sample.shape[1:]
 
@@ -74,19 +95,19 @@ if adquistion_name == 'spc':
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
-acquistion_model = {
+acquisition_model = {
     'spc': SPC(**acquisition_config),
-    'cassi': CASSI(**acquisition_config),
+    'sd_cassi': SD_CASSI(**acquisition_config),
+    'dd_cassi': DD_CASSI(**acquisition_config),
+    'c_cassi': C_CASSI(**acquisition_config)
 }[adquistion_name]
 
-y = acquistion_model(sample)
+y = acquisition_model(sample)
 
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
-
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
-
 
 plt.figure(figsize=(10,10))
 plt.imshow(img.permute(1, 2, 0))
@@ -98,6 +119,12 @@ plt.show()
 # %%
 # Reconstruction model
 # -----------------------------------------------
+# Define the recovery model :math:`\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})`, in this case, a simple U-Net model. 
+# You can add you custom model by using the :meth: `build_network` function.
+# Additionally we define the end-to-end model that combines the forward and recovery models.
+# Define the loss function :math:`\mathcal{L}`, and the regularizers :math:`\mathcal{R}` for the forward and recovery models. 
+
+
 from colibri_hdsp.models import build_network, Unet, Autoencoder
 from colibri_hdsp.archs import E2E
 from colibri_hdsp.train import Training
@@ -118,7 +145,7 @@ network_config = dict(
 
 recovery_model = build_network(Unet, **network_config)
 
-model = E2E(acquistion_model, recovery_model)
+model = E2E(acquisition_model, recovery_model)
 model = model.to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
@@ -162,9 +189,10 @@ results = train_schedule.fit(
 # %%
 # Visualize results
 # -----------------------------------------------
+# Performs the inference :math:`\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})` and visualize the results.
 
 x_est = model(sample.to(device)).cpu()
-y = acquistion_model(sample.to(device)).cpu()
+y = acquisition_model(sample.to(device)).cpu()
 
 if adquistion_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
@@ -187,11 +215,11 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.title(title)
     plt.axis('off')
 
+ca = acquisition_model.learnable_optics.cpu().detach().numpy().squeeze()
 if adquistion_name == 'spc':
-    ca = acquistion_model.ca.reshape(n_measurements, 32, 32, 1).cpu().detach().numpy().squeeze()[0]
-elif adquistion_name == 'cassi':
-    ca = acquistion_model.ca.cpu().detach().numpy().squeeze()
-
+    ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
+elif adquistion_name == 'c_cassi':
+    ca = ca.transpose(1, 2, 0)
 plt.subplot(1, 4, 4)
 plt.imshow(ca, cmap='gray')
 plt.axis('off')
