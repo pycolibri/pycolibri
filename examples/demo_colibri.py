@@ -50,7 +50,7 @@ else:
 # %%
 # Load dataset
 # -----------------------------------------------
-from colibri_hdsp.data.datasets import Dataset
+from colibri.data.datasets import Dataset
 
 dataset_path = 'cifar10'
 keys = ''
@@ -82,7 +82,7 @@ plt.show()
 
 
 import math
-from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
+from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 img_size = sample.shape[1:]
 
@@ -125,11 +125,11 @@ plt.show()
 # Define the loss function :math:`\mathcal{L}`, and the regularizers :math:`\mathcal{R}` for the forward and recovery models. 
 
 
-from colibri_hdsp.models import build_network, Unet, Autoencoder
-from colibri_hdsp.archs import E2E
-from colibri_hdsp.train import Training
-from colibri_hdsp.metrics import psnr, ssim
-from colibri_hdsp.regularizers import (
+from colibri.models import build_network, Unet, Autoencoder
+from colibri.archs import E2E
+from colibri.train import Training
+from colibri.metrics import psnr, ssim
+from colibri.regularizers import (
     Reg_Binary,
     Reg_Transmittance,
     MinVariance,

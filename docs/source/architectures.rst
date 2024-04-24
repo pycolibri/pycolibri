@@ -16,4 +16,4 @@ End-to-End models
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.archs.e2e.E2E
+    colibri.archs.e2e.E2E

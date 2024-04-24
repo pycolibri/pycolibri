@@ -4,8 +4,8 @@ include_colibri()
 
 
 import torch
-from colibri_hdsp.optics.cassi import SD_CASSI, DD_CASSI, C_CASSI
-from colibri_hdsp.optics.spc import SPC
+from colibri.optics.cassi import SD_CASSI, DD_CASSI, C_CASSI
+from colibri.optics.spc import SPC
 
 @pytest.fixture
 def imsize():

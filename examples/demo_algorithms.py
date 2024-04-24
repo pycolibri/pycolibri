@@ -35,7 +35,7 @@ else:
 # %%
 # Load dataset
 # -----------------------------------------------
-from colibri_hdsp.data.datasets import Dataset
+from colibri.data.datasets import Dataset
 
 dataset_path = 'cifar10'
 keys = ''
@@ -50,7 +50,7 @@ acquisition_name = 'spc' #  ['spc', 'cassi']
 # Visualize dataset
 # -----------------------------------------------
 from torchvision.utils import make_grid
-from colibri_hdsp.recovery.transforms import DCT2D
+from colibri.recovery.transforms import DCT2D
 
 sample = next(iter(dataset.train_dataset))[0]
 
@@ -71,7 +71,7 @@ print("Error: ", error  )
 # Optics forward model
 
 import math
-from colibri_hdsp.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
+from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 img_size = sample.shape[1:]
 
@@ -94,10 +94,10 @@ acquisition_model = {
 y = acquisition_model(sample)
 
 # Reconstruct image
-from colibri_hdsp.recovery.fista import Fista
-from colibri_hdsp.recovery.terms.prior import Sparsity
-from colibri_hdsp.recovery.terms.fidelity import L2
-from colibri_hdsp.recovery.transforms import DCT2D
+from colibri.recovery.fista import Fista
+from colibri.recovery.terms.prior import Sparsity
+from colibri.recovery.terms.fidelity import L2
+from colibri.recovery.transforms import DCT2D
 
 algo_params = {
     'max_iter': 200,

@@ -15,8 +15,8 @@ The models module contains the following models:
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.models.autoencoder.Autoencoder
-    colibri_hdsp.models.unet.Unet
+    colibri.models.autoencoder.Autoencoder
+    colibri.models.unet.Unet
     
 
 List of custom layers
@@ -31,10 +31,10 @@ The custom_layers module within our library provides implementations of custom l
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.models.custom_layers.Activation
-    colibri_hdsp.models.custom_layers.convBlock
-    colibri_hdsp.models.custom_layers.downBlock
-    colibri_hdsp.models.custom_layers.upBlock
-    colibri_hdsp.models.custom_layers.upBlockNoSkip
-    colibri_hdsp.models.custom_layers.outBlock
+    colibri.models.custom_layers.Activation
+    colibri.models.custom_layers.convBlock
+    colibri.models.custom_layers.downBlock
+    colibri.models.custom_layers.upBlock
+    colibri.models.custom_layers.upBlockNoSkip
+    colibri.models.custom_layers.outBlock
 

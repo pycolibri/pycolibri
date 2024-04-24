@@ -3,7 +3,7 @@ from .utils import include_colibri
 
 include_colibri()
 
-from colibri_hdsp.data.datasets import Dataset
+from colibri.data.datasets import Dataset
 
 
 @pytest.fixture
