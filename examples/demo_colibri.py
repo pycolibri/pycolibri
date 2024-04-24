@@ -162,23 +162,28 @@ regularizers_optics_ce_weights = [50, 1]
 regularizers_optics_mo = {"MV": MinVariance(), "KLG": KLGaussian(stddev=0.1)}
 regularizers_optics_mo_weights = [1e-3, 0.1]
 
+# train_schedule = Training(
+#     model=model,
+#     train_loader=dataset.train_dataset,
+#     optimizer=optimizer,
+#     loss_func=losses,
+#     losses_weights=losses_weights,
+#     metrics=metrics,
+#     regularizers=None,
+#     regularization_weights=None,
+#     schedulers=[],
+#     callbacks=[],
+#     device=device,
+#     regularizers_optics_ce=regularizers_optics_ce,
+#     regularization_optics_weights_ce=regularizers_optics_ce_weights,
+#     regularizers_optics_mo=regularizers_optics_mo,
+#     regularization_optics_weights_mo=regularizers_optics_mo_weights,
+# )
+
 train_schedule = Training(
     model=model,
-    train_loader=dataset.train_dataset,
-    optimizer=optimizer,
-    loss_func=losses,
-    losses_weights=losses_weights,
-    metrics=metrics,
-    regularizers=None,
-    regularization_weights=None,
-    schedulers=[],
-    callbacks=[],
-    device=device,
-    regularizers_optics_ce=regularizers_optics_ce,
-    regularization_optics_weights_ce=regularizers_optics_ce_weights,
-    regularizers_optics_mo=regularizers_optics_mo,
-    regularization_optics_weights_mo=regularizers_optics_mo_weights,
-)
+    train_loader=dataset.train_dataset
+    )
 
 
 results = train_schedule.fit(
