@@ -18,12 +18,12 @@ List of Regularizers
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.regularizers.Reg_Binary
-    colibri_hdsp.regularizers.Correlation
+    colibri.regularizers.Reg_Binary
+    colibri.regularizers.Correlation
 
-    colibri_hdsp.regularizers.Reg_Transmittance
+    colibri.regularizers.Reg_Transmittance
 
-    colibri_hdsp.regularizers.KLGaussian
-    colibri_hdsp.regularizers.MinVariance
+    colibri.regularizers.KLGaussian
+    colibri.regularizers.MinVariance
 
     

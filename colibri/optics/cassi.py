@@ -1,5 +1,5 @@
 import torch
-from colibri_hdsp.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_sd_cassi, backward_sd_cassi
+from colibri.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_sd_cassi, backward_sd_cassi
 from .utils import BaseOpticsLayer
 
     

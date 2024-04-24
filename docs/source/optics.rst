@@ -27,10 +27,10 @@ Spectral Imaging systems
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.optics.cassi.SD_CASSI
-    colibri_hdsp.optics.cassi.DD_CASSI
-    colibri_hdsp.optics.cassi.C_CASSI
-    colibri_hdsp.optics.spc.SPC
+    colibri.optics.cassi.SD_CASSI
+    colibri.optics.cassi.DD_CASSI
+    colibri.optics.cassi.C_CASSI
+    colibri.optics.spc.SPC
 
 
 Functional operators of the optical systems
@@ -41,14 +41,14 @@ Functional operators of the optical systems
     :template: methods_template.rst
     :nosignatures:
 
-    colibri_hdsp.optics.functional.forward_color_cassi
-    colibri_hdsp.optics.functional.backward_color_cassi
-    colibri_hdsp.optics.functional.forward_dd_cassi
-    colibri_hdsp.optics.functional.backward_dd_cassi
-    colibri_hdsp.optics.functional.forward_sd_cassi
-    colibri_hdsp.optics.functional.backward_sd_cassi
-    colibri_hdsp.optics.functional.forward_spc
-    colibri_hdsp.optics.functional.backward_spc
+    colibri.optics.functional.forward_color_cassi
+    colibri.optics.functional.backward_color_cassi
+    colibri.optics.functional.forward_dd_cassi
+    colibri.optics.functional.backward_dd_cassi
+    colibri.optics.functional.forward_sd_cassi
+    colibri.optics.functional.backward_sd_cassi
+    colibri.optics.functional.forward_spc
+    colibri.optics.functional.backward_spc
 
 Functional operators of optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,6 +58,6 @@ Functional operators of optical elements
     :template: methods_template.rst
     :nosignatures:
 
-    colibri_hdsp.optics.functional.prism_operator
+    colibri.optics.functional.prism_operator
 
 

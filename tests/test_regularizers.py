@@ -2,7 +2,7 @@ import pytest
 from .utils import include_colibri
 include_colibri()
 
-from colibri_hdsp import regularizers
+from colibri import regularizers
 import torch
 
 reg_list = ["binary", "transmittance", "correlation", "kl_gaussian", "min_variance"]  

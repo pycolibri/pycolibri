@@ -18,7 +18,7 @@ List of Algorithms
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.recovery.fista.Fista
+    colibri.recovery.fista.Fista
     
 
 
@@ -33,8 +33,8 @@ The module contains differents fidelity terms :math:`f(\mathbf{x})` that can be 
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.recovery.terms.fidelity.L2
-    colibri_hdsp.recovery.terms.fidelity.L1
+    colibri.recovery.terms.fidelity.L2
+    colibri.recovery.terms.fidelity.L1
 
 
 
@@ -49,7 +49,7 @@ The module contains differents prior terms :math:`g(\mathbf{x})` that can be use
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.recovery.terms.prior.Sparsity
+    colibri.recovery.terms.prior.Sparsity
     
 Transormation
 --------------------
@@ -62,4 +62,4 @@ The module contains differents signal transforms that can be used in the recover
     :template: class_template.rst
     :nosignatures:
 
-    colibri_hdsp.recovery.transforms.DCT2D
+    colibri.recovery.transforms.DCT2D

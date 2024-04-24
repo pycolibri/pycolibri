@@ -44,7 +44,7 @@ You can go to ``examples`` folder and run cells of the notebook ``demo_colibri.i
 .. code-block:: python
 
     import matplotlib.pyplot as plt
-    from colibri_hdsp.data.datasets import Dataset
+    from colibri.data.datasets import Dataset
     from torchvision.utils import make_grid
 
     # Load dataset
@@ -85,10 +85,10 @@ Available Models
 📷 **Optical Systems**
 
 - Coded Aperture Snapshot Spectral Imager (CASSI).
-    - Single Disperser CASSI `(SD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.SD_CASSI.html#colibri_hdsp.optics.cassi.SD_CASSI>`_
-    - Dual Disperser CASSI `(DD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.DD_CASSI.html>`_
-    - Color CASSI `(C-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.cassi.C_CASSI.html>`_
-- Single Pixel Camera `(SPC) <https://pycolibri.github.io/pycolibri/stubs/colibri_hdsp.optics.spc.SPC.html>`_
+    - Single Disperser CASSI `(SD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI>`_
+    - Dual Disperser CASSI `(DD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html>`_
+    - Color CASSI `(C-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html>`_
+- Single Pixel Camera `(SPC) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html>`_
 
 💻️ **Deep Neural Networks**
 

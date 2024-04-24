@@ -12,16 +12,16 @@ class Training:
         self,
         model,
         train_loader,
-        optimizer,
-        loss_func,
-        losses_weights,
-        metrics,
-        regularizers,
-        regularizers_optics_mo,
-        regularization_optics_weights_mo,
-        regularizers_optics_ce,
-        regularization_optics_weights_ce,
-        regularization_weights,
+        optimizer = None,
+        loss_func = {"MSE": torch.nn.MSELoss()},
+        losses_weights = [1.0],
+        metrics = {},
+        regularizers = {},
+        regularizers_optics_mo = {},
+        regularization_optics_weights_mo = {},
+        regularizers_optics_ce = {},
+        regularization_optics_weights_ce = {},
+        regularization_weights = {},
         schedulers=[],
         callbacks=[],
         device="cpu",
@@ -45,6 +45,9 @@ class Training:
         self.train_loader = train_loader
         self.loss_func = loss_func
         self.losses_weights = losses_weights
+
+        if optimizer is None:
+            optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
         self.optimizer = optimizer
         self.metrics = metrics
         self.regularizers = regularizers
