@@ -88,8 +88,8 @@ plt.show()
 
 - Coded Aperture Snapshot Spectral Imager (CASSI).
     - Single Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI)
-    - Dual Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html)
-    - Color CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html)
+    - Dual Disperser CASSI [(DD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html)
+    - Color CASSI [(C-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html)
 - Single Pixel Camera [(SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html)
 
 ### 💻️ Deep Neural Networks
