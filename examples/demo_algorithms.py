@@ -35,7 +35,7 @@ else:
 # %%
 # Load dataset
 # -----------------------------------------------
-from colibri.data.datasets import Dataset
+from colibri.data.datasets_ import Dataset
 
 dataset_path = 'cifar10'
 keys = ''

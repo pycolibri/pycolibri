@@ -1,46 +1,27 @@
-import os
-from PIL import Image
+import torchvision
 
-import numpy as np
-
-
-def get_all_filenames(root_directory):
-    """
-    Get a list of file paths for image files in the specified directory.
-
-    Args:
-        root_directory (str): The root directory to search for image files.
-
-    Returns:
-        list: A list of file paths for image files in the directory, sorted.
-    """
-    file_paths = []
-
-    # Walk through the directory tree using os.walk
-    for root, _, files in os.walk(root_directory):
-        for filename in files:
-            if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.mat')):
-                # Get the full path of the file
-                file_path = os.path.join(root, filename)
-                file_paths.append(file_path)
-
-    file_paths.sort()
-    return file_paths
+BUILTIN_DATASETS = {
+    'mnist': torchvision.datasets.MNIST,
+    'fashion_mnist': torchvision.datasets.FashionMNIST,
+    'cifar10': torchvision.datasets.CIFAR10,
+    'cifar100': torchvision.datasets.CIFAR100
+}
 
 
-def load_image(filename):
-    """
-    Load a jpg, jpeg or png image
+def load_builtin_dataset(path, preprocessing=None, transforms=None):
+    train_dataset = BUILTIN_DATASETS[path](root='data', train=True, download=True, transform=preprocessing)
+    test_dataset = BUILTIN_DATASETS[path](root='data', train=False, download=True, transform=preprocessing)
 
-    Args:
-        filename (str): The filename to be loaded.
+    return train_dataset, test_dataset
 
-    Returns:
-        image (array): The normalized image [0, 1] as numpy array.
-    """
-    image = Image.open(filename)
 
-    if image.mode != 'RGB':
-        image = image.convert('RGB')
+def load_img_dataset(path, preprocessing):
+    pass
 
-    return np.array(image) / 255.
+
+def load_mat_dataset(path, preprocessing):
+    pass
+
+
+def load_h5_dataset(path, preprocessing):
+    pass

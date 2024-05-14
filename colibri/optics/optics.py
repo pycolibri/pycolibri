@@ -23,7 +23,7 @@ class Optics(nn.Module):
         self.regularizers = regularizers
         self.constraints = constraints
 
-        # The following object must be defined in the child class
+        # The following objects must be defined in the child classes
 
         self.optical_elements = None
         self.forward_operator = None
