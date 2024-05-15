@@ -3,7 +3,6 @@ from .utils import include_colibri
 include_colibri()
 
 import torch
-import math
 
 # Reconstruct image
 from colibri.recovery.fista import Fista
