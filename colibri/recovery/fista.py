@@ -48,7 +48,7 @@ class Fista(nn.Module):
         self.algo_params = algo_params
         self.transform = transform
 
-        self.H = lambda x: self.acquistion_model.forward(self.transform.inverse(x))
+        self.H = lambda alpha: self.acquistion_model.forward(self.transform.inverse(alpha))
         self.tol = algo_params["tol"]
 
     def forward(self, y, x0=None, verbose=False):
