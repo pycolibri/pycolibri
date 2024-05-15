@@ -65,3 +65,19 @@ def transfer_function_fresnel(field: torch.Tensor, distance: float, dx: float, w
     U2 = U1 * H
     result = torch.fft.ifftshift(torch.fft.ifftn(torch.fft.ifftshift(U2), dim=(-2, -1)))
     return result
+
+
+def circular_aperture(diameter:int):
+    r'''
+
+
+    Create a circular aperture mask
+    
+    '''
+
+    u = torch.linspace(-diameter // 2, diameter // 2 - 1, diameter)
+    v = torch.linspace(-diameter // 2, diameter // 2 - 1, diameter)
+    [x, y] = torch.meshgrid(u, v, indexing='xy')
+    radius_distance = torch.sqrt(x ** 2 + y ** 2)<=diameter//2
+
+    return radius_distance.float()
