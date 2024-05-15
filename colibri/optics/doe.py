@@ -36,6 +36,17 @@ def get_transfer_function_fresnel_kernel(nu: int,
 
     return H
 
+def fft(field, axis = (-2, -1)):
+    field = torch.fft.fftshift(field, dim=axis)
+    field = torch.fft.fft2(field, dim=axis)
+    field = torch.fft.fftshift(field, dim=axis)
+
+    return field
+def ifft(field, axis = (-2, -1)):
+    field = torch.fft.ifftshift(field, dim=axis)
+    field = torch.fft.ifft2(field, dim=axis)
+    field = torch.fft.ifftshift(field, dim=axis)
+    return field
 
 def transfer_function_fresnel(field: torch.Tensor, distance: float, dx: float, wavelength: list):
     r"""
@@ -61,9 +72,9 @@ def transfer_function_fresnel(field: torch.Tensor, distance: float, dx: float, w
                                              distance, 
                                              field.device)
     
-    U1 = torch.fft.fftshift(torch.fft.fftn(torch.fft.fftshift(field), dim=(-2, -1)))
+    U1 = fft(field)
     U2 = U1 * H
-    result = torch.fft.ifftshift(torch.fft.ifftn(torch.fft.ifftshift(U2), dim=(-2, -1)))
+    result = ifft(U2)
     return result
 
 
