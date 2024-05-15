@@ -1,7 +1,12 @@
 import torch
 
 
-def get_transfer_function_fresnel_kernel(nu, nv, dx=8e-6, wavelengths=[515e-9], distance=0., device=torch.device('cpu')):
+def get_transfer_function_fresnel_kernel(nu: int, 
+                                         nv: int, 
+                                         dx: float, 
+                                         wavelengths: list,
+                                         distance: float, 
+                                         device=torch.device('cpu')):
     r"""
 
     Transfer function for Fresnel propagation.
@@ -31,8 +36,32 @@ def get_transfer_function_fresnel_kernel(nu, nv, dx=8e-6, wavelengths=[515e-9], 
 
     return H
 
-def zero_pad():
-    pass
 
-def transfer_function_fresnel(field, k, distance, dx, wavelength, zero_padding = False, aperture = 1.):
-    pass
+def transfer_function_fresnel(field: torch.Tensor, distance: float, dx: float, wavelength: list):
+    r"""
+
+
+    Convolution Fresnel approximation.
+
+    Args:
+        field (torch.Tensor): Input field. Shape (len(wavelengths), nu, nv).
+        distance (float): Distance in meters.
+        dx (float): Pixel pitch in meters.
+        wavelength (list): List of wavelengths in meters.
+
+    Returns:
+        torch.Tensor: Output field. Shape (len(wavelengths), nu, nv).
+    """
+
+    _, nu, nv = field.shape
+    H = get_transfer_function_fresnel_kernel(nu, 
+                                             nv, 
+                                             dx, 
+                                             wavelength, 
+                                             distance, 
+                                             field.device)
+    
+    U1 = torch.fft.fftshift(torch.fft.fftn(torch.fft.fftshift(field), dim=(-2, -1)))
+    U2 = U1 * H
+    result = torch.fft.ifftshift(torch.fft.ifftn(torch.fft.ifftshift(U2), dim=(-2, -1)))
+    return result
