@@ -1,4 +1,4 @@
-name: Build docs
+name: Run tests
 
 # Runs on pushes targeting the default branch
 on:
@@ -26,4 +26,4 @@ jobs:
           pip install -e .[test]
       - name: run all tests
         run: |
-          pytest test
+          pytest tests
