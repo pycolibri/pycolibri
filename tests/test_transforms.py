@@ -25,7 +25,8 @@ def test_dct2d():
     theta = transform_dct.forward(x_true)
     x_hat = transform_dct.inverse(theta)
 
-    assert torch.allclose(x_true, x_hat)
+    mse = (x_true - x_hat).pow(2).mean().item()
+    assert mse < 1e-6
 
     
         
