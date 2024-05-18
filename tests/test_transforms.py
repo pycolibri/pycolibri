@@ -26,7 +26,7 @@ def test_dct2d():
     x_hat = transform_dct.inverse(theta)
 
     mse = (x_true - x_hat).pow(2).mean().item()
-    assert mse < 1e-6
+    assert mse < 1e-6, f"Mean Squared Error: {mse}"
 
     
         

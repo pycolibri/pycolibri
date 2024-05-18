@@ -61,10 +61,10 @@ def test_fista_algorithm(algo_params):
     x_hat = fista(y, x0=x_trivial)
 
     # Check if the output has the same shape as the input
-    assert x_true.shape == x_hat.shape
+    assert x_true.shape == x_hat.shape, f"Shape of the input: {x_true.shape}, Shape of the output: {x_hat.shape}"
     
     error_trivial = torch.norm(x_true - x_trivial)
     error_algo    = torch.norm(x_true - x_hat)
 
     # Check if the error of the algorithm is smaller than the error of the trivial solution
-    assert error_algo < error_trivial
+    assert error_algo < error_trivial, f"Error of the algorithm: {error_algo}, Error of the trivial solution: {error_trivial}"
