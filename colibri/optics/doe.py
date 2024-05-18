@@ -1,94 +1,98 @@
 import torch
-
-
-def get_transfer_function_fresnel_kernel(nu: int, 
-                                         nv: int, 
-                                         dx: float, 
-                                         wavelengths: list,
-                                         distance: float, 
-                                         device=torch.device('cpu')):
+from functional import psf_single_doe_spectral, convolutional_sensing, weiner_filter
+from sota_does import fresnel_lens
+from utils import BaseOpticsLayer
+class SingleDOESpectral(BaseOpticsLayer):
     r"""
+    Single Diffractive Optical Element for Spectral Imaging 
 
-    Transfer function for Fresnel propagation.
+    in progress
 
-    Args:
-        nu (int): Resolution at X axis in pixels.
-        nv (int): Resolution at Y axis in pixels.
-        dx (float): Pixel pitch in meters.
-        wavelengths (list): List of wavelengths in meters.
-        distance (float): Distance in meters.
-        device (torch.device): Device, for more see torch.device().
-    Returns:
-        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), nu, nv).
     """
 
-    distance = torch.tensor(distance, device=device).unsqueeze(-1).unsqueeze(-1)
-    fx = torch.linspace(-1. / 2. / dx, 1. / 2. / dx, nu, dtype=torch.float32, device=device)
-    fy = torch.linspace(-1. / 2. / dx, 1. / 2. / dx, nv, dtype=torch.float32, device=device)
-    FY, FX = torch.meshgrid(fx, fy, indexing='ij')
+    def __init__(self, input_shape, 
+                        height_map, 
+                        aperture, 
+                        wavelengths, 
+                        source_distance, 
+                        sensor_distance, 
+                        pixel_size,
+                        trainable = False):
+        r"""
+        Initializes the SingleDOESpectral layer.
 
-    FX, FY = FX.unsqueeze(0), FY.unsqueeze(0)  # add a dimension for wavelengths
-
-    wavelengths = torch.tensor(wavelengths, device=device).unsqueeze(-1).unsqueeze(-1)
-    k = 2 * torch.pi / wavelengths
-
-    H = torch.exp(1j * k * distance * (1 - (FX * wavelengths) ** 2 - (FY * wavelengths) ** 2) ** 0.5)
-
-    return H
-
-def fft(field, axis = (-2, -1)):
-    field = torch.fft.fftshift(field, dim=axis)
-    field = torch.fft.fft2(field, dim=axis)
-    field = torch.fft.fftshift(field, dim=axis)
-
-    return field
-def ifft(field, axis = (-2, -1)):
-    field = torch.fft.ifftshift(field, dim=axis)
-    field = torch.fft.ifft2(field, dim=axis)
-    field = torch.fft.ifftshift(field, dim=axis)
-    return field
-
-def transfer_function_fresnel(field: torch.Tensor, distance: float, dx: float, wavelength: list):
-    r"""
+        Args:
+            input_shape (tuple): Tuple, shape of the input image (L, M, N).
+            trainable (bool): Boolean, if True the coded aperture is trainable
+            initial_ca (torch.Tensor): Initial coded aperture with shape (1, 1, M, N)
+        """
+        
+        self.trainable = trainable
+        self.aperture = aperture
+        self.wavelengths = wavelengths
+        self.source_distance = source_distance
+        self.sensor_distance = sensor_distance
+        self.pixel_size = pixel_size
 
 
-    Convolution Fresnel approximation.
+        self.L, self.M, self.N = input_shape  # Extract spectral image shape
 
-    Args:
-        field (torch.Tensor): Input field. Shape (len(wavelengths), nu, nv).
-        distance (float): Distance in meters.
-        dx (float): Pixel pitch in meters.
-        wavelength (list): List of wavelengths in meters.
+        
+        if height_map is None:
+            height_map = fresnel_lens(ny=self.M, nx=self.N, focal=1, radius=1)
+        #Add parameter CA in pytorch manner
+        self.height_map = torch.nn.Parameter(height_map, requires_grad=self.trainable)
 
-    Returns:
-        torch.Tensor: Output field. Shape (len(wavelengths), nu, nv).
-    """
+        super(SingleDOESpectral, self).__init__(learnable_optics=self.height_map, sensing=self.sensing, backward=self.backward)
 
-    _, nu, nv = field.shape
-    H = get_transfer_function_fresnel_kernel(nu, 
-                                             nv, 
-                                             dx, 
-                                             wavelength, 
-                                             distance, 
-                                             field.device)
-    
-    U1 = fft(field)
-    U2 = U1 * H
-    result = ifft(U2)
-    return result
+    def sensing(self, x):
+        r"""
+        Forward operator of the SingleDOESpectral layer.
 
+        Args:
+            x (torch.Tensor): Input tensor with shape (B, L, M, N)
+        Returns:
+            torch.Tensor: Output tensor with shape (B, 1, M, N) 
+        """
 
-def circular_aperture(diameter:int):
-    r'''
+        psf = psf_single_doe_spectral(height_map=self.height_map, 
+                                        aperture=self.aperture, 
+                                        wavelengths=self.wavelengths,
+                                        source_distance=self.source_distance,
+                                        sensor_distance=self.sensor_distance,
+                                        pixel_size=self.pixel_size)
+        
+        return convolutional_sensing(x, psf)
 
+    def backward(self, x):
+        r"""
+        Backward operator of the SingleDOESpectral layer.
 
-    Create a circular aperture mask
-    
-    '''
+        Args:
+            x (torch.Tensor): Input tensor with shape (B, 1, M, N)
+        Returns:
+            torch.Tensor: Output tensor with shape (B, L, M, N) 
+        """
 
-    u = torch.linspace(-diameter // 2, diameter // 2 - 1, diameter)
-    v = torch.linspace(-diameter // 2, diameter // 2 - 1, diameter)
-    [x, y] = torch.meshgrid(u, v, indexing='xy')
-    radius_distance = torch.sqrt(x ** 2 + y ** 2)<=diameter//2
+        psf = psf_single_doe_spectral(height_map=self.height_map, 
+                                        aperture=self.aperture, 
+                                        wavelengths=self.wavelengths,
+                                        source_distance=self.source_distance,
+                                        sensor_distance=self.sensor_distance,
+                                        pixel_size=self.pixel_size)
+        
+        return weiner_filter(x, psf)
+    def forward(self, x, type_calculation="forward"):
+        r"""
+        Performs the forward or backward operator according to the type_calculation
 
-    return radius_distance.float()
+        Args:
+            x (torch.Tensor): Input tensor with shape (B, L, M, N)
+            type_calculation (str): String, it can be "forward", "backward" or "forward_backward"
+        Returns:
+            torch.Tensor: Output tensor with shape (B, L, M, N) 
+        Raises:
+            ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
+        """
+
+        return super(SingleDOESpectral, self).forward(x, type_calculation)
