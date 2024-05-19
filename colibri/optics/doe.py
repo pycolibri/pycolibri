@@ -2,6 +2,7 @@ import torch
 from functional import psf_single_doe_spectral, convolutional_sensing, weiner_filter
 from sota_does import fresnel_lens
 from utils import BaseOpticsLayer
+
 class SingleDOESpectral(BaseOpticsLayer):
     r"""
     Single Diffractive Optical Element for Spectral Imaging 

@@ -1,6 +1,33 @@
 import torch
 import numpy as np
-from functional import get_space_coords, circular_aperture, refractive_index
+from functional import get_space_coords, circular_aperture
+
+def nbk7_refractive_index(wavelength):
+    r"""
+    nbk refractive index at a given wavelength
+    Args:
+        wavelength: Wavelength in meters
+    Returns:
+        val: Refractive index - 1
+    """
+    wavelength_squared = (wavelength * 1e6)**2
+    n_power2_minus_1 = (1.03961212 * wavelength_squared )/(wavelength_squared - 0.00600069867) + (0.231792344 * wavelength_squared) / (wavelength_squared - 0.0200179144) + (1.01046945 * wavelength_squared) / (wavelength_squared - 103.560653)
+    n = np.sqrt(n_power2_minus_1 + 1)
+    return n - 1
+
+def spiral_refractive_index(wavelength):
+    r"""
+    Spiral refractive index at a given wavelength
+    Args:
+        wavelength: Wavelength in meters
+    Returns:
+        val: Refractive index - 1
+    """
+    wavelength = (wavelength * 1e6)
+    IdLens = 1.5375+0.00829045*wavelength**(-2)-0.000211046*wavelength**(-4)
+    val = IdLens-1
+    return val
+
 
 def spiral_doe(ny: int, nx: int, number_spirals: int, radius: float, focal: float, start_w = 450e-9, end_w = 650e-9):
 
@@ -33,7 +60,7 @@ def spiral_doe(ny: int, nx: int, number_spirals: int, radius: float, focal: floa
     lt = start_w + (end_w - start_w) * number_spirals * theta / 2 / torch.pi
     n = torch.true_divide((torch.sqrt(r**2 + focal**2) - focal), lt)  # Constructive interference
     n = torch.ceil(n+1e-6)
-    height_map = (n * lt - (torch.sqrt(r**2 + focal**2) - focal)) / refractive_index(wavelength=lt * 1e6)  # Heights
+    height_map = (n * lt - (torch.sqrt(r**2 + focal**2) - focal)) / spiral_refractive_index(wavelength=lt)  # Heights
     return height_map * aperture, aperture
 
 
