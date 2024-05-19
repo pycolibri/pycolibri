@@ -31,7 +31,7 @@ Spectral Imaging systems
     colibri.optics.cassi.DD_CASSI
     colibri.optics.cassi.C_CASSI
     colibri.optics.spc.SPC
-    colibri.optisc.doe.SingleDOESpectral
+    colibri.optics.doe.SingleDOESpectral
 
 
 Functional operators of the optical systems
