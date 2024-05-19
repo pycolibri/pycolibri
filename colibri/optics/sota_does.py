@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from functional import get_space_coords, circular_aperture
+from colibri.optics.functional import get_space_coords, circular_aperture
 
 def nbk7_refractive_index(wavelength):
     r"""

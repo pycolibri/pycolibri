@@ -461,3 +461,13 @@ def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
     img_fft = img_fft * filter
     img = torch.abs(ifft(img_fft))
     return img
+
+def ideal_panchromatic_sensor(image: torch.Tensor):
+    r"""
+    This function simulates the ideal panchromatic sensor model of an optical system.
+    Args:
+        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
+    Returns:
+        torch.Tensor: Measurement (B, 1, M, N)
+    """
+    return torch.sum(image, dim=1, keepdim=True)/image.shape[1]
