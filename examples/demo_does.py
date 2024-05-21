@@ -101,7 +101,7 @@ else:
     focal = 50e-3
 
     if source_distance == np.inf:
-        source_distance=focal*0.88
+        sensor_distance=focal*0.88
     else:
         sensor_distance= 0.95/(1/(focal) - 1/(source_distance))
     pixel_size = (2*radius_doe)/np.min(wave_resolution)
