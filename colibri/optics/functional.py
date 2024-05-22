@@ -367,7 +367,6 @@ def height2phase(doe: torch.Tensor, wavelengths: torch.Tensor, refractive_index:
     """
     k0 = wave_number(wavelengths)
     phase_doe =  refractive_index(wavelengths) * k0 * doe
-    phase_doe = torch.exp(1j * phase_doe)
     return phase_doe
 
 def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, refractive_index: callable,
@@ -408,7 +407,8 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
                                                             wavelength = wavelengths, 
                                                             approximation = approximation)
     psf = torch.abs(optical_field_in_sensor)**2
-    psf = psf/torch.norm(psf, p=1, dim=(-2, -1), keepdim=True)
+    #psf = psf/torch.norm(psf, p=1, dim=(-2, -1), keepdim=True)
+    psf = psf/torch.sum(psf, dim=(-2, -1), keepdim=True)
     return psf
 
 

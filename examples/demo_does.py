@@ -84,7 +84,7 @@ plt.show()
 
 
 #source_distance = np.inf
-source_distance = 150e-3
+source_distance = 1# meters
 
 
 if type_doe == "spiral":
@@ -97,13 +97,13 @@ if type_doe == "spiral":
     refractive_index = spiral_refractive_index
 
 else:
-    radius_doe =  2.5e-3
+    radius_doe =  0.5e-3#.0e-3
     focal = 50e-3
 
     if source_distance == np.inf:
-        sensor_distance=focal*0.88
+        sensor_distance=focal#0.88
     else:
-        sensor_distance= 0.95/(1/(focal) - 1/(source_distance))
+        sensor_distance= 1/(1/(focal) - 1/(source_distance))
     pixel_size = (2*radius_doe)/np.min(wave_resolution)
     height_map, aperture = fresnel_lens(ny = wave_resolution[0], nx = wave_resolution[1], focal= focal, radius=radius_doe)
     refractive_index = nbk7_refractive_index
@@ -132,20 +132,30 @@ psf = psf_single_doe_spectral(height_map = height_map, aperture=aperture, refrac
                         pixel_size = pixel_size)
 
 
-psf = (psf - psf.min())/(psf.max()-psf.min())
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-ax.imshow(psf.permute(1, 2, 0), cmap="plasma")
+ax.imshow(((psf - psf.min())/(psf.max()-psf.min())).permute(1, 2, 0), cmap="plasma")
 
 
 
-field = convolutional_sensing(sample, psf)
-image = ideal_panchromatic_sensor(convolutional_sensing(sample, psf))
+
+image = convolutional_sensing(sample, psf)
 
 img = make_grid(image, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10,10))
 plt.imshow(img.permute(1, 2, 0))
 plt.title('CIFAR10 imaged')
+plt.axis('off')
+
+
+
+image = ideal_panchromatic_sensor(image)
+
+img = make_grid(image, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+
+plt.figure(figsize=(10,10))
+plt.imshow(img.permute(1, 2, 0))
+plt.title('CIFAR10 imaged pancromatic sensor')
 plt.axis('off')
 
 
@@ -160,13 +170,13 @@ acquisition_model = SingleDOESpectral(input_shape = sample.shape[1:],
                         wavelengths = wavelengths, 
                         source_distance = source_distance, 
                         sensor_distance = sensor_distance, 
+                        sensor_spectral_sensitivity = lambda x: x,
                         pixel_size = pixel_size,
                         trainable = False)
 
 psf = acquisition_model.get_psf()
-psf = (psf - psf.min())/(psf.max()-psf.min())
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-ax.imshow(psf.permute(1, 2, 0), cmap="plasma")
+ax.imshow(((psf - psf.min())/(psf.max()-psf.min())).permute(1, 2, 0), cmap="plasma")
 
 
 
@@ -180,7 +190,14 @@ plt.title('CIFAR10 imaged')
 plt.axis('off')
 
 
-plt.show()
 
+image = ideal_panchromatic_sensor(image)
+
+img = make_grid(image, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+
+plt.figure(figsize=(10,10))
+plt.imshow(img.permute(1, 2, 0))
+plt.title('CIFAR10 imaged pancromatic sensor')
+plt.axis('off')
 
 
