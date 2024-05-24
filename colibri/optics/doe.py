@@ -24,6 +24,8 @@ class SingleDOESpectral(BaseOpticsLayer):
         r"""
         Initializes the SingleDOESpectral layer.
 
+
+
         Args:
             input_shape (tuple): The shape of the input spectral image in the format (L, M, N), where L is the number of spectral bands, M is the height, and N is the width.
             height_map (torch.Tensor): The height map of the DOE (Diffractive Optical Element). If None, a default fresnel lens will be generated.
@@ -68,6 +70,8 @@ class SingleDOESpectral(BaseOpticsLayer):
                                         sensor_distance=self.sensor_distance,
                                         pixel_size=self.pixel_size,
                                         refractive_index=self.refractive_index)
+    
+    
     def forward_convolution(self, x, height_map):
         r"""
         Forward operator of the SingleDOESpectral layer.
@@ -82,6 +86,7 @@ class SingleDOESpectral(BaseOpticsLayer):
         field = convolutional_sensing(x, psf)
         return self.sensor_spectral_sensitivity(field)
 
+
     def deconvolution(self, x, height_map):
         r"""
         Backward operator of the SingleDOESpectral layer.
@@ -95,6 +100,8 @@ class SingleDOESpectral(BaseOpticsLayer):
         psf = self.get_psf(height_map)
         x = self.sensor_spectral_sensitivity(x)
         return weiner_filter(x, psf)
+    
+
     def forward(self, x, type_calculation="forward"):
         r"""
         Performs the forward or backward operator according to the type_calculation

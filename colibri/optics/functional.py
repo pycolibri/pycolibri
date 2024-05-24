@@ -397,11 +397,19 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
                         wavelengths: torch.Tensor, source_distance: float, 
                         sensor_distance:float, pixel_size: float, approximation = "fresnel"):
     r"""
-    This function calculates the PSF of a optical system composed by a DOE for spectral imaging.
+    This function calculates the point spread fucntion (PSF) of an optical system composed by a DOE for spectral imaging.
 
     .. math::
-        U_1(x, y) =  \frac{1}{j\lambda s} e^{-j \frac{k}{2f}(x^2 + y^2)}
+        \begin{aligned}
+            U_1(x, y) &=  \frac{1}{j\lambda s} e^{j \frac{k}{2s}(x^2 + y^2)}\\
+            t(x,y) &= e^{i \Phi_{\text{DOE}}(x,y,\lambda)}\\
+            U_2(x, y) &= U_1(x, y) t(x, y) A(x, y)\\ 
+            \text{PSF} &= U_{\text{FPA}} = |\mathcal{F}^{-1}\left\{ \mathcal{F}\{U_2(x, y)\} H(f_x, f_y, \lambda) \right\} |^2
+        \end{aligned}
 
+    where :math:`U_1(x, y)` is the electric field before the phase mask, represented by the paraxial approximation of a spherical wave, :math:`U_2(x, y)` is the electric field after the phase mask. :math:`t(x, y)` denotes the phase transformation, :math:`A(x, y)` is the amplitude aperture function, and :math:`U_{\text{FPA}}` is the electric field in front of the sensor.
+    
+    
     Args:
         height_map (torch.Tensor): Height map of the DOE.
         aperture (torch.Tensor): Aperture mask.
@@ -477,6 +485,16 @@ def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
     r"""
 
     This function applies the Weiner filter to an image.
+
+    .. math::
+        \begin{aligned}
+            W(u, v) &= \frac{H^*(u, v)}{|H(u, v)|^2 + \alpha} F(u, v)\\
+            F'(u, v) &= F(u, v) W(u, v)\\
+            f'(x, y) &= \mathcal{F}^{-1}\{F'(u, v)\}
+        \end{aligned}
+    where :math:`H(u, v)` is the optical transfer function, :math:`F(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, :math:`W(u, v)` is the Weiner filter and :math:`f'(x, y)` is the filtered image.
+
+
     Args:
         image (torch.Tensor): Image to apply the Weiner filter (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
