@@ -280,6 +280,33 @@ def transfer_function_fresnel(nu: int,
     # return H
 
 
+def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
+    r"""
+
+    The transfer function for the angular spectrum propagation can be written as follows:
+
+    .. math::
+        H(f_x, f_y, \lambda) = e^{\frac{j s 2 \pi}{\lambda} \sqrt{1 - \lambda^2 (f_x^2 + f_y^2)}}
+
+    where :math:`f_x` and :math:`f_y` are the spatial frequencies, :math:`\lambda` is the wavelength, :math:`s` is the distance of propagation and :math:`k` is the wavenumber.
+
+    Args:
+        nu (int): Resolution at X axis in pixels.
+        nv (int): Resolution at Y axis in pixels.
+        pixel_size (float): Pixel pixel_size in meters.
+        wavelengths (torch.Tensor): Wavelengths in meters.
+        distance (float): Distance in meters.
+        device (torch.device): Device, for more see torch.device().
+        type (str): Type of coordinates, can be "cartesian" or "polar".
+    Returns:
+        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), nu, nv).
+    """
+
+    fx, fy = get_space_coords(nv, nu, 1/(nu*pixel_size), device=device, type=type)
+    H = torch.exp(1j *distance * 2 *  torch.pi * 1 / wavelengths) * torch.sqrt(1 - (wavelengths * fx) ** 2 - (wavelengths * fy) ** 2)
+    return H
+
+
 def fft(field: torch.Tensor, axis = (-2, -1)):
     r"""
 

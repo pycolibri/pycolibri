@@ -51,6 +51,7 @@ Functional operators of the optical systems
     colibri.optics.functional.forward_spc
     colibri.optics.functional.backward_spc
     colibri.optics.functional.transfer_function_fresnel   
+    colibri.optics.functional.transfer_function_angular_spectrum
     colibri.optics.functional.fft 
     colibri.optics.functional.ifft    
     colibri.optics.functional.scalar_diffraction_propagation  
