@@ -226,6 +226,7 @@ def get_space_coords(ny: int, nx: int, pixel_size: float, device=torch.device('c
     else:
         return x, y
     
+
 def wave_number(wavelength: torch.Tensor):
     r"""
     Wavenumber of a wave.
@@ -238,6 +239,7 @@ def wave_number(wavelength: torch.Tensor):
     """
     return 2 * torch.pi / wavelength
 
+
 def transfer_function_fresnel(nu: int, 
                             nv: int, 
                             pixel_size: float, 
@@ -246,7 +248,13 @@ def transfer_function_fresnel(nu: int,
                             device=torch.device('cpu')):
     r"""
 
-    Transfer function for Fresnel propagation.
+    The transfer function for the Fresnel propagation can be written as follows:
+
+    .. math::
+        H(f_x, f_y, \lambda) = e^{j k s \sqrt{1 - \lambda^2 (f_x^2 + f_y^2)}}
+
+    where :math:`f_x` and :math:`f_y` are the spatial frequencies, :math:`\lambda` is the wavelength, :math:`s` is the distance of propagation and :math:`k` is the wavenumber.
+
 
     Args:
         nu (int): Resolution at X axis in pixels.
@@ -271,6 +279,7 @@ def transfer_function_fresnel(nu: int,
     # H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - (fr * wavelengths**2)) ** 0.5)
     # return H
 
+
 def fft(field: torch.Tensor, axis = (-2, -1)):
     r"""
 
@@ -287,6 +296,8 @@ def fft(field: torch.Tensor, axis = (-2, -1)):
     field = torch.fft.fftshift(field, dim=axis)
 
     return field
+
+
 def ifft(field: torch.Tensor, axis = (-2, -1)):
     r"""
     
@@ -304,9 +315,17 @@ def ifft(field: torch.Tensor, axis = (-2, -1)):
     field = torch.fft.ifftshift(field, dim=axis)
     return field
 
+
 def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
     r"""
-    Optical field propagation using scalar diffraction theory. For more information see Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
+    The optical field propagation using scalar diffraction theory is given by the following equation: 
+    
+    .. math::
+        U_2(x, y) = \mathcal{F}^{-1}\left\{ \mathcal{F}\{U_1(x, y)\} H(f_x, f_y, \lambda) \right\} 
+    
+    where :math:`U_1(x, y)` is the input field, :math:`U_2(x, y)` is the output field, :math:`H(f_x, f_y, \lambda)` is the transfer function and :math:`\mathcal{F}` is the Fourier transform operator.
+    
+    For more information see Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
     Args:
         field (torch.Tensor): Input field. Shape (len(wavelengths), nu, nv).
         distance (float): Distance in meters.
@@ -350,13 +369,17 @@ def circular_aperture(ny: int, nx: int, radius: float, pixel_size: float):
     r, _ = get_space_coords(ny, nx, pixel_size, type='polar')
     return r<=radius
 
-    
-
 
 def height2phase(doe: torch.Tensor, wavelengths: torch.Tensor, refractive_index: callable):
     r"""
 
     Convert height map to phase modulation.
+
+    .. math::
+
+        \Phi_{\text{DOE}}(x,y,\lambda) = k (n(\lambda) - 1) h(x, y)
+    
+    where :math:`\Phi_{\text{DOE}}` is the phase modulation, :math:`k` is the wavenumber, :math:`n(\lambda)` is the refractive index, :math:`h(x, y)` is the height map.
 
     Args:
         doe (torch.Tensor): Height map.
@@ -369,11 +392,15 @@ def height2phase(doe: torch.Tensor, wavelengths: torch.Tensor, refractive_index:
     phase_doe =  refractive_index(wavelengths) * k0 * doe
     return phase_doe
 
+
 def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, refractive_index: callable,
                         wavelengths: torch.Tensor, source_distance: float, 
                         sensor_distance:float, pixel_size: float, approximation = "fresnel"):
     r"""
     This function calculates the PSF of a optical system composed by a DOE for spectral imaging.
+
+    .. math::
+        U_1(x, y) =  \frac{1}{j\lambda s} e^{-j \frac{k}{2f}(x^2 + y^2)}
 
     Args:
         height_map (torch.Tensor): Height map of the DOE.
@@ -428,6 +455,7 @@ def addGaussianNoise(y: torch.Tensor, snr: float):
     noise = torch.randn_like(y) * torch.sqrt(sigma_per_channel)
     return y+noise
 
+
 def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor):
     r"""
     This function simulates the convolutional sensing model of an optical system.
@@ -443,6 +471,7 @@ def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor):
     img_fft = img_fft * otf
     img = torch.abs(ifft(img_fft))
     return img
+
 
 def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
     r"""
@@ -461,6 +490,7 @@ def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
     img_fft = img_fft * filter
     img = torch.abs(ifft(img_fft))
     return img
+
 
 def ideal_panchromatic_sensor(image: torch.Tensor):
     r"""
