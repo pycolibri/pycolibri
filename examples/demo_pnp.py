@@ -80,7 +80,7 @@ acquisition_config = dict(
 )
 
 if acquisition_name == 'spc':
-    n_measurements  = 25**2 
+    n_measurements  = 31**2 
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
@@ -94,28 +94,28 @@ acquisition_model = {
 y = acquisition_model(sample)
 
 # Reconstruct image
-from colibri.recovery.fista import Fista
+from colibri.recovery.pnp import PnP
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
 from colibri.recovery.transforms import DCT2D
 
 algo_params = {
-    'max_iter': 200,
+    'max_iters': 200,
+    '_lambda': 0.01,
+    'rho': 0.1,
     'alpha': 1e-4,
-    'lambda': 0.001,
-    'tol': 1e-3
 }
 
 
 
-fidelity = L2()
-prior = Sparsity()
+fidelity  = L2()
+prior     = Sparsity()
 transform = DCT2D()
 
-fista = Fista(fidelity, prior, acquisition_model, algo_params, transform)
+pnp = PnP(fidelity, prior, acquisition_model, transform, **algo_params)
 
 x0 = acquisition_model.forward(y, type_calculation="backward")
-x_hat = fista(y, x0=x0 ) 
+x_hat = pnp(y, x0=x0 ) 
 
 print(x_hat.shape)
 
