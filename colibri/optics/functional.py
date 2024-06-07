@@ -491,9 +491,10 @@ def addGaussianNoise(y: torch.Tensor, snr: float):
     return y+noise
 
 
-def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor):
+
+def fourier_conv(image: torch.Tensor, psf: torch.Tensor):
     r"""
-    This function simulates the convolutional sensing model of an optical system.
+    This function applies the Fourier Convolution Theorem to an image.
     Args:
         image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
@@ -501,11 +502,98 @@ def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor):
         torch.Tensor: Measurement (B, 1, M, N)
 
     """
+    # Fix psf and image size
+    psf_size = psf.shape[-2:]
+    image_size = image.shape[-2:]
+    extra_size = [(psf_size[i]-image_size[i]) for i in range(len(image_size))]
+    if extra_size[0] < 0 or extra_size[1] < 0:
+        #pad psf
+        psf = add_pad(psf, [0, -extra_size[0]//2, -extra_size[1]//2])
+    else:
+        #psf = unpad(psf, [0, 0, extra_size[0]//2, extra_size[1]//2])
+        image = add_pad(image, [0, 0, extra_size[0]//2, extra_size[1]//2])
+
     img_fft = fft(image)
     otf = fft(psf)
     img_fft = img_fft * otf
     img = torch.abs(ifft(img_fft))
+    if not(extra_size[0] < 0 or extra_size[1] < 0):
+        img = unpad(img, pad = [0, 0, extra_size[0]//2, extra_size[1]//2])
     return img
+
+def add_pad(x, pad):
+    r"""
+    
+    Args:
+        x (torch.Tensor): Tensor to pad
+        pad int:  padding to ad
+    Returns:
+        x (torch.Tensor): Padded tensor
+    """
+    assert len(x.shape) == len(pad), "The tensor and the padding must have the same number of dimensions"
+
+    pad_list = sum([[pa, pa] for pa in pad][::-1], [])
+    return torch.nn.functional.pad(x, pad_list, mode='constant', value=0)
+
+def unpad(x, pad):
+    r"""
+    Args:
+        x (torch.Tensor): Tensor to unpad
+        pad int:  padding to remove
+    Returns:
+        x (torch.Tensor): Unpadded tensor
+    """
+    assert len(x.shape) == len(pad), "The tensor and the padding must have the same number of dimensions"
+    if len(x.shape) ==4:
+        return x[(0+pad[0]):(x.shape[0] - pad[0]), (0+pad[1]):(x.shape[1] - pad[1]), (0+pad[2]):(x.shape[2] - pad[2]), (0+pad[3]):(x.shape[3] - pad[3])]
+    elif len(x.shape) ==3:
+        return x[(0+pad[0]):(x.shape[0] - pad[0]), (0+pad[1]):(x.shape[1] - pad[1]), (0+pad[2]):(x.shape[2] - pad[2])]
+    elif len(x.shape) ==2:
+        return x[(0+pad[0]):(x.shape[0] - pad[0]), (0+pad[1]):(x.shape[1] - pad[1])]
+    else:
+        raise ValueError("The tensor must have 3 or 4 dimensions")
+    
+
+def signal_conv(image: torch.Tensor, psf: torch.Tensor):
+    r"""
+    This function applies the convolution of an image with a Point Spread Function (PSF).
+    Args:
+        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
+        psf (torch.Tensor): Point Spread Function (1, L, M, N)
+    Returns:
+        torch.Tensor: Measurement (B, 1, M, N)
+
+    """
+    original_size = image.shape[-2:]
+    psf = psf.unsqueeze(1)
+    C, _, _, Nx = psf.shape
+    image = torch.nn.functional.conv2d(image, torch.flip(psf, [-2, -1]), padding=(Nx-1, Nx-1), groups=C)
+
+    new_size = image.shape[-2:]
+    image = unpad(image, pad = [0, 0, (new_size[0]-original_size[0])//2, (new_size[1]-original_size[1])//2])
+    # if image.shape!=original_size:
+    #     image = image[..., :-(image.shape[-2]-original_size[0]), :-(image.shape[-1]-original_size[1])]
+    return image
+
+def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor, domain='fourier'):
+    r"""
+    This function simulates the convolutional sensing model of an optical system 
+    Args:
+        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
+        psf (torch.Tensor): Point Spread Function (1, L, M, N)
+        domain (str): Domain to apply the convolution, can be 'fourier' or 'signal'
+    Returns:
+        torch.Tensor: Measurement (B, 1, M, N)
+    Raises:
+        NotImplementedError: If the domain is not 'fourier' or 'signal'
+
+    """
+    if domain == 'fourier':
+        return fourier_conv(image, psf)
+    elif domain == 'signal':
+        return signal_conv(image, psf)
+    else:
+        raise NotImplementedError(f"{domain} domain is not implemented")
 
 
 def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):

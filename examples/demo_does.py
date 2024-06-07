@@ -13,8 +13,10 @@ In progress...
 # Select Working Directory and Device
 # -----------------------------------------------
 
-import os 
-os.chdir(os.path.dirname(os.getcwd()))
+import os,sys
+#os.chdir(os.path.dirname(os.getcwd()))
+#os.chdir("colibri")
+sys.path.append(os.getcwd())
 print("Current Working Directory " , os.getcwd())
 
 
@@ -24,7 +26,7 @@ import matplotlib.pyplot as plt
 from colibri.optics.functional import psf_single_doe_spectral, convolutional_sensing, ideal_panchromatic_sensor
 from colibri.optics.sota_does import spiral_doe, fresnel_lens, spiral_refractive_index, nbk7_refractive_index
 from colibri.optics import SingleDOESpectral
-
+from colibri import seed_everything
 
 
 
@@ -32,10 +34,12 @@ from colibri.optics import SingleDOESpectral
 import matplotlib.pyplot as plt
 import torch
 import os
-
+seed_everything()
 manual_device = "cpu"
-wave_resolution=(1000, 1000)
-type_doe = "fresnel" # spiral, fresnel_lens
+doe_size=(1000, 1000)
+img_size=(100, 100)
+type_doe = "spiral" # spiral, fresnel_lens
+convolution_domain = "fourier" # signal, fourier
 wavelengths=torch.Tensor([450, 550, 650])*1e-9
 
 # Check GPU support
@@ -65,7 +69,7 @@ import torchvision
 
 sample = next(iter(dataset.train_dataset))[0]
 
-sample = torchvision.transforms.functional.resize(sample, wave_resolution)
+sample = torchvision.transforms.functional.resize(sample, img_size)
 img = make_grid(sample, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10,10))
@@ -84,14 +88,14 @@ plt.show()
 
 
 #source_distance = np.inf
-source_distance = 1# meters
+source_distance = 100e-3# meters
 
 
 if type_doe == "spiral":
     radius_doe = 0.5e-3
     sensor_distance=50e-3
-    pixel_size = (2*radius_doe)/np.min(wave_resolution)
-    height_map, aperture = spiral_doe(ny = wave_resolution[0], nx = wave_resolution[1], 
+    pixel_size = (2*radius_doe)/np.min(doe_size)
+    height_map, aperture = spiral_doe(ny = doe_size[0], nx = doe_size[1], 
                     number_spirals = 3, radius = radius_doe, 
                     focal = 50e-3, start_w = 450e-9, end_w = 650e-9)
     refractive_index = spiral_refractive_index
@@ -104,8 +108,8 @@ else:
         sensor_distance=focal#0.88
     else:
         sensor_distance= 1/(1/(focal) - 1/(source_distance))
-    pixel_size = (2*radius_doe)/np.min(wave_resolution)
-    height_map, aperture = fresnel_lens(ny = wave_resolution[0], nx = wave_resolution[1], focal= focal, radius=radius_doe)
+    pixel_size = (2*radius_doe)/np.min(doe_size)
+    height_map, aperture = fresnel_lens(ny = doe_size[0], nx = doe_size[1], focal= focal, radius=radius_doe)
     refractive_index = nbk7_refractive_index
 
 
@@ -138,7 +142,7 @@ ax.imshow(((psf - psf.min())/(psf.max()-psf.min())).permute(1, 2, 0), cmap="plas
 
 
 
-image = convolutional_sensing(sample, psf)
+image = convolutional_sensing(sample, psf, domain=convolution_domain)
 
 img = make_grid(image, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
@@ -147,7 +151,7 @@ plt.imshow(img.permute(1, 2, 0))
 plt.title('CIFAR10 imaged')
 plt.axis('off')
 
-
+plt.show()
 
 image = ideal_panchromatic_sensor(image)
 
