@@ -268,16 +268,8 @@ def transfer_function_fresnel(nu: int,
     """
     fr,_ = get_space_coords(nv, nu, 1/(nu*pixel_size), device=device, type='polar')
     fr = fr.unsqueeze(0)
-    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * wavelengths**2)) ** 0.5)
+    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * (wavelengths**2)/2)) )
     return H
-
-#     fx = torch.linspace(-1. / 2. / pixel_size, 1. / 2. / pixel_size, nu, dtype=torch.float32, device=device)
-    # fy = torch.linspace(-1. / 2. / pixel_size, 1. / 2. / pixel_size, nv, dtype=torch.float32, device=device)
-    # FY, FX = torch.meshgrid(fx, fy, indexing='ij')
-    # fr =FX ** 2 + FY ** 2
-    # fr = fr.unsqueeze(0)
-    # H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - (fr * wavelengths**2)) ** 0.5)
-    # return H
 
 
 def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
@@ -302,8 +294,10 @@ def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wave
         torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), nu, nv).
     """
 
-    fx, fy = get_space_coords(nv, nu, 1/(nu*pixel_size), device=device, type=type)
-    H = torch.exp(1j *distance * 2 *  torch.pi * 1 / wavelengths) * torch.sqrt(1 - (wavelengths * fx) ** 2 - (wavelengths * fy) ** 2)
+    fr,_ = get_space_coords(nv, nu, 1/(nu*pixel_size), device=device, type='polar')
+    fr = fr.unsqueeze(0)
+    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * wavelengths**2)) ** 0.5)
+
     return H
 
 
@@ -364,13 +358,22 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     """
 
     _, nu, nv = field.shape
+    print("#"*10, approximation)
     if approximation == "fresnel":
+        
         H = transfer_function_fresnel(nu, 
                                     nv, 
                                     pixel_size, 
                                     wavelength, 
                                     distance, 
                                     field.device)
+    elif approximation == "angular_spectrum":
+        H = transfer_function_angular_spectrum(nu, 
+                                            nv, 
+                                            pixel_size, 
+                                            wavelength, 
+                                            distance, 
+                                            field.device)
     else:
         raise NotImplementedError(f"{approximation} approximation is implemented")
     

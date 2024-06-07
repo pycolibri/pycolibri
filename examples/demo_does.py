@@ -14,10 +14,10 @@ In progress...
 # -----------------------------------------------
 
 import os,sys
-#os.chdir(os.path.dirname(os.getcwd()))
-#os.chdir("colibri")
-sys.path.append(os.getcwd())
+os.chdir(os.path.dirname(os.getcwd()))
+#sys.path.append(os.getcwd())
 print("Current Working Directory " , os.getcwd())
+
 
 
 import torch
@@ -36,10 +36,11 @@ import torch
 import os
 seed_everything()
 manual_device = "cpu"
-doe_size=(1000, 1000)
-img_size=(100, 100)
+doe_size=(100, 100)
+img_size=(1000, 1000)
 type_doe = "spiral" # spiral, fresnel_lens
 convolution_domain = "fourier" # signal, fourier
+type_wave_propagation = "fresnel" # fresnel, angular_spectrum, fraunhofer
 wavelengths=torch.Tensor([450, 550, 650])*1e-9
 
 # Check GPU support
@@ -88,7 +89,7 @@ plt.show()
 
 
 #source_distance = np.inf
-source_distance = 100e-3# meters
+source_distance = 1# meters
 
 
 if type_doe == "spiral":
@@ -133,7 +134,7 @@ psf = psf_single_doe_spectral(height_map = height_map, aperture=aperture, refrac
                         wavelengths = wavelengths, 
                         source_distance = source_distance, 
                         sensor_distance = sensor_distance, 
-                        pixel_size = pixel_size)
+                        pixel_size = pixel_size, approximation = type_wave_propagation)
 
 
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
@@ -176,6 +177,9 @@ acquisition_model = SingleDOESpectral(input_shape = sample.shape[1:],
                         sensor_distance = sensor_distance, 
                         sensor_spectral_sensitivity = lambda x: x,
                         pixel_size = pixel_size,
+                        doe_refractive_index = refractive_index,
+                        approximation = type_wave_propagation,
+                        domain = convolution_domain,
                         trainable = False)
 
 psf = acquisition_model.get_psf()

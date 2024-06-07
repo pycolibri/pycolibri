@@ -20,6 +20,8 @@ class SingleDOESpectral(BaseOpticsLayer):
                         pixel_size,
                         sensor_spectral_sensitivity=ideal_panchromatic_sensor,
                         doe_refractive_index = None,
+                        approximation = "fresnel",
+                        domain = "fourier",
                         trainable = False):
         r"""
         Initializes the SingleDOESpectral layer.
@@ -36,6 +38,8 @@ class SingleDOESpectral(BaseOpticsLayer):
             pixel_size (float): The size of a pixel in the sensor.
             sensor_spectral_sensitivity (torch.Tensor, optional): The spectral sensitivity of the sensor. Defaults to ideal_panchromatic_sensor.
             doe_refractive_index (float, optional): The refractive index of the DOE. Defaults to None.
+            approximation (str, optional): The approximation used to calculate the PSF. It can be "fresnel", "angular_spectrum" or "fraunhofer". Defaults to "fresnel".
+            domain (str, optional): The domain used to calculate the PSF. It can be "fourier" or "spatial". Defaults to "fourier".
             trainable (bool, optional): Whether the height map of the DOE is trainable or not. Defaults to False.
         """
         
@@ -47,6 +51,9 @@ class SingleDOESpectral(BaseOpticsLayer):
         self.source_distance = source_distance
         self.sensor_distance = sensor_distance
         self.pixel_size = pixel_size
+        self.approximation = approximation
+        self.domain = domain
+
         self.refractive_index = nbk7_refractive_index if doe_refractive_index is None else doe_refractive_index
 
 
@@ -69,7 +76,8 @@ class SingleDOESpectral(BaseOpticsLayer):
                                         source_distance=self.source_distance,
                                         sensor_distance=self.sensor_distance,
                                         pixel_size=self.pixel_size,
-                                        refractive_index=self.refractive_index)
+                                        refractive_index=self.refractive_index,
+                                        approximation=self.approximation)
     
     
     def forward_convolution(self, x, height_map):
@@ -83,7 +91,7 @@ class SingleDOESpectral(BaseOpticsLayer):
         """
 
         psf = self.get_psf(height_map)
-        field = convolutional_sensing(x, psf)
+        field = convolutional_sensing(x, psf, domain=self.domain)
         return self.sensor_spectral_sensitivity(field)
 
 
