@@ -301,6 +301,29 @@ def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wave
     return H
 
 
+def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
+
+
+    r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
+    r = r.unsqueeze(0)
+    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * r**2)
+    c = c.to(device=device)
+    result =  c * fft(field)
+
+    return result
+
+
+def fraunhofer_inverse_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
+
+    r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
+    r = r.unsqueeze(0)
+    c = torch.exp(-1j * wave_number(wavelengths) * distance) * torch.exp(-1j * wave_number(wavelengths) / (2 * distance) * r**2)
+    c = c.to(device=device)
+    result =  ifft(field / c)
+
+    return result
+
+
 def fft(field: torch.Tensor, axis = (-2, -1)):
     r"""
 
@@ -374,6 +397,25 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
                                             wavelength, 
                                             distance, 
                                             field.device)
+        
+    elif approximation == "fraunhofer":
+        return fraunhofer_propagation(field, 
+                                      nu, 
+                                      nv, 
+                                      pixel_size, 
+                                      wavelength, 
+                                      distance, 
+                                      field.device)
+
+    elif approximation == "fraunhofer_inverse":
+        return fraunhofer_inverse_propagation(field,
+                                            nu,
+                                            nv,
+                                            pixel_size,
+                                            wavelength,
+                                            distance,
+                                            field.device)
+
     else:
         raise NotImplementedError(f"{approximation} approximation is implemented")
     
