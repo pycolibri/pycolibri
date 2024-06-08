@@ -251,7 +251,7 @@ def transfer_function_fresnel(nu: int,
     The transfer function for the Fresnel propagation can be written as follows:
 
     .. math::
-        H(f_x, f_y, \lambda) = e^{j k s \sqrt{1 - \lambda^2 (f_x^2 + f_y^2)}}
+        H(f_x, f_y, \lambda) = e^{j k s \left(1 - \frac{\lambda^2}{2} (f_x^2 + f_y^2)\right)}
 
     where :math:`f_x` and :math:`f_y` are the spatial frequencies, :math:`\lambda` is the wavelength, :math:`s` is the distance of propagation and :math:`k` is the wavenumber.
 
