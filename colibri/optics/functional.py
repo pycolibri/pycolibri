@@ -306,9 +306,9 @@ def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: fl
 
     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
-    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * r**2)
+    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * (r**2))
     c = c.to(device=device)
-    result =  c * fft(field)
+    result =  fft(field) * c * pixel_size**2
 
     return result
 
@@ -319,7 +319,7 @@ def fraunhofer_inverse_propagation(field: torch.Tensor, nu: int, nv: int, pixel_
     r = r.unsqueeze(0)
     c = torch.exp(-1j * wave_number(wavelengths) * distance) * torch.exp(-1j * wave_number(wavelengths) / (2 * distance) * r**2)
     c = c.to(device=device)
-    result =  ifft(field / c)
+    result =  ifft(field / pixel_size**2 / c)
 
     return result
 
