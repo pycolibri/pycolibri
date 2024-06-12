@@ -89,7 +89,10 @@ plt.show()
 
 
 #source_distance = np.inf
-source_distance = 1# meters
+if type_wave_propagation == "fraunhofer":
+    source_distance = np.inf
+else:
+    source_distance = 1# meters
 
 
 if type_doe == "spiral":
