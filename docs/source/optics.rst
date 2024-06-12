@@ -50,14 +50,12 @@ Functional operators of the optical systems
     colibri.optics.functional.backward_sd_cassi
     colibri.optics.functional.forward_spc
     colibri.optics.functional.backward_spc
-    colibri.optics.functional.transfer_function_fresnel   
-    colibri.optics.functional.transfer_function_angular_spectrum
-    colibri.optics.functional.fft 
-    colibri.optics.functional.ifft    
-    colibri.optics.functional.scalar_diffraction_propagation  
     colibri.optics.functional.psf_single_doe_spectral 
     colibri.optics.functional.convolutional_sensing   
-    colibri.optics.functional.weiner_filter    
+    colibri.optics.functional.fourier_conv
+    colibri.optics.functional.signal_conv
+    colibri.optics.functional.weiner_filter     
+    colibri.optics.functional.addGaussianNoise  
 
 Functional operators of optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +70,20 @@ Functional operators of optical elements
     colibri.optics.functional.height2phase    
     colibri.optics.functional.ideal_panchromatic_sensor  
     colibri.optics.functional.wave_number 
-    colibri.optics.functional.get_space_coords   
-    colibri.optics.functional.addGaussianNoise    
+    colibri.optics.functional.get_space_coords    
+
+Functional operators of light propagation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.optics.functional.scalar_diffraction_propagation
+    colibri.optics.functional.transfer_function_angular_spectrum    
+    colibri.optics.functional.transfer_function_fresnel
+    colibri.optics.functional.fraunhofer_propagation
+
 
 

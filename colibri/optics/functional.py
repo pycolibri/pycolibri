@@ -201,7 +201,7 @@ def backward_spc(y, H):
 
 def get_space_coords(ny: int, nx: int, pixel_size: float, device=torch.device('cpu'), type='cartesian'):
     r"""
-
+    [TO DOCUMMENT]
     Space coordinates used in wave optics propagations.
         
     Args:
@@ -229,11 +229,14 @@ def get_space_coords(ny: int, nx: int, pixel_size: float, device=torch.device('c
 
 def wave_number(wavelength: torch.Tensor):
     r"""
-    Wavenumber of a wave.
-    fraunhofer_inverse_propagation
+    Wavenumber 
+    
+    .. math::
+        k = \frac{2 \pi}{\lambda}
+    
+    where :math:`\lambda` is the wavelength.
     Args:
         wavelength (torch.Tensor): Wavelength in meters.
-
     Returns:
         torch.Tensor: Wavenumber.
     """
@@ -368,6 +371,7 @@ def ifft(field: torch.Tensor, axis = (-2, -1)):
 
 def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
     r"""
+    [TO IMPROVE]
     The optical field propagation using scalar diffraction theory is given by the following equation: 
     
     .. math::
@@ -376,6 +380,7 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     where :math:`U_1(x, y)` is the input field, :math:`U_2(x, y)` is the output field, :math:`H(f_x, f_y, \lambda)` is the transfer function and :math:`\mathcal{F}` is the Fourier transform operator.
     
     For more information see Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
+
     Args:
         field (torch.Tensor): Input field. Shape (len(wavelengths), nu, nv).
         distance (float): Distance in meters.
@@ -448,26 +453,26 @@ def circular_aperture(ny: int, nx: int, radius: float, pixel_size: float):
     return r<=radius
 
 
-def height2phase(doe: torch.Tensor, wavelengths: torch.Tensor, refractive_index: callable):
+def height2phase(height_map: torch.Tensor, wavelengths: torch.Tensor, refractive_index: callable):
     r"""
 
     Convert height map to phase modulation.
 
     .. math::
 
-        \Phi_{\text{DOE}}(x,y,\lambda) = k (n(\lambda) - 1) h(x, y)
+        \Phi(x,y,\lambda) = k(\lambda) \Delta n(\lambda) h(x, y)
     
-    where :math:`\Phi_{\text{DOE}}` is the phase modulation, :math:`k` is the wavenumber, :math:`n(\lambda)` is the refractive index, :math:`h(x, y)` is the height map.
+    where :math:`\Phi` is the phase modulation,  :math:`h(x, y)` is the height map of the optical element, :math:`k(\lambda)` is the wavenumber for \lambda wavelength and :math:`\Delta n(\lambda)` is the change of refractive index between propagation medium and material of the optical element .
 
     Args:
-        doe (torch.Tensor): Height map.
+        height_map (torch.Tensor): Height map.
         wavelengths (torch.Tensor): Wavelengths in meters.
         refractive_index (function): Function to calculate the refractive index.
     Returns:
-    torch.Tensor: Phase.    
+        torch.Tensor: Phase.    
     """
     k0 = wave_number(wavelengths)
-    phase_doe =  refractive_index(wavelengths) * k0 * doe
+    phase_doe =  refractive_index(wavelengths) * k0 * height_map
     return phase_doe
 
 
@@ -476,7 +481,7 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
                         sensor_distance:float, pixel_size: float, approximation = "fresnel"):
     r"""
     This function calculates the point spread fucntion (PSF) of an optical system composed by a DOE for spectral imaging.
-
+    [TO IMPROVE]
     .. math::
         \begin{aligned}
             U_1(x, y) &=  \frac{1}{j\lambda s} e^{j \frac{k}{2s}(x^2 + y^2)}\\
@@ -505,7 +510,7 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
     ny, nx = height_map.shape
     wavelengths = wavelengths.unsqueeze(1).unsqueeze(2)
     k0 = wave_number(wavelengths)
-    doe = height2phase(doe = torch.unsqueeze(height_map, 0), wavelengths = wavelengths, refractive_index = refractive_index)
+    doe = height2phase(height_map = torch.unsqueeze(height_map, 0), wavelengths = wavelengths, refractive_index = refractive_index)
     doe = torch.exp(1j * doe*aperture)*aperture
     optical_field = torch.ones_like(doe)
     if not(np.isinf(source_distance) or np.isnan(source_distance)):
@@ -674,6 +679,7 @@ def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
 
 def ideal_panchromatic_sensor(image: torch.Tensor):
     r"""
+    [TO DOCUMMENT]
     This function simulates the ideal panchromatic sensor model of an optical system.
     Args:
         image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
