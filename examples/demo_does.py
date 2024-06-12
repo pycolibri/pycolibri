@@ -37,10 +37,10 @@ import os
 seed_everything()
 manual_device = "cpu"
 doe_size=(100, 100)
-img_size=(1000, 1000)
-type_doe = "spiral" # spiral, fresnel_lens
+img_size=(200, 200)
+type_doe = "fresnel_lens" # spiral, fresnel_lens
 convolution_domain = "fourier" # signal, fourier
-type_wave_propagation = "fresnel" # fresnel, angular_spectrum, fraunhofer
+type_wave_propagation = "angular_spectrum" # fresnel, angular_spectrum, fraunhofer
 wavelengths=torch.Tensor([450, 550, 650])*1e-9
 
 # Check GPU support

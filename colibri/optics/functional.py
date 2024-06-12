@@ -175,7 +175,7 @@ def forward_spc(x, H):
 def backward_spc(y, H):
     r"""
 
-    Inverse operation to reconsstruct the image from measurements.
+    Inverse operation to reconstruct the image from measurements.
 
     For more information refer to: Optimized Sensing Matrix for Single Pixel Multi-Resolution Compressive Spectral Imaging  10.1109/TIP.2020.2971150
 
@@ -230,7 +230,7 @@ def get_space_coords(ny: int, nx: int, pixel_size: float, device=torch.device('c
 def wave_number(wavelength: torch.Tensor):
     r"""
     Wavenumber of a wave.
-
+    fraunhofer_inverse_propagation
     Args:
         wavelength (torch.Tensor): Wavelength in meters.
 
@@ -303,7 +303,9 @@ def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wave
 
 def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
 
-
+    r"""
+    [TO DOCUMMENT]
+    """
     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
     c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * (r**2))
@@ -314,6 +316,10 @@ def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: fl
 
 
 def fraunhofer_inverse_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
+    r"""
+    [TO DOCUMMENT]
+    [TO Delete]
+    """
 
     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
@@ -428,7 +434,7 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
 
 def circular_aperture(ny: int, nx: int, radius: float, pixel_size: float):
     r'''
-
+    [TO DOCUMMENT]
     Create a circular aperture mask of a given radius and pixel_size of size (ny, nx).
     
     Args:
@@ -514,14 +520,13 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
                                                             wavelength = wavelengths, 
                                                             approximation = approximation)
     psf = torch.abs(optical_field_in_sensor)**2
-    #psf = psf/torch.norm(psf, p=1, dim=(-2, -1), keepdim=True)
     psf = psf/torch.sum(psf, dim=(-2, -1), keepdim=True)
     return psf
 
 
 def addGaussianNoise(y: torch.Tensor, snr: float):
     r"""
-
+    [TO DOCUMMENT]
     This function adds gaussian noise to an image
     y_noisy = x + noise
     Args:
@@ -540,6 +545,7 @@ def addGaussianNoise(y: torch.Tensor, snr: float):
 def fourier_conv(image: torch.Tensor, psf: torch.Tensor):
     r"""
     This function applies the Fourier Convolution Theorem to an image.
+    [TO DOCUMMENT]
     Args:
         image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
@@ -552,10 +558,8 @@ def fourier_conv(image: torch.Tensor, psf: torch.Tensor):
     image_size = image.shape[-2:]
     extra_size = [(psf_size[i]-image_size[i]) for i in range(len(image_size))]
     if extra_size[0] < 0 or extra_size[1] < 0:
-        #pad psf
         psf = add_pad(psf, [0, -extra_size[0]//2, -extra_size[1]//2])
     else:
-        #psf = unpad(psf, [0, 0, extra_size[0]//2, extra_size[1]//2])
         image = add_pad(image, [0, 0, extra_size[0]//2, extra_size[1]//2])
 
     img_fft = fft(image)
@@ -568,7 +572,6 @@ def fourier_conv(image: torch.Tensor, psf: torch.Tensor):
 
 def add_pad(x, pad):
     r"""
-    
     Args:
         x (torch.Tensor): Tensor to pad
         pad int:  padding to ad
@@ -616,13 +619,12 @@ def signal_conv(image: torch.Tensor, psf: torch.Tensor):
 
     new_size = image.shape[-2:]
     image = unpad(image, pad = [0, 0, (new_size[0]-original_size[0])//2, (new_size[1]-original_size[1])//2])
-    # if image.shape!=original_size:
-    #     image = image[..., :-(image.shape[-2]-original_size[0]), :-(image.shape[-1]-original_size[1])]
     return image
 
 def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor, domain='fourier'):
     r"""
     This function simulates the convolutional sensing model of an optical system 
+    [TO DOCUMMENT]
     Args:
         image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
