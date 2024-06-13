@@ -13,26 +13,27 @@ class SPCSolver(Solver):
 
         .. math::
             
-                \min_{X} \frac{1}{2}||Y - HX||_2^2 + \rho||X - xtilde||_2^2
+                \min_{\textbf{X}} \frac{1}{2}||\textbf{X} - \textbf{H}\textbf{X}||_2^2 + \rho||\textbf{X} - \tilde{\textbf{X}}||_2^2
 
-        where :math:`X` is the tensor to be recovered, :math:`Y` is the input tensor, 
-        :math:`H` is the sensing matrix, and :math:`\rho` is the regularization parameter.
+        where :math:`\textbf{X}` is the tensor to be recovered, :math:`\textbf{Y}` is the input tensor, 
+        :math:`\textbf{H}` is the sensing matrix, and :math:`\rho` is the regularization parameter.
 
-        in the case of the SPC acquisition model, the :math:`X` is a matrix of size :math:`(h*w, c)`,
+        in the case of the SPC acquisition model, the :math:`\textbf{X}` is a matrix of size :math:`(h*w, c)`,
         where :math:`h` and :math:`w` are the height and width of the image, and :math:`c` is the number of channels.
 
-        In this case :math:`X` is the spatial vectorized form of the image. 
+        In this sense, :math:`\textbf{X}` is the spatial vectorized form of the image. 
         (since the SPC its broadcasting the sensing matrix over the channels)
 
         The solution of the optimization problem is given by:
 
         .. math::
                 
-                    \hat{X} = (H^TH + \rho I)^{-1}(H^Ty + \rho xtilde)
+                    \hat{\textbf{X}} = (\textbf{H}^\top\textbf{H} + \rho \textbf{I})^{-1}(\textbf{H}^\top \textbf{Y} + \rho \tilde{\textbf{X}})
 
     """
 
     def __init__(self, y, acquisition_model: SPC):
+
 
         super(SPCSolver, self).__init__(y, acquisition_model)
 

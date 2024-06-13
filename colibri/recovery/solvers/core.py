@@ -32,13 +32,13 @@ class LinearSolver(Solver):
 
         .. math::
 
-            \min_{x} \frac{1}{2}||y - Hx||_2^2 + \rho||x - xtilde||_2^2
+            \min_{\textbf{x}} \frac{1}{2}||\textbf{y} - \textbf{H}\textbf{x}||_2^2 + \rho||\textbf{x} - \tilde{\textbf{x}}||_2^2
 
         which has the following solution:
 
         .. math::
             
-                \hat{X} = (H^TH + \rho I)^{-1}(H^Ty + \rho xtilde)    
+                \hat{\textbf{x}} = (\textbf{H}^\top\textbf{H} + \rho \textbf{I})^{-1}(\textbf{H}^\top\textbf{y} + \rho \tilde{\textbf{x}})    
 
     """
 
