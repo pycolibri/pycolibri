@@ -38,7 +38,7 @@ class LinearSolver(Solver):
 
         .. math::
             
-                x = (H^TH + \rho I)^{-1}(H^Ty + \rho xtilde)    
+                \hat{X} = (H^TH + \rho I)^{-1}(H^Ty + \rho xtilde)    
 
     """
 

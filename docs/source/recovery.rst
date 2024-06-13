@@ -21,6 +21,16 @@ List of Algorithms
     colibri.recovery.fista.Fista
     
 
+List of Solvers
+--------------------
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.recovery.solvers.core.LinearSolver
+    colibri.recovery.solvers.spc.SPCSolver
 
 
 Fidelity Terms
