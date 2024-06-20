@@ -201,18 +201,19 @@ def backward_spc(y, H):
 
 def get_space_coords(ny: int, nx: int, pixel_size: float, device=torch.device('cpu'), type='cartesian'):
     r"""
-    [TO DOCUMMENT]
-    Space coordinates used in wave optics propagations.
+    
+    Generate spatial coordinates for wave optics simulations in either Cartesian or polar format.
         
     Args:
         ny (int): Resolution at Y axis in pixels.
         nx (int): Resolution at X axis in pixels.
         pixel_size (float): Pixel pixel_size in meters.
         device (torch.device): Device, for more see torch.device().
-        type (str): Type of coordinates, can be "cartesian" or "polar".
+        type (str): Type of coordinate system to generate ('cartesian' or 'polar').
     
     Returns:
-        torch.Tensor: Space coordinates. Shape (ny, nx).
+        tuple[torch.Tensor, torch.Tensor]: A tuple of tensors representing the X and Y coordinates
+                                           if 'cartesian', or radius (r) and angle (theta) if 'polar'.
     """
 
 
@@ -307,7 +308,25 @@ def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wave
 def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
 
     r"""
-    [TO DOCUMMENT]
+    Simulate Fraunhofer diffraction (far-field) propagation of a wave field.
+
+    .. math::
+        U(x, y) = \mathcal{F}^{-1} {A(f_x, f_y) exp(-j * \pi * \lambda * z * (f_x^2 + f_y^2))}
+
+    where: :math:`\mathcal{F}^{-1}` is the inverse Fourier transform, :math:`A(f_x, f_y)` is the Fourier transform of the aperture function, :math:`\lambda` is the wavelength, :math:`z` is the propagation distance, :math:`f_x` and :math:`f_y` are spatial frequencies.
+
+    Args:
+        field (torch.Tensor): The input optical field.
+        nu (int): Number of pixels along the horizontal axis of the output image.
+        nv (int): Number of pixels along the vertical axis of the output image.
+        pixel_size (float): Pixel size in the output image, in meters.
+        wavelengths (torch.Tensor): Wavelengths of the light, in meters.
+        distance (float): Propagation distance, in meters.
+        device (torch.device): Computation device (e.g., CPU or GPU).
+        type (str): Coordinate system type used for calculations ('cartesian' or 'polar').
+
+    Returns:
+        torch.Tensor: The propagated wave field at the given distance.
     """
     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
@@ -318,19 +337,19 @@ def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: fl
     return result
 
 
-def fraunhofer_inverse_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
-    r"""
-    [TO DOCUMMENT]
-    [TO Delete]
-    """
+# def fraunhofer_inverse_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
+#     r"""
+#     [TO DOCUMMENT]
+#     [TO Delete]
+#     """
 
-    r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
-    r = r.unsqueeze(0)
-    c = torch.exp(-1j * wave_number(wavelengths) * distance) * torch.exp(-1j * wave_number(wavelengths) / (2 * distance) * r**2)
-    c = c.to(device=device)
-    result =  ifft(field / pixel_size**2 / c)
+#     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
+#     r = r.unsqueeze(0)
+#     c = torch.exp(-1j * wave_number(wavelengths) * distance) * torch.exp(-1j * wave_number(wavelengths) / (2 * distance) * r**2)
+#     c = c.to(device=device)
+#     result =  ifft(field / pixel_size**2 / c)
 
-    return result
+#     return result
 
 
 def fft(field: torch.Tensor, axis = (-2, -1)):
@@ -371,8 +390,7 @@ def ifft(field: torch.Tensor, axis = (-2, -1)):
 
 def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
     r"""
-    [TO IMPROVE]
-    The optical field propagation using scalar diffraction theory is given by the following equation: 
+    Compute the optical field propagation using a scalar diffraction theory model which is given by the following equation: 
     
     .. math::
         U_2(x, y) = \mathcal{F}^{-1}\left\{ \mathcal{F}\{U_1(x, y)\} H(f_x, f_y, \lambda) \right\} 
@@ -382,13 +400,13 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     For more information see Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
 
     Args:
-        field (torch.Tensor): Input field. Shape (len(wavelengths), nu, nv).
-        distance (float): Distance in meters.
-        pixel_size (float): Pixel pixel_size in meters.
+        field (torch.Tensor): Input optical field. Shape (len(wavelengths), nu, nv).
+        distance (float): Propagation distance in meters.
+        pixel_size (float): Pixel size in meters.
         wavelength (list): List of wavelengths in meters.
-        approximation (str): Approximation to use, can be "fresnel", "angular_spectrum" or "Fraunhofer".
+        approximation (str): Approximation (or diffraction model type) to use, can be "fresnel", "angular_spectrum" or "fraunhofer".
     Returns:
-        torch.Tensor: Output field. Shape (len(wavelengths), nu, nv).
+        torch.Tensor: The propagated optical field according to the selected approximation. Shape (len(wavelengths), nu, nv).
     """
 
     _, nu, nv = field.shape
@@ -418,14 +436,14 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
                                       distance, 
                                       field.device)
 
-    elif approximation == "fraunhofer_inverse":
-        return fraunhofer_inverse_propagation(field,
-                                            nu,
-                                            nv,
-                                            pixel_size,
-                                            wavelength,
-                                            distance,
-                                            field.device)
+    # elif approximation == "fraunhofer_inverse":
+    #     return fraunhofer_inverse_propagation(field,
+    #                                         nu,
+    #                                         nv,
+    #                                         pixel_size,
+    #                                         wavelength,
+    #                                         distance,
+    #                                         field.device)
 
     else:
         raise NotImplementedError(f"{approximation} approximation is implemented")
@@ -439,15 +457,24 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
 
 def circular_aperture(ny: int, nx: int, radius: float, pixel_size: float):
     r'''
-    [TO DOCUMMENT]
     Create a circular aperture mask of a given radius and pixel_size of size (ny, nx).
+
+    .. math::
+        \begin{cases} 
+            1 & \text{if } sqrt(x^2 + y^2) \leq \text{radius} \\
+            0 & \text{otherwise}
+        \end{cases}
+        
+    where: :math:`(x, y)` are the coordinates of each pixel, normalized by the pixel size, :math:`\text{radius}` is the radius of the aperture
     
     Args:
         nx (int): Resolution at X axis in pixels.
         ny (int): Resolution at Y axis in pixels.
-        radius (float): Radius of the aperture.
-        pixel_size (float): Pixel pixel_size in meters.
+        radius (float): Radius of the circular aperture in meters.
+        pixel_size (float): Pixel size in meters.
     
+    Returns:
+        torch.Tensor: A binary mask with 1's inside the radius and 0's outside.
     '''
     r, _ = get_space_coords(ny, nx, pixel_size, type='polar')
     return r<=radius
@@ -480,8 +507,8 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
                         wavelengths: torch.Tensor, source_distance: float, 
                         sensor_distance:float, pixel_size: float, approximation = "fresnel"):
     r"""
-    This function calculates the point spread fucntion (PSF) of an optical system composed by a DOE for spectral imaging.
-    [TO IMPROVE]
+    Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging.
+    
     .. math::
         \begin{aligned}
             U_1(x, y) &=  \frac{1}{j\lambda s} e^{j \frac{k}{2s}(x^2 + y^2)}\\
@@ -498,12 +525,13 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
         aperture (torch.Tensor): Aperture mask.
         refractive_index (callable): Function to calculate the refractive index.
         wavelengths (torch.Tensor): Wavelengths in meters.
-        source_distance (float): Source distance in meters.
-        sensor_distance (float): Sensor distance in meters.
-        pixel_size (float): Pixel pixel_size in meters.
-        approximation (str): Approximation to use, can be "fresnel", "angular_spectrum" or "Fraunhofer".
+        source_distance (float): Distance from the source to the DOE in meters.
+        sensor_distance (float): Distance from the DOE to the sensor in meters.
+        pixel_size (float): Pixel size in meters.
+        approximation (str): Type of propagation model ('fresnel', 'angular_spectrum', 'fraunhofer').
+
     Returns:
-        torch.Tensor: PSF of the optical system.
+        torch.Tensor: PSF of the optical system, normalized to unit energy.
     """
     
     height_map = height_map*aperture
@@ -531,14 +559,21 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
 
 def addGaussianNoise(y: torch.Tensor, snr: float):
     r"""
-    [TO DOCUMMENT]
-    This function adds gaussian noise to an image
-    y_noisy = x + noise
+    Add Gaussian noise to an image based on a specified signal-to-noise ratio (SNR).
+
+    .. math::
+    y_noisy = y + n
+    .. math::
+    n ~ N(0, \sigma^2)
+
+    where :math:`\sigma^2` is derived from the SNR and the power of :math:`y`.
+
     Args:
-        y (torch.Tensor): Image to add noise (B, L, M, N)
-        snr (float): Signal to Noise Ratio
+        y (torch.Tensor): Original image tensor with shape (B, L, M, N).
+        snr (float): Desired signal-to-noise ratio in decibels (dB).
+
     Returns:
-        y (torch.Tensor): Noisy image (B, L, M, N)
+        torch.Tensor: Noisy image tensor with the same shape as input.
     """
     noise = torch.zeros_like(y)
     sigma_per_channel = torch.sum(torch.pow(y, 2), dim=(2, 3), keepdim=True) / (torch.numel(y[0,0,...]) * 10 ** (snr / 10))
@@ -549,8 +584,13 @@ def addGaussianNoise(y: torch.Tensor, snr: float):
 
 def fourier_conv(image: torch.Tensor, psf: torch.Tensor):
     r"""
-    This function applies the Fourier Convolution Theorem to an image.
-    [TO DOCUMMENT]
+    Apply Fourier convolution theorem to simulate the effect of a linear system characterized by a point spread function (PSF).
+
+    .. math::
+    g = \mathcal{F}^{-1}(\mathcal{F}(f) * \mathcal{F}(h))
+
+    where :math:`f` is the input image, :math:`h` is the PSF, :math:`g` is the convolved output, :math:`\mathcal{F}` and :math:`\mathcal{F}^{-1}` denote the Fourier and inverse Fourier transforms.
+
     Args:
         image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
@@ -628,16 +668,28 @@ def signal_conv(image: torch.Tensor, psf: torch.Tensor):
 
 def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor, domain='fourier'):
     r"""
-    This function simulates the convolutional sensing model of an optical system 
-    [TO DOCUMMENT]
+    Simulate the convolutional sensing model of an optical system, using either Fourier or spatial domain methods.
+
+    In the "signal" domain, the convolution operation is performed in the spatial domain using the torch.nn.functional.conv2d function.
+    .. math::
+        g(x, y) = f(x, y) * h(x, y)
+
+    In the "fourier" domain, the convolution operation is performed in the Fourier domain using the Fourier convolution theorem.
+    .. math::
+        \mathcal{G}(f_x, f_y) = \mathcal{F}(f_x, f_y) * \mathcal{H}(f_x, f_y)
+
+    where :math:`f(x, y)` is the input image, :math:`h(x, y)` is the PSF, :math:`*` denotes the convolution operation, :math:`\mathcal{F}` and :math:`\mathcal{H}` are the Fourier transforms of :math:`f` and :math:`h`, respectively, and :math:`\mathcal{G}` is the Fourier transform of the output image :math:`g`.
+
     Args:
-        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
-        psf (torch.Tensor): Point Spread Function (1, L, M, N)
-        domain (str): Domain to apply the convolution, can be 'fourier' or 'signal'
+        image (torch.Tensor): Image tensor to simulate the sensing (B, L, M, N).
+        psf (torch.Tensor): Point Spread Function (PSF) tensor (1, L, M, N).
+        domain (str): Domain for convolution operation, 'fourier' or 'signal'.
+
     Returns:
-        torch.Tensor: Measurement (B, 1, M, N)
+        torch.Tensor: Convolved image tensor as measurement (B, 1, M, N).
+
     Raises:
-        NotImplementedError: If the domain is not 'fourier' or 'signal'
+        NotImplementedError: If the specified domain is not supported.
 
     """
     if domain == 'fourier':
@@ -679,11 +731,19 @@ def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
 
 def ideal_panchromatic_sensor(image: torch.Tensor):
     r"""
-    [TO DOCUMMENT]
-    This function simulates the ideal panchromatic sensor model of an optical system.
+
+    Simulate the response of an ideal panchromatic sensor by averaging the spectral channels.
+
+    .. math::
+    I = \frac{1}{L} \sum_{\lambda} I_{\lambda}
+
+    where :math:`I_{\lambda}` is the intensity at each wavelength, and :math:`L` is the number of spectral channels.
+
     Args:
-        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
+        image (torch.Tensor): Multispectral image tensor (B, L, M, N).
+
     Returns:
-        torch.Tensor: Measurement (B, 1, M, N)
+        torch.Tensor: Simulated sensor output as measurement (B, 1, M, N).
+
     """
     return torch.sum(image, dim=1, keepdim=True)/image.shape[1]
