@@ -56,7 +56,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 128
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'c_cassi' #  ['spc', 'cassi']
+acquisition_name = 'c_cassi' #  ['spc', 'cassi']
 
 
 # %%
