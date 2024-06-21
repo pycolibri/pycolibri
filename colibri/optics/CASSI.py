@@ -16,12 +16,6 @@ CA_INITIALIZATION = {
     'zeros': torch.zeros
 }
 
-CASSI_OPERATORS = {
-    'sd_cassi': {'forward': F.forward_sd_cassi, 'transpose': F.backward_sd_cassi},
-    'dd_cassi': {'forward': F.forward_dd_cassi, 'transpose': F.backward_dd_cassi},
-    'color_cassi': {'forward': F.forward_color_cassi, 'transpose': F.backward_color_cassi}
-}
-
 
 def initialize_ca(name, img_shape, trainable=False, initialization=None, load_ca=None):
     assert len(img_shape) == 3, "The image shape must be (M, N, L)"
@@ -38,9 +32,8 @@ def initialize_ca(name, img_shape, trainable=False, initialization=None, load_ca
     return torch.nn.Parameter(ca, requires_grad=trainable)
 
 
-class CASSI(Optics):
+class SDCASSI(Optics):
     def __init__(self,
-                 name,
                  img_shape,
                  shots,
                  initialization,
@@ -49,12 +42,15 @@ class CASSI(Optics):
                  load_ca=None,
                  regularizers=None,
                  constraints=None):
-        super(CASSI, self).__init__(img_shape, shots, initialization, trainable, noise, load_ca, regularizers,
-                                    constraints)
+        super(SDCASSI, self).__init__(img_shape, shots, initialization, trainable, noise, load_ca, regularizers,
+                                      constraints)
 
-        ca = initialize_ca(name, img_shape, trainable=trainable, initialization=initialization, load_ca=load_ca)
+        ca = initialize_ca('sd_cassi', img_shape, trainable=trainable, initialization=initialization,
+                           load_ca=load_ca)
+
         self.optical_elements = {'ca': ca}
+        self.forward_operator = lambda x: F.forward_sd_cassi(x, ca)
+        self.transpose_operator = lambda x: F.backward_sd_cassi(x, ca)
 
-        cassi_operator = CASSI_OPERATORS[name]
-        self.forward_operator = lambda x: cassi_operator['forward'](x, self.optical_elements['ca'])
-        self.transpose_operator = lambda x: cassi_operator['backward'](x, self.optical_elements['ca'])
+    def forward(self, x):
+        super().forward(x)
