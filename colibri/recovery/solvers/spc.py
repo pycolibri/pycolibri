@@ -41,7 +41,7 @@ class SPCSolver(Solver):
         self.Hty = acquisition_model(y, type_calculation="backward")
         self.H   = acquisition_model.learnable_optics
 
-    def __call__(self, xtilde, rho):
+    def solve(self, xtilde, rho):
 
         Hadj = torch.matmul(self.H.permute(1, 0), self.H) + rho * torch.eye(self.H.shape[1])
         Hadj = torch.inverse(Hadj)

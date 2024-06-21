@@ -19,7 +19,11 @@ class Solver(object):
 
 
     def __call__(self, xtilde, rho):
-        pass
+        result = self.solve(xtilde, rho)
+        return result
+
+    def solve(self, xtilde, rho):
+        raise NotImplementedError("Subclasses should implement the solve method.")
 
 
 class LinearSolver(Solver):
@@ -63,7 +67,7 @@ class LinearSolver(Solver):
         self.Hty = torch.bmm(H, y_vec.unsqueeze(-1))
         self.HtH = torch.bmm(H, H.permute(0, 2, 1))
 
-    def __call__(self, xtilde, rho):
+    def solve(self, xtilde, rho):
 
         Hadj = self.HtH + rho * torch.eye(self.HtH.shape[1], device=self.HtH.device)
         Hadj = torch.inverse(Hadj)
