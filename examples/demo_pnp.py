@@ -102,7 +102,7 @@ from colibri.recovery.terms.fidelity import L2
 from colibri.recovery.transforms import DCT2D
 
 algo_params = {
-    'max_iters': 200,
+    'max_iters': 50,
     '_lambda': 0.01,
     'rho': 0.1,
     'alpha': 1e-4,
