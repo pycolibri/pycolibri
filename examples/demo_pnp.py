@@ -85,11 +85,13 @@ if acquisition_name == 'spc':
     acquisition_config['n_measurements'] = n_measurements
 
 acquisition_model = {
-    'spc': SPC(**acquisition_config),
-    'sd_cassi': SD_CASSI(**acquisition_config),
-    'dd_cassi': DD_CASSI(**acquisition_config),
-    'c_cassi': C_CASSI(**acquisition_config)
+    'spc': SPC,
+    'sd_cassi': SD_CASSI,
+    'dd_cassi': DD_CASSI,
+    'c_cassi': C_CASSI
 }[acquisition_name]
+
+acquisition_model = acquisition_model(**acquisition_config)
 
 y = acquisition_model(sample)
 
