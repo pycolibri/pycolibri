@@ -3,7 +3,7 @@ from PIL import Image
 import scipy.io as sio
 
 import torchvision
-from torchvision import transforms
+
 
 BUILTIN_DATASETS = {
     'mnist': torchvision.datasets.MNIST,
@@ -11,22 +11,6 @@ BUILTIN_DATASETS = {
     'cifar10': torchvision.datasets.CIFAR10,
     'cifar100': torchvision.datasets.CIFAR100
 }
-
-
-class DefaultTransform:
-    def __init__(self, extension):
-        if extension == 'builtin':
-            self.transform_data = transforms.ToTensor()
-            self.transform_label = transforms.Lambda(lambda x: x)
-
-        else:
-            raise NotImplementedError
-
-    def transform_data(self, data):
-        return self.transform_data(data)
-
-    def transform_label(self, label):
-        return self.transform_label(label)
 
 
 def get_name_from_key(key):

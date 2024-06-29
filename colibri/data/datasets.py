@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 
 from torch.utils import data
 from torch.utils.data import Dataset
+from torchvision import transforms
 
 import colibri.data.utils as D
 
@@ -11,6 +12,23 @@ DATASET_READER = {
     'mat': D.load_mat,
     'h5': D.load_h5,
 }
+
+
+class DefaultTransform:
+    def __init__(self, extension):
+        self.transform_dict = dict(input=transforms.ToTensor(), default=transforms.ToTensor())
+        if extension == 'builtin':
+            self.transform_dict['output'] = transforms.Lambda(lambda x: x)
+        else:
+            self.transform_dict['output'] = transforms.ToTensor()
+
+    def __call__(self, data):
+        for key, transform in self.transform_dict.items():
+            if key in data:
+                data[key] = transform(data[key])
+
+    def default_transform(self, data):
+        return self.transform_dict['default'](data)
 
 
 class CustomDataset(Dataset):
@@ -28,8 +46,15 @@ class CustomDataset(Dataset):
         """
         assert 'builtin' in extension or data_name_dict is not None, ('data_name_dict must be provided '
                                                                       'for non-builtin datasets')
-        if data_name_dict is not None:
+        if data_name_dict is None:
+            data_name_dict = {}
+        else:
             assert 'input' in data_name_dict, 'input key must be provided in data_name_dict'
+
+        if transform_dict is None:
+            transform_dict = {}
+        else:
+            assert 'input' in transform_dict, 'input key must be provided in transform_dict'
 
         self.dataset_filenames = D.get_filenames(path, extension, **data_dict)
         self.data_reader = DATASET_READER[extension]
@@ -37,7 +62,7 @@ class CustomDataset(Dataset):
         self.data_name_dict = data_name_dict
         self.transform_dict = transform_dict
         self.preload = preload or extension == 'builtin'
-        self.default_transform = D.DefaultTransform(extension)
+        self.default_transform = DefaultTransform(extension)
         self.len_dataset = len(self.dataset_filenames)
 
         if self.preload:
@@ -68,9 +93,22 @@ class CustomDataset(Dataset):
 
         # apply transformation
 
+        for key, value in data.items():
+            if key in self.transform_dict:
+                data[key] = self.transform_dict[key](value)
+            else:
+                data[key] = self.default_transform.default_transform(value)
+
+
         for key, transform in self.transform_dict.items():
             if key in data:
                 data[key] = transform(data[key])
+
+        if not self.transform_dict:
+            data = self.default_transform(data)
+
+        if 'input' not in self.transform_dict:
+            data['input'] = self.default_transform.transform_data(data['input'])
 
         return data
 
