@@ -1,8 +1,9 @@
 import os
+from PIL import Image
+import scipy.io as sio
 
 import torchvision
 from torchvision import transforms
-from PIL import Image
 
 BUILTIN_DATASETS = {
     'mnist': torchvision.datasets.MNIST,
@@ -28,6 +29,16 @@ class DefaultTransform:
         return self.transform_label(label)
 
 
+def get_name_from_key(key):
+    name = key
+    if 'input' in key:
+        name = 'input'
+    elif 'output' in key:
+        name = 'output'
+
+    return name
+
+
 def get_filenames(path, extension, **kwargs):
     if extension == 'builtin':
         name = kwargs['name']
@@ -40,7 +51,8 @@ def get_filenames(path, extension, **kwargs):
         """Return a list with the filenames of the files in the given path."""
         return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
-def load_builtin(path, **kwargs):
+
+def load_builtin_dataset(path, **kwargs):
     name = kwargs['name']
     train = kwargs['train'] if 'train' in kwargs else True
     download = kwargs['download'] if 'download' in kwargs else True
@@ -53,7 +65,7 @@ def load_img(filename, **kwargs):
 
 
 def load_mat(filename, preprocessing, **kwargs):
-    pass
+    return sio.loadmat(filename)
 
 
 def load_h5(path, preprocessing, **kwargs):
