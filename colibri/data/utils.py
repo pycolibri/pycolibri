@@ -3,7 +3,7 @@ from PIL import Image
 import scipy.io as sio
 
 import torchvision
-
+from torchvision.transforms import transforms
 
 BUILTIN_DATASETS = {
     'mnist': torchvision.datasets.MNIST,
@@ -41,7 +41,16 @@ def load_builtin_dataset(path, **kwargs):
     train = kwargs['train'] if 'train' in kwargs else True
     download = kwargs['download'] if 'download' in kwargs else True
 
-    return BUILTIN_DATASETS[name](root=path, train=train, download=download)
+    builtin_dataset = BUILTIN_DATASETS[name](root=path, train=train, download=download)
+    dataset = dict(input=builtin_dataset.data, output=builtin_dataset.targets)
+
+    # transform
+
+    dataset['input'] = dataset['input'] / 255.
+    if dataset['input'].ndim != 4:
+        dataset['input'] = dataset['input'].unsqueeze(1)
+
+    return dataset
 
 
 def load_img(filename, **kwargs):

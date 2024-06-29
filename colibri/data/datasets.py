@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import torch
 
 from torch.utils import data
 from torch.utils.data import Dataset
@@ -22,10 +23,11 @@ class DefaultTransform:
         else:
             self.transform_dict['output'] = transforms.ToTensor()
 
-    def __call__(self, data):
-        for key, transform in self.transform_dict.items():
-            if key in data:
-                data[key] = transform(data[key])
+    def __call__(self, key, value):
+        if key in self.transform_dict:
+            return self.transform_dict[key](value)
+        else:
+            return self.default_transform(value)
 
     def default_transform(self, data):
         return self.transform_dict['default'](data)
@@ -40,8 +42,8 @@ class CustomDataset(Dataset):
             path (string): Path to directory with the dataset.
             extension (string): Extension of the dataset.
             data_dict (dict): Dictionary with the variables needed to load the dataset.
-            data_name_dict (dict): Dictionary with the names of the data.
-            transform_dict (dict): Dictionary with the transformations to apply to the data.
+            data_name_dict (dict,object): Dictionary with the names of the data.
+            transform_dict (dict,object): Dictionary with the transformations to apply to the data.
             preload (bool): If True, the dataset will be loaded in memory.
         """
         assert 'builtin' in extension or data_name_dict is not None, ('data_name_dict must be provided '
@@ -49,12 +51,12 @@ class CustomDataset(Dataset):
         if data_name_dict is None:
             data_name_dict = {}
         else:
-            assert 'input' in data_name_dict, 'input key must be provided in data_name_dict'
+            assert 'input' in data_name_dict, "'input' key must be provided in data_name_dict"
 
         if transform_dict is None:
             transform_dict = {}
         else:
-            assert 'input' in transform_dict, 'input key must be provided in transform_dict'
+            assert 'input' in transform_dict, "'input' key must be provided in transform_dict"
 
         self.dataset_filenames = D.get_filenames(path, extension, **data_dict)
         self.data_reader = DATASET_READER[extension]
@@ -67,8 +69,7 @@ class CustomDataset(Dataset):
 
         if self.preload:
             if extension == 'builtin':
-                builtin_dataset = self.data_reader(self.dataset_filenames[0], **self.data_dict)
-                self.dataset = dict(input=builtin_dataset.data, output=builtin_dataset.targets)
+                self.dataset = self.data_reader(self.dataset_filenames[0], **self.data_dict)
 
             else:
                 self.dataset = {}
@@ -94,32 +95,22 @@ class CustomDataset(Dataset):
         # apply transformation
 
         for key, value in data.items():
-            if key in self.transform_dict:
-                data[key] = self.transform_dict[key](value)
-            else:
-                data[key] = self.default_transform.default_transform(value)
-
-
-        for key, transform in self.transform_dict.items():
-            if key in data:
-                data[key] = transform(data[key])
-
-        if not self.transform_dict:
-            data = self.default_transform(data)
-
-        if 'input' not in self.transform_dict:
-            data['input'] = self.default_transform.transform_data(data['input'])
+            if not isinstance(value, torch.Tensor):
+                if key in self.transform_dict:
+                    data[key] = self.transform_dict[key](value)
+                else:
+                    data[key] = self.default_transform(key, value)
 
         return data
 
 
 if __name__ == '__main__':
-    data_dict = dict(name='mnist', train=True, download=True)
+    data_dict = dict(name='cifar10', train=True, download=True)
     data_name_dict = dict(input='data', output='label')
     dataset = CustomDataset('/home/enmartz/Downloads',
                             'builtin',
                             data_dict=data_dict,
-                            transform_dict={},
+                            transform_dict=None,
                             preload=False)
 
     dataset_loader = data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
