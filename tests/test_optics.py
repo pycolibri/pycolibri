@@ -108,7 +108,9 @@ def test_doe_forward(doe_config):
 
     psf = acquisition_model.get_psf()
     output = acquisition_model(images)
+    deconvolution = acquisition_model(output, type_calculation="backward")
 
     expected_shape = (len(wavelengths), *doe_size)
     assert psf.shape == expected_shape, "PSF shape is incorrect"
     assert output.shape == img_size, "Output shape is incorrect"
+    assert deconvolution.shape == img_size, "Deconvolution shape is incorrect"
