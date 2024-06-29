@@ -212,3 +212,5 @@ plt.title('CIFAR10 imaged pancromatic sensor')
 plt.axis('off')
 
 
+
+# %%
