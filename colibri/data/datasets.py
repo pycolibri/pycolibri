@@ -22,9 +22,9 @@ class CustomDataset(Dataset):
             path (string): Path to directory with the dataset.
             extension (string): Extension of the files in the dataset.
             dataset_vars (dict): Dictionary with the variables needed to load the dataset.
-
-            transform (callable, optional): Optional transform to be applied on a sample.
-            preload (bool): If True, the dataset is preloaded in memory.
+            transform_input (callable, optional): Optional transform to be applied to the input data.
+            transform_output (callable, optional): Optional transform to be applied to the output data.
+            preload (bool): If True, the dataset will be loaded in memory.
         """
         self.dataset_filenames = D.get_filenames(path, extension, **dataset_vars)
         self.data_reader = DATASET_READER[extension]
@@ -62,42 +62,20 @@ class CustomDataset(Dataset):
         return data, label
 
 
-class Dataset:
-    def __init__(self,
-                 path,
-                 extension,
-                 dataset_vars=None,
-                 transform_input=None,
-                 transform_output=None,
-                 preload=False,
-                 use_loader=True,
-                 batch_size=32,
-                 shuffle=False,
-                 num_workers=0):
-        dataset = CustomDataset(path, extension, transform_input=transform_input, transform_output=transform_output,
-                                dataset_vars=dataset_vars, preload=preload)
-
-        if use_loader:
-            self.train_loader = data.DataLoader(dataset, batch_size=batch_size,
-                                                shuffle=shuffle, num_workers=num_workers)
-
-
 if __name__ == '__main__':
     dataset_vars = dict(name='cifar10', train=True, download=True)
-    train_dataset = Dataset('/home/enmartz/Downloads',
+    dataset = CustomDataset('/home/enmartz/Downloads',
                             'builtin',
                             dataset_vars=dataset_vars,
                             transform_input=None,
                             transform_output=None,
-                            preload=False,
-                            use_loader=True,
-                            batch_size=32,
-                            shuffle=False,
-                            num_workers=0)
+                            preload=False)
+
+    dataset_loader = data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
 
     # plot 3 x 3 images
 
-    data, label = next(iter(train_dataset.train_loader))
+    data, label = next(iter(dataset_loader))
 
     plt.figure(figsize=(5, 5))
     plt.suptitle('CIFAR10 dataset Samples')
