@@ -75,7 +75,7 @@ def test_spc_forward(spc_config):
 @pytest.fixture
 def doe_config():
     doe_size=(100, 100)
-    img_size=(32, 3, 200, 200)
+    img_size=(32, 3, 100, 100)
     convolution_domain = "fourier" 
     type_wave_propagation = "angular_spectrum" 
     wavelengths=torch.Tensor([450, 550, 650])*1e-9
