@@ -95,7 +95,7 @@ class SingleDOESpectral(BaseOpticsLayer):
         return self.sensor_spectral_sensitivity(field)
 
 
-    def deconvolution(self, x, height_map):
+    def deconvolution(self, x, height_map, alpha=1e-3):
         r"""
         Backward operator of the SingleDOESpectral layer.
 
@@ -107,7 +107,7 @@ class SingleDOESpectral(BaseOpticsLayer):
 
         psf = self.get_psf(height_map)
         x = self.sensor_spectral_sensitivity(x)
-        return weiner_filter(x, psf)
+        return weiner_filter(x, psf, alpha)
     
 
     def forward(self, x, type_calculation="forward"):
