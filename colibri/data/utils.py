@@ -36,8 +36,7 @@ def get_filenames(path, extension, **kwargs):
         return [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))]
 
 
-def load_builtin_dataset(path, **kwargs):
-    name = kwargs['name']
+def load_builtin_dataset(path, name, **kwargs):
     train = kwargs['train'] if 'train' in kwargs else True
     download = kwargs['download'] if 'download' in kwargs else True
 
@@ -53,13 +52,9 @@ def load_builtin_dataset(path, **kwargs):
     return dataset
 
 
-def load_img(filename, **kwargs):
+def load_arad_sample(filename, preprocessing, **kwargs):
     return Image.open(filename)
 
 
-def load_mat(filename, preprocessing, **kwargs):
+def load_cave_sample(filename, preprocessing, **kwargs):
     return sio.loadmat(filename)
-
-
-def load_h5(path, preprocessing, **kwargs):
-    pass

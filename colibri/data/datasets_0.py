@@ -7,17 +7,18 @@ from torchvision import transforms
 
 import colibri.data.utils as D
 
-
 DATASET_READER = {
-    'cave': D.load_cave_sample,
-    'arad': D.load_arad_sample,
+    'builtin': D.load_builtin_dataset,
+    'img': D.load_img,
+    'mat': D.load_mat,
+    'h5': D.load_h5,
 }
 
 
 class DefaultTransform:
-    def __init__(self, name):
+    def __init__(self, extension):
         self.transform_dict = dict(input=transforms.ToTensor(), default=transforms.ToTensor())
-        if name in D.BUILTIN_DATASETS:
+        if extension == 'builtin':
             self.transform_dict['output'] = transforms.Lambda(lambda x: x)
         else:
             self.transform_dict['output'] = transforms.ToTensor()
@@ -35,33 +36,49 @@ class DefaultTransform:
 class CustomDataset(Dataset):
     """Custom dataset."""
 
-    def __init__(self, path, name, data_dict, transform_dict=None):
+    def __init__(self, path, extension, data_dict, data_name_dict=None, transform_dict=None, preload=False):
         """
         Arguments:
             path (string): Path to directory with the dataset.
-            name (string): Name of the dataset.
+            extension (string): Extension of the dataset.
             data_dict (dict): Dictionary with the variables needed to load the dataset.
+            data_name_dict (dict,object): Dictionary with the names of the data.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
+            preload (bool): If True, the dataset will be loaded in memory.
         """
+        assert 'builtin' in extension or data_name_dict is not None, ('data_name_dict must be provided '
+                                                                      'for non-builtin datasets')
+        if data_name_dict is None:
+            data_name_dict = {}
+        else:
+            assert 'input' in data_name_dict, "'input' key must be provided in data_name_dict"
+
         if transform_dict is None:
             transform_dict = {}
         else:
             assert 'input' in transform_dict, "'input' key must be provided in transform_dict"
 
-        self.is_builtin_dataset = False
-        if name in D.BUILTIN_DATASETS:  # builtin datasets
-            self.is_builtin_dataset = True
-            self.dataset = D.load_builtin_dataset(path, name, **data_dict)
-            self.len_dataset = len(self.dataset['input'])
-
-        else:  # custom datasets
-            self.dataset_filenames = D.get_filenames(path, name, **data_dict)
-            self.data_reader = DATASET_READER[name]
-            self.len_dataset = len(self.dataset_filenames)
-
+        self.dataset_filenames = D.get_filenames(path, extension, **data_dict)
+        self.data_reader = DATASET_READER[extension]
         self.data_dict = data_dict
+        self.data_name_dict = data_name_dict
         self.transform_dict = transform_dict
-        self.default_transform = DefaultTransform(name)
+        self.preload = preload or extension == 'builtin'
+        self.default_transform = DefaultTransform(extension)
+        self.len_dataset = len(self.dataset_filenames)
+
+        if self.preload:
+            if extension == 'builtin':
+                self.dataset = self.data_reader(self.dataset_filenames[0], **self.data_dict)
+
+            else:
+                self.dataset = {}
+                for key, data_name in self.data_name_dict.items():
+                    name = D.get_name_from_key(key)
+                    self.dataset[name] = [self.data_reader(f, data_name, **self.data_dict) for f in
+                                          self.dataset_filenames]
+
+            self.len_dataset = len(self.dataset['input'])
 
     def __len__(self):
         return self.len_dataset
@@ -70,7 +87,7 @@ class CustomDataset(Dataset):
 
         # load sample
 
-        if self.is_builtin_dataset:
+        if self.preload:
             data = {key: value[idx] for key, value in self.dataset.items()}
         else:
             data = self.data_reader(self.dataset_filenames[idx], **self.data_dict)
@@ -88,11 +105,13 @@ class CustomDataset(Dataset):
 
 
 if __name__ == '__main__':
-    data_dict = dict(train=True, download=True)
-    dataset = CustomDataset('/home/enmartz/Downloads',
-                            'fashion_mnist',
+    data_dict = dict(name='cifar10', train=True, download=True)
+    data_name_dict = dict(input='data', output='label')
+    dataset = CustomDataset('/home/enmartz/Datasets/raw/complete_ms_data',
+                            'builtin',
                             data_dict=data_dict,
-                            transform_dict=None)
+                            transform_dict=None,
+                            preload=False)
 
     dataset_loader = data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
 
