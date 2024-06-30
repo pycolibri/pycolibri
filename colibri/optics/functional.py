@@ -409,7 +409,7 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     """
 
     _, nu, nv = field.shape
-    print("#"*10, approximation)
+    
     if approximation == "fresnel":
         
         H = transfer_function_fresnel(nu, 
