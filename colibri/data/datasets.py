@@ -35,12 +35,12 @@ class DefaultTransform:
 class CustomDataset(Dataset):
     """Custom dataset."""
 
-    def __init__(self, path, name, data_dict, transform_dict=None):
+    def __init__(self, name, path, builtin_dict=None, transform_dict=None):
         """
         Arguments:
             path (string): Path to directory with the dataset.
             name (string): Name of the dataset.
-            data_dict (dict): Dictionary with the variables needed to load the dataset.
+            builtin_dict (dict): Dictionary with the parameters to load the builtin dataset.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
         """
         if transform_dict is None:
@@ -50,16 +50,17 @@ class CustomDataset(Dataset):
 
         self.is_builtin_dataset = False
         if name in D.BUILTIN_DATASETS:  # builtin datasets
+            assert builtin_dict is not None, "builtin_dict must be provided for builtin datasets"
             self.is_builtin_dataset = True
-            self.dataset = D.load_builtin_dataset(path, name, **data_dict)
+            path = D.update_builtin_path(name, path)
+            self.dataset = D.load_builtin_dataset(name, path, **builtin_dict)
             self.len_dataset = len(self.dataset['input'])
 
         else:  # custom datasets
-            self.dataset_filenames = D.get_filenames(path, name, **data_dict)
+            self.dataset_filenames = D.get_filenames(name, path)
             self.data_reader = DATASET_READER[name]
             self.len_dataset = len(self.dataset_filenames)
 
-        self.data_dict = data_dict
         self.transform_dict = transform_dict
         self.default_transform = DefaultTransform(name)
 
@@ -70,10 +71,13 @@ class CustomDataset(Dataset):
 
         # load sample
 
+        if idx == 19:
+            pass
+
         if self.is_builtin_dataset:
             data = {key: value[idx] for key, value in self.dataset.items()}
         else:
-            data = self.data_reader(self.dataset_filenames[idx], **self.data_dict)
+            data = self.data_reader(self.dataset_filenames[idx])
 
         # apply transformation
 
@@ -88,13 +92,15 @@ class CustomDataset(Dataset):
 
 
 if __name__ == '__main__':
-    data_dict = dict(train=True, download=True)
-    dataset = CustomDataset('/home/enmartz/Downloads',
-                            'fashion_mnist',
-                            data_dict=data_dict,
+    name = 'cave'
+    path = '/home/enmartz/Datasets/raw/complete_ms_data'
+
+    builtin_dict = dict(train=True, download=True)
+    dataset = CustomDataset(name, path,
+                            builtin_dict=builtin_dict,
                             transform_dict=None)
 
-    dataset_loader = data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
+    dataset_loader = data.DataLoader(dataset, batch_size=16, shuffle=False, num_workers=0)
 
     # plot 3 x 3 images
 
@@ -103,12 +109,12 @@ if __name__ == '__main__':
     label = data['output']
 
     plt.figure(figsize=(5, 5))
-    plt.suptitle('CIFAR10 dataset Samples')
+    plt.suptitle(f'{name.upper()} dataset Samples')
 
     for i in range(9):
         plt.subplot(3, 3, i + 1)
         plt.imshow(image[i].permute(1, 2, 0).cpu().numpy())
-        plt.title(label[i].cpu().numpy())
+        # plt.title(label[i].cpu().numpy())
         plt.axis('off')
 
     plt.tight_layout()
