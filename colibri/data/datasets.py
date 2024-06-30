@@ -38,8 +38,8 @@ class CustomDataset(Dataset):
     def __init__(self, name, path, builtin_dict=None, transform_dict=None):
         """
         Arguments:
-            path (string): Path to directory with the dataset.
             name (string): Name of the dataset.
+            path (string): Path to directory with the dataset.
             builtin_dict (dict): Dictionary with the parameters to load the builtin dataset.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
         """
@@ -93,7 +93,7 @@ class CustomDataset(Dataset):
 
 if __name__ == '__main__':
     name = 'cave'
-    path = '/home/enmartz/Datasets/raw/complete_ms_data'
+    path = 'path_to_cave_dataset'
 
     builtin_dict = dict(train=True, download=True)
     dataset = CustomDataset(name, path,
@@ -114,7 +114,6 @@ if __name__ == '__main__':
     for i in range(9):
         plt.subplot(3, 3, i + 1)
         plt.imshow(image[i].permute(1, 2, 0).cpu().numpy())
-        # plt.title(label[i].cpu().numpy())
         plt.axis('off')
 
     plt.tight_layout()
