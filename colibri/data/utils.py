@@ -31,7 +31,7 @@ def load_builtin_dataset(name, path, **kwargs):
 
     # transform
 
-    dataset['input'] = dataset['input'] / 255.
+    dataset['input'] = (dataset['input'] / 255.).astype(np.float32)
     if dataset['input'].ndim != 4:
         dataset['input'] = dataset['input'].unsqueeze(1)
 
@@ -69,9 +69,10 @@ def load_cave_sample(filename):
     for i in range(1, 32):
         spectral_band_filename = os.path.join(filename, f'{name}_ms_{i:02d}.png')
         spectral_band = np.array(Image.open(spectral_band_filename).convert('L')) / 255.
-        spectral_image.append(spectral_band)
+        spectral_image.append(spectral_band.astype(np.float32))
 
     spectral_image = np.stack(spectral_image, axis=-1)
     rgb_image = np.array(Image.open(os.path.join(filename, f'{name}_RGB.bmp'))) / 255.
+    rgb_image = rgb_image.astype(np.float32)
 
     return dict(input=rgb_image, output=spectral_image)

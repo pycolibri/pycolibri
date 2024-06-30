@@ -1,4 +1,6 @@
 import pytest
+from torch.utils import data
+
 from .utils import include_colibri
 include_colibri()
 
@@ -7,19 +9,24 @@ import torch
 from colibri.recovery.transforms import DCT2D
 
 def load_img():
+    from colibri.data.datasets import CustomDataset
+    name = 'cifar10'
+    path = '.'
+    batch_size = 16
 
-    from colibri.data.datasets import Dataset
-    dataset_path = 'cifar10'
-    keys = ''
-    batch_size = 1
-    dataset = Dataset(dataset_path, keys, batch_size)
-    sample = next(iter(dataset.train_dataset))[0]
+    builtin_dict = dict(train=True, download=True)
+    dataset = CustomDataset(name, path,
+                            builtin_dict=builtin_dict,
+                            transform_dict=None)
+    dataset_loader = data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+
+    sample = next(iter(dataset_loader))
     return sample
 
 
 def test_dct2d():
 
-    x_true = load_img()
+    x_true = load_img()['input']
     transform_dct = DCT2D()
 
     theta = transform_dct.forward(x_true)

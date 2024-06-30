@@ -71,9 +71,6 @@ class CustomDataset(Dataset):
 
         # load sample
 
-        if idx == 19:
-            pass
-
         if self.is_builtin_dataset:
             data = {key: value[idx] for key, value in self.dataset.items()}
         else:

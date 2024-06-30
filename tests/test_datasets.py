@@ -19,7 +19,7 @@ def dataset_info():
                             builtin_dict=builtin_dict,
                             transform_dict=None)
 
-    return batch_size, data.DataLoader(dataset, batch_size=16, shuffle=False, num_workers=0)
+    return batch_size, data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 
 def test_sample_type(dataset_info):
