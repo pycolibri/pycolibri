@@ -84,7 +84,7 @@ acquisition_model = acquisition_model(**acquisition_config)
 y = acquisition_model(sample)
 
 # Reconstruct image
-from colibri.recovery.pnp import PnP
+from colibri.recovery.pnp import PnP_ADMM
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
 from colibri.recovery.terms.transforms import DCT2D
@@ -101,7 +101,7 @@ algo_params = {
 fidelity  = L2()
 prior     = Sparsity(basis='dct')
 
-pnp = PnP(fidelity, prior, acquisition_model, **algo_params)
+pnp = PnP_ADMM(fidelity, prior, acquisition_model, **algo_params)
 
 x0 = acquisition_model.forward(y, type_calculation="backward")
 x_hat = pnp(y, x0=x0 ) 

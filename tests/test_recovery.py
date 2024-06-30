@@ -5,7 +5,7 @@ include_colibri()
 import torch
 
 # Reconstruct image
-from colibri.recovery import Fista, PnP
+from colibri.recovery import Fista, PnP_ADMM
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
 
@@ -77,7 +77,7 @@ def test_pnp_algorithm(algo_params):
     fidelity = L2()
     prior = Sparsity(basis="dct")
 
-    pnp = PnP(fidelity, prior, acquisition_model, rho=rho, **algo_params)
+    pnp = PnP_ADMM(fidelity, prior, acquisition_model, rho=rho, **algo_params)
     y = acquisition_model(x_true)
     x_trivial = acquisition_model(y, type_calculation="backward")
     x_hat = pnp(y, x0=x_trivial)

@@ -4,9 +4,9 @@ from torch import nn
 from .solvers import SOLVERS, get_solver
 
 
-class PnP(nn.Module):
+class PnP_ADMM(nn.Module):
     r"""
-    Plug-and-Play (PnP) algorithm for solving the optimization problem
+    Plug-and-Play (PnP) algorithm for solving the optimization problem based on the Alternating Direction Method of Multipliers (ADMM) formulation.
 
     .. math::
         \begin{equation}
@@ -16,7 +16,7 @@ class PnP(nn.Module):
 
     def __init__(self, fidelity, prior, aquisition_model, solver="close", max_iters=20, _lambda=0.1, rho=0.1, alpha=0.01):
 
-        super(PnP, self).__init__()
+        super(PnP_ADMM, self).__init__()
 
         self.fidelity         = fidelity
         self.aquisition_model = aquisition_model
