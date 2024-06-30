@@ -8,7 +8,6 @@ import torch
 from colibri.recovery import Fista, PnP
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
-from colibri.recovery.transforms import DCT2D
 
 @pytest.fixture
 def algo_params():
@@ -49,12 +48,12 @@ def test_fista_algorithm(algo_params):
     img_size = x_true.shape[1:]
     acquisition_model = load_acqusition(img_size)
 
-    transform_dct = DCT2D()
+
     fidelity = L2()
-    prior = Sparsity()
+    prior = Sparsity(basis="dct")
 
 
-    fista = Fista(fidelity, prior, acquisition_model, transform_dct, **algo_params)
+    fista = Fista(fidelity, prior, acquisition_model, **algo_params)
     y = acquisition_model(x_true)
     x_trivial = acquisition_model(y, type_calculation="backward")
     x_hat = fista(y, x0=x_trivial)
@@ -75,11 +74,10 @@ def test_pnp_algorithm(algo_params):
     img_size = x_true.shape[1:]
     acquisition_model = load_acqusition(img_size)
 
-    transform_dct = DCT2D()
     fidelity = L2()
-    prior = Sparsity()
+    prior = Sparsity(basis="dct")
 
-    pnp = PnP(fidelity, prior, acquisition_model, transform_dct, rho=rho, **algo_params)
+    pnp = PnP(fidelity, prior, acquisition_model, rho=rho, **algo_params)
     y = acquisition_model(x_true)
     x_trivial = acquisition_model(y, type_calculation="backward")
     x_hat = pnp(y, x0=x_trivial)

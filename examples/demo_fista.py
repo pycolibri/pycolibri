@@ -50,21 +50,8 @@ acquisition_name = 'spc' #  ['spc', 'cassi']
 # Visualize dataset
 # -----------------------------------------------
 from torchvision.utils import make_grid
-from colibri.recovery.transforms import DCT2D
 
 sample = next(iter(dataset.train_dataset))[0]
-
-
-# %%
-
-
-transform_dct = DCT2D()
-
-theta = transform_dct.forward(sample)
-x_hat = transform_dct.inverse(theta)
-
-error = torch.norm(sample - x_hat)
-print("Error: ", error  )
 
 
 # %%
@@ -99,7 +86,7 @@ y = acquisition_model(sample)
 from colibri.recovery.fista import Fista
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
-from colibri.recovery.transforms import DCT2D
+from colibri.recovery.terms.transforms import DCT2D
 
 algo_params = {
     'max_iters': 2000,
@@ -110,13 +97,16 @@ algo_params = {
 
 
 fidelity  = L2()
-prior     = Sparsity()
-transform = DCT2D()
+prior     = Sparsity(basis='dct')
 
-fista = Fista(fidelity, prior, acquisition_model, transform, **algo_params)
+fista = Fista(fidelity, prior, acquisition_model, **algo_params)
 
 x0 = acquisition_model.forward(y, type_calculation="backward")
 x_hat = fista(y, x0=x0 ) 
+
+basis = DCT2D()
+
+theta = basis.forward(x_hat).detach()
 
 print(x_hat.shape)
 

@@ -14,7 +14,7 @@ class PnP(nn.Module):
         \end{equation}
     """
 
-    def __init__(self, fidelity, prior, aquisition_model, transform, solver="close", max_iters=20, _lambda=0.1, rho=0.1, alpha=0.01):
+    def __init__(self, fidelity, prior, aquisition_model, solver="close", max_iters=20, _lambda=0.1, rho=0.1, alpha=0.01):
 
         super(PnP, self).__init__()
 
@@ -27,7 +27,6 @@ class PnP(nn.Module):
         self._lambda          = _lambda
         self.rho              = rho
         self.alpha            = alpha
-        self.transform        = transform
 
 
     def forward(self, y, x0=None, verbose=False):
@@ -55,9 +54,7 @@ class PnP(nn.Module):
 
             # v-subproblem update
             vtilde = x_t + u_t
-            vtilde = self.transform.forward(vtilde)
             v_t    = self.prior.prox(vtilde, self._lambda)
-            v_t    = self.transform.inverse(v_t)
 
             # u-subproblem update
             u_t = u_t + x_t - v_t

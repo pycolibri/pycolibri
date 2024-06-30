@@ -26,7 +26,7 @@ class Fista(nn.Module):
 
     """
 
-    def __init__(self, fidelity, prior, acquistion_model, transform, max_iters=5, alpha=1e-3, _lambda=0.1):
+    def __init__(self, fidelity, prior, acquistion_model, max_iters=5, alpha=1e-3, _lambda=0.1):
         """Initializes the Fista class.
 
         Args:
@@ -34,7 +34,6 @@ class Fista(nn.Module):
             fidelity (nn.Module): The fidelity term in the optimization problem. This is a function that measures the discrepancy between the data and the model prediction.
             prior (nn.Module): The prior term in the optimization problem. This is a function that encodes prior knowledge about the solution.
             acquistion_model (nn.Module): The acquisition model of the imaging system. This is a function that models the process of data acquisition in the imaging system.
-            transform (object): The transform to be applied to the image. This is a function that transforms the image into a different domain, for example, the DCT domain.
             max_iters (int): The maximum number of iterations for the FISTA algorithm. Defaults to 5.
             alpha (float): The step size for the gradient step. Defaults to 1e-3.
             _lambda (float): The regularization parameter for the prior term. Defaults to 0.1.
@@ -47,9 +46,8 @@ class Fista(nn.Module):
         self.fidelity = fidelity
         self.acquistion_model = acquistion_model
         self.prior = prior
-        self.transform = transform
 
-        self.H = lambda alpha: self.acquistion_model.forward(self.transform.inverse(alpha))
+        self.H = lambda alpha: self.acquistion_model.forward(alpha)
 
         self.max_iters = max_iters
         self.alpha = alpha
@@ -93,5 +91,5 @@ class Fista(nn.Module):
             if verbose:
                 print("Iter: ", i, "fidelity: ", error)
 
-        x_hat = self.transform.inverse(x)
+        x_hat = x
         return x_hat
