@@ -28,16 +28,13 @@ def load_img():
     from colibri.data.datasets import CustomDataset
     name = 'cifar10'
     path = '.'
-    batch_size = 16
 
     builtin_dict = dict(train=True, download=True)
     dataset = CustomDataset(name, path,
                             builtin_dict=builtin_dict,
                             transform_dict=None)
-    dataset_loader = data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
-
-    sample = next(iter(dataset_loader))
-    return sample
+    sample = dataset[0]['input']
+    return sample.unsqueeze(0)
 
 
 def load_acqusition(img_size):
@@ -55,7 +52,7 @@ def load_acqusition(img_size):
 
 
 def test_fista_algorithm(algo_params):
-    x_true = load_img()['input']
+    x_true = load_img()
     img_size = x_true.shape[1:]
     acquisition_model = load_acqusition(img_size)
 
