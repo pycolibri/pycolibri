@@ -72,4 +72,4 @@ The module contains differents signal transforms that can be used in the recover
     :template: class_template.rst
     :nosignatures:
 
-    colibri.recovery.transforms.DCT2D
+    colibri.recovery.terms.transforms.DCT2D
