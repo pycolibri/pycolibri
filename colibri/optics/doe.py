@@ -7,10 +7,26 @@ class SingleDOESpectral(BaseOpticsLayer):
     r"""
     Single Diffractive Optical Element for Spectral Imaging 
 
-    in progress
+    This optical system allow for the capture of spatio-spectral information through a wavelength dependent phase coding of light through a diffractive optical element. 
+    
+    Mathematically, this systems can be described as follows. 
+
+    .. math::
+    
+            \mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise
+    
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for SingleDOESpectral, :math:`\xset = \mathbb{R}^{L \times M \times N}` and :math:`\yset = \mathbb{R}^{M \times N}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the diffractive optical element, such as
+
+    .. math::
+
+        \begin{align*}
+        \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
+                        \mathbf{y}_l &=  \sum_{l=1}^{L} \psf(\learnedOptics)_l * \mathbf{x}_{, l}
+        \end{align*}
+
+    with :math:`\psf(\learnedOptics)_l` the optical-point spread function (PSF) of the diffractive optical element at wavelength :math:`\lambda_l`, calculated using  :func:`colibri.optics.functional.psf_single_doe_spectral`
 
     """
-
     def __init__(self, input_shape, 
                         height_map, 
                         aperture, 
