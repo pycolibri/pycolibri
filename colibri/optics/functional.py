@@ -305,28 +305,26 @@ def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wave
     return H
 
 
-def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
-
+def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu')):
     r"""
-    Simulate Fraunhofer diffraction (far-field) propagation of a wave field.
+    The Fraunhofer approximation of :math:`U_0(x',y')` is its Fourier transform, :math:`\mathcal{F}\{U_0\}` with an additional phase factor that depends on the distance of propagation, :math:`z`. The Fraunhofer approximation is given by the following equation:
 
     .. math::
-        U(x, y) = \mathcal{F}^{-1} {A(f_x, f_y) exp(-j * \pi * \lambda * z * (f_x^2 + f_y^2))}
+        U(x,y,z) \approx \frac{e^{jkz}e^{\frac{jk\left(x^2+y^2\right)}{2z}}}{j\lambda z} \mathcal{F}\left\{U_0(x,y)\right\}\left(\frac{x}{\lambda z}, \frac{y}{\lambda z}\right)
 
-    where: :math:`\mathcal{F}^{-1}` is the inverse Fourier transform, :math:`A(f_x, f_y)` is the Fourier transform of the aperture function, :math:`\lambda` is the wavelength, :math:`z` is the propagation distance, :math:`f_x` and :math:`f_y` are spatial frequencies.
+    where :math:`U(x,y,z)` is the field at distance :math:`z` from the source, :math:`U_0(x,y)` is the field at the source, :math:`\mathcal{F}` is the Fourier transform operator, :math:`k` is the wavenumber, :math:`\lambda` is the wavelength, :math:`\frac{x}{\lambda z}` and  :math:`\frac{y}{\lambda z}` are the spatial frequencies, and :math:`z` is the distance of propagation.
 
     Args:
-        field (torch.Tensor): The input optical field.
-        nu (int): Number of pixels along the horizontal axis of the output image.
-        nv (int): Number of pixels along the vertical axis of the output image.
-        pixel_size (float): Pixel size in the output image, in meters.
-        wavelengths (torch.Tensor): Wavelengths of the light, in meters.
-        distance (float): Propagation distance, in meters.
-        device (torch.device): Computation device (e.g., CPU or GPU).
-        type (str): Coordinate system type used for calculations ('cartesian' or 'polar').
+        field (torch.Tensor): Input field.
+        nu (int): Resolution at X axis in pixels.
+        nv (int): Resolution at Y axis in pixels.
+        pixel_size (float): Pixel pixel_size in meters.
+        wavelengths (torch.Tensor): Wavelengths in meters.
+        distance (float): Distance in meters.
+        device (torch.device): Device, for more see torch.device().
 
     Returns:
-        torch.Tensor: The propagated wave field at the given distance.
+        torch.Tensor: Propagated field. 
     """
     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
