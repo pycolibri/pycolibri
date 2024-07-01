@@ -84,6 +84,7 @@ Functional operators of light propagation
     colibri.optics.functional.transfer_function_angular_spectrum    
     colibri.optics.functional.transfer_function_fresnel
     colibri.optics.functional.fraunhofer_propagation
+    colibri.optics.functional.fraunhofer_inverse_propagation
 
 
 
