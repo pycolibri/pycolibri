@@ -337,7 +337,23 @@ def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: fl
 
 def fraunhofer_inverse_propagation(field: torch.Tensor, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu')):
     r"""
-    [TO DOCUMMENT]
+    The inverse Fraunhofer approximation (to reconstruct the field at the source from the field at the sensor) is given by the following equation:
+
+    .. math::
+        U_0(x,y) \approx \frac{1}{j\lambda z} e^{j k z} e^{\frac{j k (x^2 + y^2)}{2z}} \mathcal{F}^{-1}\left\{ U(x,y) \right\}
+
+    where :math:`U_0(x,y)` is the field at the source, :math:`U(x,y)` is the field at the sensor, :math:`\mathcal{F}^{-1}` is the inverse Fourier transform operator,  :math:`k` is the wavenumber, :math:`\lambda` is the wavelength, and :math:`z` is the distance of propagation.   
+
+    Args:
+        field (torch.Tensor): Field at the sensor.
+        pixel_size (float): Pixel pixel_size in meters.
+        wavelengths (torch.Tensor): Wavelengths in meters.
+        distance (float): Distance in meters.
+        device (torch.device): Device, for more see torch.device().
+    
+    Returns:
+        torch.Tensor: Reconstructed field.
+    
     """
     _, nu, nv = field.shape
     r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
