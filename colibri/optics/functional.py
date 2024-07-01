@@ -504,7 +504,7 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
     Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging. The PSF is calculated as follows:
     
     .. math::
-        \mathbf{H}(\learnedOptics)  = |\mathcal{P_2}(z2, \lambda) \left( \mathcal{P_1}(z_1,  \lambda)(\delta) * \learnedOptics \right)|^2
+        \mathbf{H}(\learnedOptics)  = |\mathcal{P_2}(z_2, \lambda) \left( \mathcal{P_1}(z_1,  \lambda)(\delta) * \learnedOptics \right)|^2
     
     where :math:`\mathcal{P_1}` is an operator that describes the propagation of light from the source to the DOE at a distance :math:`z_1`, :math:`\mathcal{P_2}` is an operator that describes the propagation of light from the DOE to the sensor at a distance :math:`z_2`, and :math:`\learnedOptics` is the DOE. 
     
