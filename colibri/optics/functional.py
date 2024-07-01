@@ -501,18 +501,19 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
                         wavelengths: torch.Tensor, source_distance: float, 
                         sensor_distance:float, pixel_size: float, approximation = "fresnel"):
     r"""
-    Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging.
+    Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging. The PSF is calculated as follows:
     
     .. math::
-        \begin{aligned}
-            U_1(x, y) &=  \frac{1}{j\lambda s} e^{j \frac{k}{2s}(x^2 + y^2)}\\
-            t(x,y) &= e^{i \Phi_{\text{DOE}}(x,y,\lambda)}\\
-            U_2(x, y) &= U_1(x, y) t(x, y) A(x, y)\\ 
-            \text{PSF} &= U_{\text{FPA}} = |\mathcal{F}^{-1}\left\{ \mathcal{F}\{U_2(x, y)\} H(f_x, f_y, \lambda) \right\} |^2
-        \end{aligned}
-
-    where :math:`U_1(x, y)` is the electric field before the phase mask, represented by the paraxial approximation of a spherical wave, :math:`U_2(x, y)` is the electric field after the phase mask. :math:`t(x, y)` denotes the phase transformation, :math:`A(x, y)` is the amplitude aperture function, and :math:`U_{\text{FPA}}` is the electric field in front of the sensor.
+        \mathbf{H}(\learnedOptics)  = |\mathcal{P_2}(z2, \lambda) \left( \mathcal{P_1}(z_1,  \lambda)(\delta) * \learnedOptics \right)|^2
     
+    where :math:`\mathcal{P_1}` is an operator that describes the propagation of light from the source to the DOE at a distance :math:`z_1`, :math:`\mathcal{P_2}` is an operator that describes the propagation of light from the DOE to the sensor at a distance :math:`z_2`, and :math:`\learnedOptics` is the DOE. 
+    
+    The operator :math:`\mathcal{P_2}` depends on the given approximation:
+
+        - Fresnel :func:`colibri.optics.functional.transfer_function_fresnel`
+        - Angular Spectrum :func:`colibri.optics.functional.transfer_function_angular_spectrum`
+        - Fraunhofer :func:`colibri.optics.functional.fraunhofer_propagation`.
+        
     
     Args:
         height_map (torch.Tensor): Height map of the DOE.
