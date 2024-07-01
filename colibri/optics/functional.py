@@ -701,11 +701,25 @@ def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
     Returns:
         torch.Tensor: Filtered image (B, L, M, N)
     """
+
+    # Fix psf and image size
+    psf_size = psf.shape[-2:]
+    image_size = image.shape[-2:]
+    extra_size = [(psf_size[i]-image_size[i]) for i in range(len(image_size))]
+    if extra_size[0] < 0 or extra_size[1] < 0:
+        psf = add_pad(psf, [0, -extra_size[0]//2, -extra_size[1]//2])
+    else:
+        image = add_pad(image, [0, 0, extra_size[0]//2, extra_size[1]//2])
+
+
     img_fft = fft(image)
     otf = fft(psf)
     filter = torch.conj(otf) / (torch.abs(otf) ** 2 + alpha)
     img_fft = img_fft * filter
     img = torch.abs(ifft(img_fft))
+
+    if not(extra_size[0] < 0 or extra_size[1] < 0):
+        img = unpad(img, pad = [0, 0, extra_size[0]//2, extra_size[1]//2])
     return img
 
 
