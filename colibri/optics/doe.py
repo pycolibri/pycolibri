@@ -1,5 +1,5 @@
 import torch
-from colibri.optics.functional import psf_single_doe_spectral, convolutional_sensing, weiner_filter, ideal_panchromatic_sensor
+from colibri.optics.functional import psf_single_doe_spectral, convolutional_sensing, wiener_filter, ideal_panchromatic_sensor
 from colibri.optics.sota_does import fresnel_lens, nbk7_refractive_index
 from .utils import BaseOpticsLayer
 
@@ -123,7 +123,7 @@ class SingleDOESpectral(BaseOpticsLayer):
 
         psf = self.get_psf(height_map)
         x = self.sensor_spectral_sensitivity(x)
-        return weiner_filter(x, psf, alpha)
+        return wiener_filter(x, psf, alpha)
     
 
     def forward(self, x, type_calculation="forward"):

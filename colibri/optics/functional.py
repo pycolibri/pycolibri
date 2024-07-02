@@ -695,22 +695,20 @@ def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor, domain='fourie
         raise NotImplementedError(f"{domain} domain is not implemented")
 
 
-def weiner_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
+def wiener_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
     r"""
 
-    This function applies the Weiner filter to an image.
+    This function applies the Wiener filter to an image.
 
     .. math::
         \begin{aligned}
-            W(u, v) &= \frac{H^*(u, v)}{|H(u, v)|^2 + \alpha} F(u, v)\\
-            F'(u, v) &= F(u, v) W(u, v)\\
-            f'(x, y) &= \mathcal{F}^{-1}\{F'(u, v)\}
+            X(x, y) &= \mathcal{F}^{-1}\{Y(u, v) \frac{H^*(u, v)}{|H(u, v)|^2 + \alpha}\}
         \end{aligned}
-    where :math:`H(u, v)` is the optical transfer function, :math:`F(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, :math:`W(u, v)` is the Weiner filter and :math:`f'(x, y)` is the filtered image.
+    where :math:`H(u, v)` is the optical transfer function, :math:`Y(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, and :math:`X(x, y)` is the filtered image.
 
 
     Args:
-        image (torch.Tensor): Image to apply the Weiner filter (B, L, M, N)
+        image (torch.Tensor): Image to apply the Wiener filter (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
         alpha (float): Regularization parameter
     Returns:
