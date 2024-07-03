@@ -15,6 +15,7 @@ DATASET_READER = {
 
 
 class DefaultTransform:
+
     def __init__(self, name):
         self.transform_dict = dict(input=transforms.ToTensor(), default=transforms.ToTensor())
         if name in D.BUILTIN_DATASETS:
@@ -86,32 +87,3 @@ class CustomDataset(Dataset):
                     data[key] = self.default_transform(key, value)
 
         return data
-
-
-if __name__ == '__main__':
-    name = 'cave'
-    path = 'path_to_cave_dataset'
-
-    builtin_dict = dict(train=True, download=True)
-    dataset = CustomDataset(name, path,
-                            builtin_dict=builtin_dict,
-                            transform_dict=None)
-
-    dataset_loader = data.DataLoader(dataset, batch_size=16, shuffle=False, num_workers=0)
-
-    # plot 3 x 3 images
-
-    data = next(iter(dataset_loader))
-    image = data['input']
-    label = data['output']
-
-    plt.figure(figsize=(5, 5))
-    plt.suptitle(f'{name.upper()} dataset Samples')
-
-    for i in range(9):
-        plt.subplot(3, 3, i + 1)
-        plt.imshow(image[i].permute(1, 2, 0).cpu().numpy())
-        plt.axis('off')
-
-    plt.tight_layout()
-    plt.show()
