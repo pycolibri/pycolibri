@@ -67,7 +67,7 @@ acquisition_config = dict(
 )
 
 if acquisition_name == 'spc':
-    n_measurements  = 31**2 
+    n_measurements  = 25**2 
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
@@ -99,10 +99,10 @@ algo_params = {
 fidelity  = L2()
 prior     = Sparsity(basis='dct')
 
-fista = Fista(fidelity, prior, acquisition_model, **algo_params)
+fista = Fista(acquisition_model, fidelity, prior, **algo_params)
 
 x0 = acquisition_model.forward(y, type_calculation="backward")
-x_hat = fista(y, x0=x0 ) 
+x_hat = fista(y, x0=x0) 
 
 basis = DCT2D()
 

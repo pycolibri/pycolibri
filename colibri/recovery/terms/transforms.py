@@ -20,7 +20,7 @@ class DCT2D:
     """
 
     def __init__(self, norm='ortho'):
-        """Initializes the DCT2D class.
+        r"""Initializes the DCT2D class.
 
         Args:
             norm (str, optional): The normalization to be applied to the transform. Defaults to 'ortho'.
@@ -29,7 +29,7 @@ class DCT2D:
         self.norm = norm
 
     def forward(self, x):
-        """Computes the 2D DCT of the input image.
+        r"""Computes the 2D DCT of the input image.
 
         Args:
             x (torch.Tensor): The input image.
@@ -40,7 +40,7 @@ class DCT2D:
         return dct.dct_2d(x, norm=self.norm)
 
     def inverse(self, x):
-        """Computes the inverse 2D DCT of the input image.
+        r"""Computes the inverse 2D DCT of the input image.
 
         Args:
             x (torch.Tensor): The input image.

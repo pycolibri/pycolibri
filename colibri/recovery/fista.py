@@ -1,10 +1,14 @@
 import torch
 from torch import nn
 
+from colibri.recovery.terms.fidelity import L2
+from colibri.recovery.terms.prior import Sparsity
 
 class Fista(nn.Module):
     r"""
-    FISTA algorithm for solving the optimization problem
+    Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)
+
+    The FISTA algorithm solves the optimization problem:
 
     .. math::
         \begin{equation}
@@ -24,11 +28,11 @@ class Fista(nn.Module):
 
     where :math:`\alpha` is the step size and :math:`f` is the fidelity term.
 
+    Implementation based on the formulation of authors in https://doi.org/10.1137/080716542
     """
 
-    def __init__(self, fidelity, prior, acquistion_model, max_iters=5, alpha=1e-3, _lambda=0.1):
-        """Initializes the Fista class.
-
+    def __init__(self, acquistion_model, fidelity=L2(), prior=Sparsity("dct"), max_iters=5, alpha=1e-3, _lambda=0.1):
+        r"""
         Args:
 
             fidelity (nn.Module): The fidelity term in the optimization problem. This is a function that measures the discrepancy between the data and the model prediction.
@@ -47,7 +51,7 @@ class Fista(nn.Module):
         self.acquistion_model = acquistion_model
         self.prior = prior
 
-        self.H = lambda alpha: self.acquistion_model.forward(alpha)
+        self.H = lambda x: self.acquistion_model.forward(x)
 
         self.max_iters = max_iters
         self.alpha = alpha
@@ -55,7 +59,7 @@ class Fista(nn.Module):
 
 
     def forward(self, y, x0=None, verbose=False):
-        """Runs the FISTA algorithm to solve the optimization problem.
+        r"""Runs the FISTA algorithm to solve the optimization problem.
 
         Args:
             y (torch.Tensor): The data to be reconstructed.
@@ -85,11 +89,9 @@ class Fista(nn.Module):
             t_old = t
             t = (1 + (1 + 4 * t_old**2) ** 0.5) / 2
             z = x + ((t_old - 1) / t) * (x - x_old)
-
-            error = self.fidelity.forward(x, y, self.H).item()
             
             if verbose:
+                error = self.fidelity.forward(x, y, self.H).item()
                 print("Iter: ", i, "fidelity: ", error)
 
-        x_hat = x
-        return x_hat
+        return x

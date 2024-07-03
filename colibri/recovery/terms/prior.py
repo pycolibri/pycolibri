@@ -4,7 +4,7 @@ from .transforms import DCT2D
 
 
 class Sparsity(torch.nn.Module):
-    '''
+    r"""
         Sparsity prior 
         
         .. math::
@@ -13,12 +13,12 @@ class Sparsity(torch.nn.Module):
         
             where :math:`\Phi` is the sparsity basis and :math:`x` is the input tensor.
 
-    '''
+    """
     def __init__(self, basis=None):
-        '''
+        r"""
         Args:
             basis (str): Basis function. 'dct', 'None'. Default is None.
-        '''
+        """
         super(Sparsity, self).__init__()
 
         if basis == 'dct':
@@ -27,7 +27,7 @@ class Sparsity(torch.nn.Module):
             self.transform = None
 
     def forward(self, x):
-        '''
+        r"""
         Compute sparsity term.
 
         Args:
@@ -35,12 +35,12 @@ class Sparsity(torch.nn.Module):
         
         Returns:
             torch.Tensor: Sparsity term.
-        '''
+        """
         x = self.transform.forward(x)
         return torch.norm(x, 1)**2
     
     def prox(self, x, _lambda, type="soft"):
-        '''
+        r"""
         Compute proximal operator of the sparsity term.
 
         Args:
@@ -50,7 +50,8 @@ class Sparsity(torch.nn.Module):
         
         Returns:
             torch.Tensor: Proximal operator of the sparsity term.
-        '''
+        """
+        
         x = x.requires_grad_()
         x = self.transform.forward(x)
 

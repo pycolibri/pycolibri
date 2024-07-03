@@ -33,7 +33,11 @@ class SPCSolver(Solver):
     """
 
     def __init__(self, y, acquisition_model: SPC):
-
+        r"""
+        Args:
+            y (torch.Tensor): Input tensor with shape (B, C, H, W)
+            acquisition_model (SPC): Acquisition model
+        """
 
         super(SPCSolver, self).__init__(y, acquisition_model)
 

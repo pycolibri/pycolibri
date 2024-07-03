@@ -182,6 +182,7 @@ def backward_spc(y, H, pinv=False):
     Args:
         y (torch.Tensor): Measurement tensor of size (B, S, L).
         H (torch.Tensor): Measurement matrix of size (S, M*N).
+        pinv (bool): Boolean, if True the pseudo-inverse of H is used, otherwise the transpose of H is used, defaults to False.
     Returns:
         torch.Tensor: Reconstructed image tensor of size (B, L, M, N).
     """

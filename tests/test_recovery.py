@@ -53,7 +53,7 @@ def test_fista_algorithm(algo_params):
     prior = Sparsity(basis="dct")
 
 
-    fista = Fista(fidelity, prior, acquisition_model, **algo_params)
+    fista = Fista(acquisition_model, fidelity, prior, **algo_params)
     y = acquisition_model(x_true)
     x_trivial = acquisition_model(y, type_calculation="backward")
     x_hat = fista(y, x0=x_trivial)
@@ -77,7 +77,7 @@ def test_pnp_algorithm(algo_params):
     fidelity = L2()
     prior = Sparsity(basis="dct")
 
-    pnp = PnP_ADMM(fidelity, prior, acquisition_model, rho=rho, **algo_params)
+    pnp = PnP_ADMM(acquisition_model, fidelity, prior, rho=rho, **algo_params)
     y = acquisition_model(x_true)
     x_trivial = acquisition_model(y, type_calculation="backward")
     x_hat = pnp(y, x0=x_trivial)

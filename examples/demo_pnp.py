@@ -68,7 +68,7 @@ acquisition_config = dict(
 )
 
 if acquisition_name == 'spc':
-    n_measurements  = 31**2 
+    n_measurements  = 25**2 
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
@@ -90,8 +90,8 @@ from colibri.recovery.terms.fidelity import L2
 from colibri.recovery.terms.transforms import DCT2D
 
 algo_params = {
-    'max_iters': 50,
-    '_lambda': 0.01,
+    'max_iters': 200,
+    '_lambda': 0.05,
     'rho': 0.1,
     'alpha': 1e-4,
 }
@@ -101,10 +101,10 @@ algo_params = {
 fidelity  = L2()
 prior     = Sparsity(basis='dct')
 
-pnp = PnP_ADMM(fidelity, prior, acquisition_model, **algo_params)
+pnp = PnP_ADMM(acquisition_model, fidelity, prior, **algo_params)
 
 x0 = acquisition_model.forward(y, type_calculation="backward")
-x_hat = pnp(y, x0=x0 ) 
+x_hat = pnp(y, x0=x0,  verbose=True) 
 
 basis = DCT2D()
 theta = basis.forward(x_hat).detach()

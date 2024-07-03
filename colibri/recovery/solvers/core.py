@@ -51,7 +51,7 @@ class LinearSolver(Solver):
         Initializes the linear solver.
 
         Args:
-            y (torch.Tensor): Input tensor
+            y (torch.Tensor): Input tensor with shape (B, *)
             acquisition_model (BaseOpticsLayer): Acquisition model
         """
 

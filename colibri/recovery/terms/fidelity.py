@@ -15,7 +15,7 @@ class L2(torch.nn.Module):
         super(L2, self).__init__()
 
     def forward(self, x, y, H=None):
-        """ Computes the L2 fidelity term.
+        r""" Computes the L2 fidelity term.
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
@@ -59,7 +59,7 @@ class L1(torch.nn.Module):
         super(L2, self).__init__()
 
     def forward(self, x, y, H):
-        """ Computes the L1 fidelity term.
+        r""" Computes the L1 fidelity term.
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
