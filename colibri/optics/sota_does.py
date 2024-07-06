@@ -29,7 +29,7 @@ def spiral_refractive_index(wavelength):
     return val
 
 
-def spiral_doe(ny: int, nx: int, number_spirals: int, radius: float, focal: float, start_w = 450e-9, end_w = 650e-9):
+def spiral_doe(M: int, N: int, number_spirals: int, radius: float, focal: float, start_w = 450e-9, end_w = 650e-9):
 
     r"""
 
@@ -39,8 +39,8 @@ def spiral_doe(ny: int, nx: int, number_spirals: int, radius: float, focal: floa
 
     Args:
     
-        ny (int): Resolution at Y axis in pixels.
-        nx (int): Resolution at X axis in pixels.
+        M (int): Resolution at Y axis in pixels.
+        N (int): Resolution at X axis in pixels.
         number_spirals (int): Number of spirals.
         radius (float): Radius of the doe.
         focal (float): Focal length of the doe.
@@ -52,9 +52,9 @@ def spiral_doe(ny: int, nx: int, number_spirals: int, radius: float, focal: floa
         torch.Tensor: Height map of the spiral DOE
         torch.Tensor: Aperture of the spiral DOE
     """
-    pixel_size = (2*radius)/np.min([ny, nx]) 
-    r, theta = get_space_coords(ny = ny, nx = nx, pixel_size = pixel_size, type='polar')
-    aperture = circular_aperture(ny = ny, nx = nx, radius = radius, pixel_size = pixel_size)
+    pixel_size = (2*radius)/np.min([M, N]) 
+    r, theta = get_space_coords(M = M, N = N, pixel_size = pixel_size, type='polar')
+    aperture = circular_aperture(M = M, N = N, radius = radius, pixel_size = pixel_size)
     theta = torch.remainder(theta + torch.pi, 
                             (2 * torch.pi / number_spirals))
     lt = start_w + (end_w - start_w) * number_spirals * theta / 2 / torch.pi
@@ -65,26 +65,32 @@ def spiral_doe(ny: int, nx: int, number_spirals: int, radius: float, focal: floa
 
 
 
-def fresnel_lens(ny: int, nx: int, focal = None, radius = None):
+def conventional_lens(M: int, N: int, focal = None, radius = None):
     r"""
 
-    Code to generate a Fresnel lens with a given focal length and radius.
+    Code to generate a conventional lens with a given focal length and radius following the equation 
+
+    .. math::
+        h(x, y) = \frac{-(x^2 + y^2)}{f}
+
+    where :math:`r` is the distance from the center of the lens and :math:`f` is the focal length of the lens.
 
     For more information, please refer to:  
     Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
     (2017). Design and fabrication of diffractive optical elements with MATLAB.
-    Creates a fresnel lens 
+    Creates a conventional lens 
     Args:
-        N: Number of pixels
+        M: Number of pixels in the y direction,
+        N: Number of pixels in the x direction,
         focal: Focal length of the lens
         wavelength: Wavelength of the light
         radius: Radius of the lens
     Returns:
-        torch.Tensor: Height map of the fresnel lens
-        torch.Tensor: Aperture of the fresnel lens
+        torch.Tensor: Height map of the conventional lens
+        torch.Tensor: Aperture of the conventional lens
     """
-    pixel_size = (2*radius)/np.min([ny, nx])
-    r, _ = get_space_coords(ny = ny, nx = nx, pixel_size = pixel_size, type='polar')
-    aperture = circular_aperture(ny = ny, nx = nx, radius = radius, pixel_size = pixel_size)
+    pixel_size = (2*radius)/np.min([M, N])
+    r, _ = get_space_coords(M = M, N = N, pixel_size = pixel_size, type='polar')
+    aperture = circular_aperture(M = M, N = N, radius = radius, pixel_size = pixel_size)
     height_map = -(r**2)/(focal)
     return height_map*aperture, aperture

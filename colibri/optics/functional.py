@@ -199,26 +199,29 @@ def backward_spc(y, H):
 
 ### Wave optics
 
-def get_space_coords(ny: int, nx: int, pixel_size: float, device=torch.device('cpu'), type='cartesian'):
+def get_space_coords(M: int, N: int, pixel_size: float, device=torch.device('cpu'), type='cartesian'):
     r"""
     
-    Generate spatial coordinates for wave optics simulations in either Cartesian or polar format.
+    Generate the spatial coordinates for wave optics simulations in a specific coordinate system.
+    
+    if type is 'cartesian', the coordinates are generated in the cartesian coordinate system $(x, y)$
+    if type is 'polar', the coordinates are generated in the polar coordinate system $(r, \theta)$
         
     Args:
-        ny (int): Resolution at Y axis in pixels.
-        nx (int): Resolution at X axis in pixels.
-        pixel_size (float): Pixel pixel_size in meters.
+        M (int): number of pixels in the y axis.
+        N (int): number of pixels in the x axis.
+        pixel_size (float): Pixel size in meters.
         device (torch.device): Device, for more see torch.device().
         type (str): Type of coordinate system to generate ('cartesian' or 'polar').
     
     Returns:
         tuple[torch.Tensor, torch.Tensor]: A tuple of tensors representing the X and Y coordinates
-                                           if 'cartesian', or radius (r) and angle (theta) if 'polar'.
+                                            if 'cartesian', or radius (r) and angle (theta) if 'polar'.
     """
 
 
-    x = (torch.linspace(-pixel_size*nx/2, pixel_size*nx/2, nx)).to(device=device)
-    y = (torch.linspace(-pixel_size*ny/2, pixel_size*ny/2, ny)).to(device=device)
+    x = (torch.linspace(-pixel_size*N/2, pixel_size*N/2, N)).to(device=device)
+    y = (torch.linspace(-pixel_size*M/2, pixel_size*M/2, M)).to(device=device)
     x,y = torch.meshgrid(y, x, indexing='ij')
     if type=="polar":
         r = torch.sqrt(x**2 + y**2)
@@ -235,7 +238,8 @@ def wave_number(wavelength: torch.Tensor):
     .. math::
         k = \frac{2 \pi}{\lambda}
     
-    where :math:`\lambda` is the wavelength.
+    where :math:`\lambda` is the wavelength in meters.
+
     Args:
         wavelength (torch.Tensor): Wavelength in meters.
     Returns:
@@ -244,8 +248,8 @@ def wave_number(wavelength: torch.Tensor):
     return 2 * torch.pi / wavelength
 
 
-def transfer_function_fresnel(nu: int, 
-                            nv: int, 
+def transfer_function_fresnel(M: int, 
+                            N: int, 
                             pixel_size: float, 
                             wavelengths: torch.Tensor,
                             distance: float, 
@@ -261,22 +265,22 @@ def transfer_function_fresnel(nu: int,
 
 
     Args:
-        nu (int): Resolution at X axis in pixels.
-        nv (int): Resolution at Y axis in pixels.
+        M (int): Resolution at Y axis in pixels.
+        N (int): Resolution at N axis in pixels.
         pixel_size (float): Pixel pixel_size in meters.
         wavelengths (torch.Tensor): Wavelengths in meters.
         distance (float): Distance in meters.
         device (torch.device): Device, for more see torch.device().
     Returns:
-        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), nu, nv).
+        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), M, N).
     """
-    fr,_ = get_space_coords(nv, nu, 1/(nu*pixel_size), device=device, type='polar')
+    fr,_ = get_space_coords(M, N, 1/(N*pixel_size), device=device, type='polar')
     fr = fr.unsqueeze(0)
     H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * (wavelengths**2)/2)) )
     return H
 
 
-def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
+def transfer_function_angular_spectrum(M: int, N: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'), type='cartesian'):
     r"""
 
     The transfer function for the angular spectrum propagation can be written as follows:
@@ -287,25 +291,25 @@ def transfer_function_angular_spectrum(nu: int, nv: int, pixel_size: float, wave
     where :math:`f_x` and :math:`f_y` are the spatial frequencies, :math:`\lambda` is the wavelength, :math:`s` is the distance of propagation and :math:`k` is the wavenumber.
 
     Args:
-        nu (int): Resolution at X axis in pixels.
-        nv (int): Resolution at Y axis in pixels.
+        M (int): Resolution at Y axis in pixels.
+        N (int): Resolution at X axis in pixels.
         pixel_size (float): Pixel pixel_size in meters.
         wavelengths (torch.Tensor): Wavelengths in meters.
         distance (float): Distance in meters.
         device (torch.device): Device, for more see torch.device().
         type (str): Type of coordinates, can be "cartesian" or "polar".
     Returns:
-        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), nu, nv).
+        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), M, N).
     """
 
-    fr,_ = get_space_coords(nv, nu, 1/(nu*pixel_size), device=device, type='polar')
+    fr,_ = get_space_coords(M, N, 1/(N*pixel_size), device=device, type='polar')
     fr = fr.unsqueeze(0)
     H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * wavelengths**2)) ** 0.5)
 
     return H
 
 
-def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu')):
+def fraunhofer_propagation(field: torch.Tensor, M: int, N: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu')):
     r"""
     The Fraunhofer approximation of :math:`U_0(x',y')` is its Fourier transform, :math:`\mathcal{F}\{U_0\}` with an additional phase factor that depends on the distance of propagation, :math:`z`. The Fraunhofer approximation is given by the following equation:
 
@@ -316,8 +320,8 @@ def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: fl
 
     Args:
         field (torch.Tensor): Input field.
-        nu (int): Resolution at X axis in pixels.
-        nv (int): Resolution at Y axis in pixels.
+        M (int): Resolution at Y axis in pixels.
+        N (int): Resolution at X axis in pixels.
         pixel_size (float): Pixel pixel_size in meters.
         wavelengths (torch.Tensor): Wavelengths in meters.
         distance (float): Distance in meters.
@@ -326,7 +330,7 @@ def fraunhofer_propagation(field: torch.Tensor, nu: int, nv: int, pixel_size: fl
     Returns:
         torch.Tensor: Propagated field. 
     """
-    r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
+    r, _ = get_space_coords(M, N, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
     c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * (r**2))
     c = c.to(device=device)
@@ -355,8 +359,8 @@ def fraunhofer_inverse_propagation(field: torch.Tensor, pixel_size: float, wavel
         torch.Tensor: Reconstructed field.
     
     """
-    _, nu, nv = field.shape
-    r, _ = get_space_coords(nv, nu, pixel_size, device=device, type='polar')
+    _, M, N = field.shape
+    r, _ = get_space_coords(M, N, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
     c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * r**2)
     c = c.to(device=device)
@@ -413,28 +417,28 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     For more information see Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
 
     Args:
-        field (torch.Tensor): Input optical field. Shape (len(wavelengths), nu, nv).
+        field (torch.Tensor): Input optical field of shape (C, M, N).
         distance (float): Propagation distance in meters.
         pixel_size (float): Pixel size in meters.
         wavelength (list): List of wavelengths in meters.
         approximation (str): Approximation (or diffraction model type) to use, can be "fresnel", "angular_spectrum" or "fraunhofer".
     Returns:
-        torch.Tensor: The propagated optical field according to the selected approximation. Shape (len(wavelengths), nu, nv).
+        torch.Tensor: The propagated optical field according to the selected approximation of shape (C, M, N).
     """
 
-    _, nu, nv = field.shape
+    _, M, N = field.shape
     
     if approximation == "fresnel":
         
-        H = transfer_function_fresnel(nu, 
-                                    nv, 
+        H = transfer_function_fresnel(M, 
+                                    N, 
                                     pixel_size, 
                                     wavelength, 
                                     distance, 
                                     field.device)
     elif approximation == "angular_spectrum":
-        H = transfer_function_angular_spectrum(nu, 
-                                            nv, 
+        H = transfer_function_angular_spectrum(M, 
+                                            N, 
                                             pixel_size, 
                                             wavelength, 
                                             distance, 
@@ -449,28 +453,28 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     return result
 
 
-def circular_aperture(ny: int, nx: int, radius: float, pixel_size: float):
+def circular_aperture(M: int, N: int, radius: float, pixel_size: float):
     r'''
-    Create a circular aperture mask of a given radius and pixel_size of size (ny, nx).
+    Create a circular aperture mask of a given radius and pixel_size of size (M, N).
 
     .. math::
-        \begin{cases} 
-            1 & \text{if } sqrt(x^2 + y^2) \leq \text{radius} \\
+        A(x, y) = \begin{cases} 
+            1 & \text{if } \pm \sqrt{(x^2 + y^2)} \leq \text{radius} \\
             0 & \text{otherwise}
         \end{cases}
         
     where: :math:`(x, y)` are the coordinates of each pixel, normalized by the pixel size, :math:`\text{radius}` is the radius of the aperture
     
     Args:
-        nx (int): Resolution at X axis in pixels.
-        ny (int): Resolution at Y axis in pixels.
+        M (int): Resolution at Y axis in pixels.
+        N (int): Resolution at X axis in pixels.
         radius (float): Radius of the circular aperture in meters.
         pixel_size (float): Pixel size in meters.
     
     Returns:
         torch.Tensor: A binary mask with 1's inside the radius and 0's outside.
     '''
-    r, _ = get_space_coords(ny, nx, pixel_size, type='polar')
+    r, _ = get_space_coords(M, N, pixel_size, type='polar')
     return r<=radius
 
 
@@ -530,14 +534,14 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
     """
     
     height_map = height_map*aperture
-    ny, nx = height_map.shape
+    M, N = height_map.shape
     wavelengths = wavelengths.unsqueeze(1).unsqueeze(2)
     k0 = wave_number(wavelengths)
     doe = height2phase(height_map = torch.unsqueeze(height_map, 0), wavelengths = wavelengths, refractive_index = refractive_index)
     doe = torch.exp(1j * doe*aperture)*aperture
     optical_field = torch.ones_like(doe)
     if not(np.isinf(source_distance) or np.isnan(source_distance)):
-        r, _ = get_space_coords(ny, nx, pixel_size, device=doe.device, type='polar')
+        r, _ = get_space_coords(M, N, pixel_size, device=doe.device, type='polar')
         spherical_phase = (k0/(2*source_distance))*(torch.unsqueeze(r, 0)**2)
         optical_field = torch.exp(1j*spherical_phase) * (1/(1j*wavelengths*source_distance))
 
@@ -552,16 +556,14 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
     return psf
 
 
-def addGaussianNoise(y: torch.Tensor, snr: float):
+def gaussian_noise(y: torch.Tensor, snr: float):
     r"""
     Add Gaussian noise to an image based on a specified signal-to-noise ratio (SNR).
 
     .. math::
-    y_noisy = y + n
-    .. math::
-    n ~ N(0, \sigma^2)
+        \mathbf{\tilde{y}} = \mathbf{y} + n
 
-    where :math:`\sigma^2` is derived from the SNR and the power of :math:`y`.
+    where :math:`n` is a Gaussian noise with zero mean and variance :math:`\sigma^2` such that is derived from the SNR and the power of :math:`\mathbf{y}`.
 
     Args:
         y (torch.Tensor): Original image tensor with shape (B, L, M, N).
@@ -582,7 +584,7 @@ def fourier_conv(image: torch.Tensor, psf: torch.Tensor):
     Apply Fourier convolution theorem to simulate the effect of a linear system characterized by a point spread function (PSF).
 
     .. math::
-    g = \mathcal{F}^{-1}(\mathcal{F}(f) * \mathcal{F}(h))
+        g = \mathcal{F}^{-1}(\mathcal{F}(f) * \mathcal{F}(h))
 
     where :math:`f` is the input image, :math:`h` is the PSF, :math:`g` is the convolved output, :math:`\mathcal{F}` and :math:`\mathcal{F}^{-1}` denote the Fourier and inverse Fourier transforms.
 
@@ -644,7 +646,14 @@ def unpad(x, pad):
 
 def signal_conv(image: torch.Tensor, psf: torch.Tensor):
     r"""
-    This function applies the convolution of an image with a Point Spread Function (PSF).
+    This function applies the convolution of an image with a Point Spread Function (PSF) in the signal domain.
+
+    .. math::
+        g(x, y) = f(x, y) * h(x, y)
+
+    where :math:`f(x, y)` is the input image, :math:`h(x, y)` is the PSF, and :math:`g(x, y)` is the convolved output.
+
+
     Args:
         image (torch.Tensor): Image to simulate the sensing (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
@@ -654,8 +663,8 @@ def signal_conv(image: torch.Tensor, psf: torch.Tensor):
     """
     original_size = image.shape[-2:]
     psf = psf.unsqueeze(1)
-    C, _, _, Nx = psf.shape
-    image = torch.nn.functional.conv2d(image, torch.flip(psf, [-2, -1]), padding=(Nx-1, Nx-1), groups=C)
+    C, _, _, N = psf.shape
+    image = torch.nn.functional.conv2d(image, torch.flip(psf, [-2, -1]), padding=(N-1, N-1), groups=C)
 
     new_size = image.shape[-2:]
     image = unpad(image, pad = [0, 0, (new_size[0]-original_size[0])//2, (new_size[1]-original_size[1])//2])
@@ -665,15 +674,7 @@ def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor, domain='fourie
     r"""
     Simulate the convolutional sensing model of an optical system, using either Fourier or spatial domain methods.
 
-    In the "signal" domain, the convolution operation is performed in the spatial domain using the torch.nn.functional.conv2d function.
-    .. math::
-        g(x, y) = f(x, y) * h(x, y)
-
-    In the "fourier" domain, the convolution operation is performed in the Fourier domain using the Fourier convolution theorem.
-    .. math::
-        \mathcal{G}(f_x, f_y) = \mathcal{F}(f_x, f_y) * \mathcal{H}(f_x, f_y)
-
-    where :math:`f(x, y)` is the input image, :math:`h(x, y)` is the PSF, :math:`*` denotes the convolution operation, :math:`\mathcal{F}` and :math:`\mathcal{H}` are the Fourier transforms of :math:`f` and :math:`h`, respectively, and :math:`\mathcal{G}` is the Fourier transform of the output image :math:`g`.
+    The "domain" argument choose to perform the convolution in the Fourier domain with :func:`colibri.optics.functional.fourier_conv` or the spatial domain with :func:`colibri.optics.functional.signal_conv`.
 
     Args:
         image (torch.Tensor): Image tensor to simulate the sensing (B, L, M, N).
@@ -742,7 +743,7 @@ def ideal_panchromatic_sensor(image: torch.Tensor):
     Simulate the response of an ideal panchromatic sensor by averaging the spectral channels.
 
     .. math::
-    I = \frac{1}{L} \sum_{\lambda} I_{\lambda}
+        I = \frac{1}{L} \sum_{\lambda} I_{\lambda}
 
     where :math:`I_{\lambda}` is the intensity at each wavelength, and :math:`L` is the number of spectral channels.
 

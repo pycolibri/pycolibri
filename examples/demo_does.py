@@ -24,7 +24,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from colibri.optics.functional import psf_single_doe_spectral, convolutional_sensing, ideal_panchromatic_sensor
-from colibri.optics.sota_does import spiral_doe, fresnel_lens, spiral_refractive_index, nbk7_refractive_index
+from colibri.optics.sota_does import spiral_doe, conventional_lens, spiral_refractive_index, nbk7_refractive_index
 from colibri.optics import SingleDOESpectral
 from colibri import seed_everything
 
@@ -38,7 +38,7 @@ seed_everything()
 manual_device = "cpu"
 doe_size=(100, 100)
 img_size=(200, 200)
-type_doe = "fresnel_lens" # spiral, fresnel_lens
+type_doe = "spiral" # spiral, conventional_lens
 convolution_domain = "fourier" # signal, fourier
 type_wave_propagation = "angular_spectrum" # fresnel, angular_spectrum, fraunhofer
 wavelengths=torch.Tensor([450, 550, 650])*1e-9
@@ -99,7 +99,7 @@ if type_doe == "spiral":
     radius_doe = 0.5e-3
     sensor_distance=50e-3
     pixel_size = (2*radius_doe)/np.min(doe_size)
-    height_map, aperture = spiral_doe(ny = doe_size[0], nx = doe_size[1], 
+    height_map, aperture = spiral_doe(M = doe_size[0], N = doe_size[1], 
                     number_spirals = 3, radius = radius_doe, 
                     focal = 50e-3, start_w = 450e-9, end_w = 650e-9)
     refractive_index = spiral_refractive_index
@@ -113,13 +113,13 @@ else:
     else:
         sensor_distance= 1/(1/(focal) - 1/(source_distance))
     pixel_size = (2*radius_doe)/np.min(doe_size)
-    height_map, aperture = fresnel_lens(ny = doe_size[0], nx = doe_size[1], focal= focal, radius=radius_doe)
+    height_map, aperture = conventional_lens(M = doe_size[0], N = doe_size[1], focal= focal, radius=radius_doe)
     refractive_index = nbk7_refractive_index
 
 
 fig, ax = plt.subplots(1, 2, figsize=(10, 10))
-ax[0].imshow(height_map, cmap="viridis")
-ax[1].imshow(aperture, cmap="plasma")
+ax[0].imshow(height_map, cmap="viridis"); ax[0].set_title("Height map")
+ax[1].imshow(aperture, cmap="plasma"); ax[1].set_title("Aperture map")
 
 
 # %%

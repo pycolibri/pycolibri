@@ -54,8 +54,8 @@ Functional operators of the optical systems
     colibri.optics.functional.convolutional_sensing   
     colibri.optics.functional.fourier_conv
     colibri.optics.functional.signal_conv
-    colibri.optics.functional.weiner_filter     
-    colibri.optics.functional.addGaussianNoise  
+    colibri.optics.functional.wiener_filter     
+    colibri.optics.functional.gaussian_noise  
 
 Functional operators of optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,5 +86,18 @@ Functional operators of light propagation
     colibri.optics.functional.fraunhofer_propagation
     colibri.optics.functional.fraunhofer_inverse_propagation
 
+state-of-the-art optical elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.optics.sota_does.conventional_lens
+    colibri.optics.sota_does.spiral_doe
+
+
+    
 
 

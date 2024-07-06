@@ -1,6 +1,6 @@
 import torch
 from colibri.optics.functional import psf_single_doe_spectral, convolutional_sensing, wiener_filter, ideal_panchromatic_sensor
-from colibri.optics.sota_does import fresnel_lens, nbk7_refractive_index
+from colibri.optics.sota_does import conventional_lens, nbk7_refractive_index
 from .utils import BaseOpticsLayer
 
 class SingleDOESpectral(BaseOpticsLayer):
@@ -9,7 +9,7 @@ class SingleDOESpectral(BaseOpticsLayer):
 
     This optical system allow for the capture of spatio-spectral information through a wavelength dependent phase coding of light through a diffractive optical element. 
     
-    Mathematically, this systems can be described as follows. 
+    Mathematically, this system can be described as follows: 
 
     .. math::
     
@@ -28,12 +28,12 @@ class SingleDOESpectral(BaseOpticsLayer):
 
     """
     def __init__(self, input_shape, 
-                        height_map, 
-                        aperture, 
-                        wavelengths, 
-                        source_distance, 
-                        sensor_distance, 
-                        pixel_size,
+                        height_map = None, 
+                        aperture = None, 
+                        pixel_size = 1e-6,
+                        wavelengths = torch.tensor([450, 550, 650])*1e-9, 
+                        source_distance = 3, 
+                        sensor_distance = 50e-3, 
                         sensor_spectral_sensitivity=ideal_panchromatic_sensor,
                         doe_refractive_index = None,
                         approximation = "fresnel",
@@ -46,11 +46,11 @@ class SingleDOESpectral(BaseOpticsLayer):
 
         Args:
             input_shape (tuple): The shape of the input spectral image in the format (L, M, N), where L is the number of spectral bands, M is the height, and N is the width.
-            height_map (torch.Tensor): The height map of the DOE (Diffractive Optical Element). If None, a default fresnel lens will be generated.
-            aperture (float): The aperture of the DOE.
-            wavelengths (list): The list of wavelengths corresponding to the spectral bands.
-            source_distance (float): The distance between the source and the DOE.
-            sensor_distance (float): The distance between the DOE and the sensor.
+            height_map (torch.Tensor): The height map of the DOE (Diffractive Optical Element). If None, a default conventional lens will be generated.
+            aperture (float): The aperture of the DOE. If None, a circular aperture will be generated.
+            wavelengths (torch.Tensor): The list of wavelengths corresponding to the spectral bands, by default torch.tensor([450, 550, 650])*1e-9.
+            source_distance (float): The distance between the source and the DOE, by default is 3 meters.
+            sensor_distance (float): The distance between the DOE and the sensor, by default is 50e-3 meters.
             pixel_size (float): The size of a pixel in the sensor.
             sensor_spectral_sensitivity (torch.Tensor, optional): The spectral sensitivity of the sensor. Defaults to ideal_panchromatic_sensor.
             doe_refractive_index (float, optional): The refractive index of the DOE. Defaults to None.
@@ -77,11 +77,13 @@ class SingleDOESpectral(BaseOpticsLayer):
 
         
         if height_map is None:
-            height_map = fresnel_lens(ny=self.M, nx=self.N, focal=1, radius=1)
+            height_map, _ = conventional_lens(M=self.M, N=self.N, focal=50e-3, radius=1)
+        if aperture is None:
+            _, aperture = conventional_lens(M=self.M, N=self.N, focal=50e-3, radius=1)
         #Add parameter CA in pytorch manner
         height_map = torch.nn.Parameter(height_map, requires_grad=self.trainable)
 
-        super(SingleDOESpectral, self).__init__(learnable_optics=height_map, sensing=self.forward_convolution, backward=self.deconvolution)
+        super(SingleDOESpectral, self).__init__(learnable_optics=height_map, sensing=self.convolution, backward=self.deconvolution)
 
     def get_psf(self, height_map=None):
         if height_map is None:
@@ -96,7 +98,7 @@ class SingleDOESpectral(BaseOpticsLayer):
                                         approximation=self.approximation)
     
     
-    def forward_convolution(self, x, height_map):
+    def convolution(self, x, height_map):
         r"""
         Forward operator of the SingleDOESpectral layer.
 

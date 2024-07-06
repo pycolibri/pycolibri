@@ -104,7 +104,7 @@ elif adquistion_name == 'doe':
     source_distance = 1# meters
     sensor_distance=50e-3
     pixel_size = (2*radius_doe)/min(doe_size)
-    height_map, aperture = spiral_doe(ny = doe_size[0], nx = doe_size[1], 
+    height_map, aperture = spiral_doe(M = doe_size[0], N = doe_size[1], 
                     number_spirals = 3, radius = radius_doe, 
                     focal = 50e-3, start_w = 450e-9, end_w = 650e-9)
     refractive_index = spiral_refractive_index

@@ -8,7 +8,7 @@ import numpy as np
 from colibri.optics.cassi import SD_CASSI, DD_CASSI, C_CASSI
 from colibri.optics.spc import SPC
 from colibri.optics.doe import SingleDOESpectral
-from colibri.optics.sota_does import fresnel_lens, nbk7_refractive_index
+from colibri.optics.sota_does import conventional_lens, nbk7_refractive_index
 
 @pytest.fixture
 def imsize():
@@ -81,7 +81,7 @@ def doe_config():
     wavelengths=torch.Tensor([450, 550, 650])*1e-9
     radius_doe =  0.5e-3
     focal = 50e-3
-    height_map, aperture = fresnel_lens(ny=doe_size[0], nx=doe_size[1], focal=focal, radius=radius_doe)
+    height_map, aperture = conventional_lens(M=doe_size[0], N=doe_size[1], focal=focal, radius=radius_doe)
     source_distance = 1
     sensor_distance= 1/(1/(focal) - 1/(source_distance))
     pixel_size = (2*radius_doe)/np.min(doe_size)
