@@ -15,8 +15,24 @@ DATASET_READER = {
 
 
 class DefaultTransform:
+    """Default transformation class.
+
+    This class is used to apply the default transformations to the data.
+
+    The default transformations are:
+        - input: `transforms.ToTensor()`
+        - output: `transforms.ToTensor()`
+
+    The default transformation for the output is `transforms.ToTensor()`, but it can be changed by providing a dictionary with the key 'output' in the `transform_dict` parameter.
+    The default transformation for the input is `transforms.ToTensor()`, but it can be changed by providing a dictionary with the key 'input' in the `transform_dict` parameter.
+
+    """
 
     def __init__(self, name):
+        """
+        Arguments:
+            name (string): Name of the dataset.
+        """
         self.transform_dict = dict(input=transforms.ToTensor(), default=transforms.ToTensor())
         if name in D.BUILTIN_DATASETS:
             self.transform_dict['output'] = transforms.Lambda(lambda x: x)
@@ -24,22 +40,69 @@ class DefaultTransform:
             self.transform_dict['output'] = transforms.ToTensor()
 
     def __call__(self, key, value):
+        """
+        Arguments:
+            key (string): Key of the data.
+            value (object): Data to transform.
+
+        Returns:
+            object: Transformed data.
+        """
         if key in self.transform_dict:
             return self.transform_dict[key](value)
         else:
             return self.default_transform(value)
 
     def default_transform(self, data):
+        """
+        Arguments:
+            data (object): Data to transform
+
+        Returns:
+            object: Transformed data.
+        """
         return self.transform_dict['default'](data)
 
 
 class CustomDataset(Dataset):
-    """Custom dataset."""
+    """Custom dataset.
 
+    This class allows to load custom datasets and apply transformations to the data.
+
+    The datasets that can be currently loaded are:
+        - 'cifar10'
+        - 'mnist'
+        - 'fashion_mnist'
+        - 'cave'
+
+    This class is dividied in two parts:
+        - builtin datasets: datasets that are predefined in the repository.
+        - custom datasets: datasets that are not predefined in the repository.
+
+    The builtin datasets are loaded using the function `load_builtin_dataset` from the module `colibri.data.utils`.
+    The custom datasets are loaded using the function `get_filenames` from the module `colibri.data.utils`.
+    The transformations are applied to the data using the `torchvision.transforms` module.
+
+    The default transformations are:
+        - input: `transforms.ToTensor()`
+        - output: `transforms.ToTensor()`
+
+    The default transformation for the output is `transforms.ToTensor()`, but it can be changed by providing a dictionary with the key 'output' in the `transform_dict` parameter.
+    The default transformation for the input is `transforms.ToTensor()`, but it can be changed by providing a dictionary with the key 'input' in the `transform_dict` parameter.
+    The `transform_dict` parameter is a dictionary with the transformations to apply to the data.
+
+    Example:
+        >>> name = 'cifar10'
+        >>> path = '.'
+        >>> builtin_dict = dict(train=True, download=True)
+        >>> transform_dict = dict(input=transforms.ToTensor(), output=transforms.ToTensor())
+        >>> dataset = CustomDataset(name, path, builtin_dict=builtin_dict, transform_dict=transform_dict)
+    """
     def __init__(self, name, path, builtin_dict=None, transform_dict=None):
         """
         Arguments:
             name (string): Name of the dataset.
+                Current options are: ('cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave').
             path (string): Path to directory with the dataset.
             builtin_dict (dict): Dictionary with the parameters to load the builtin dataset.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
@@ -66,9 +129,20 @@ class CustomDataset(Dataset):
         self.default_transform = DefaultTransform(name)
 
     def __len__(self):
+        """
+        Returns:
+            int: Length of the dataset.
+        """
         return self.len_dataset
 
     def __getitem__(self, idx):
+        """
+        Arguments:
+            idx (int): Index of the sample to load.
+
+        Returns:
+            dict: Dictionary with the data.
+        """
 
         # load sample
 

@@ -5,7 +5,15 @@ Demo Datasets.
 In this example we show how to use the custom dataset class to load the predefined datasets in the repository.
 
 """
+
+# %%
+# Select Working Directory and Device
+# -----------------------------------------------
+import os
 from torch.utils import data
+
+os.chdir(os.path.dirname(os.getcwd()))
+print("Current Working Directory ", os.getcwd())
 
 # %%
 # Load dataset
