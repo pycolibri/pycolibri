@@ -20,7 +20,7 @@ print("Current Working Directory ", os.getcwd())
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = 'cifar10'
+name = 'cifar10'   # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = '.'
 batch_size = 128
 
