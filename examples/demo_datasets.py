@@ -22,8 +22,8 @@ print("Current Working Directory ", os.getcwd())
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = 'cifar10'   # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
-path = '.'
+name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+path = 'data'
 batch_size = 128
 
 builtin_dict = dict(train=True, download=True)
@@ -56,14 +56,31 @@ plt.tight_layout()
 plt.show()
 
 # %%
-# Load cave dataset
+# Cave dataset
 # -----------------------------------------------
 # CAVE is a database of multispectral images that were used to emulate the GAP camera.
 # The images are of a wide variety of real-world materials and objects.
 # You can download the dataset from the following link: http://www.cs.columbia.edu/CAVE/databases/multispectral/
-# Specifically, the entire dataset can be downloaded from the following link: https://www.cs.columbia.edu/CAVE/databases/multispectral/zip/complete_ms_data.zip
 # Once downloaded, you must extract the files and place them in the 'data' folder.
-# Then, you can use the following code to load the dataset:
+
+import requests
+import zipfile
+import os
+
+
+url = 'https://www.cs.columbia.edu/CAVE/databases/multispectral/zip/complete_ms_data.zip'
+
+r = requests.get(url, allow_redirects=True)
+open('data/complete_ms_data.zip', 'wb').write(r.content)
+
+with zipfile.ZipFile('data/complete_ms_data.zip', 'r') as zip_ref:
+    zip_ref.extractall('data/complete_ms_data')
+
+os.remove('data/complete_ms_data.zip')
+
+# %%
+# Load cave dataset
+# -----------------------------------------------
 
 name = 'cave'
 path = 'data/complete_ms_data'  # path to the cave dataset
