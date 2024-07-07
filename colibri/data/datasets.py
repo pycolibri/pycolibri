@@ -92,6 +92,7 @@ class CustomDataset(Dataset):
     The `transform_dict` parameter is a dictionary with the transformations to apply to the data.
 
     Example:
+        >>> from torchvision import transforms
         >>> name = 'cifar10'
         >>> path = '.'
         >>> builtin_dict = dict(train=True, download=True)
