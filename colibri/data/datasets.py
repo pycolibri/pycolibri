@@ -94,7 +94,7 @@ class CustomDataset(Dataset):
             name (string): Name of the dataset.
                 Current options are: ('cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave').
             path (string): Path to directory with the dataset.
-            builtin_dict (dict): Dictionary with the parameters to load the builtin dataset.
+            builtin_dict (dict,object): Dictionary with the parameters to load the builtin dataset.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
         """
         if transform_dict is None:
