@@ -87,17 +87,6 @@ class CustomDataset(Dataset):
         - input: `transforms.ToTensor()`
         - output: `transforms.ToTensor()`
 
-    The default transformation for the output is `transforms.ToTensor()`, but it can be changed by providing a dictionary with the key 'output' in the `transform_dict` parameter.
-    The default transformation for the input is `transforms.ToTensor()`, but it can be changed by providing a dictionary with the key 'input' in the `transform_dict` parameter.
-    The `transform_dict` parameter is a dictionary with the transformations to apply to the data.
-
-    Example:
-        >>> from torchvision import transforms
-        >>> name = 'cifar10'
-        >>> path = '.'
-        >>> builtin_dict = dict(train=True, download=True)
-        >>> transform_dict = dict(input=transforms.ToTensor(), output=transforms.ToTensor())
-        >>> dataset = CustomDataset(name, path, builtin_dict=builtin_dict, transform_dict=transform_dict)
     """
     def __init__(self, name, path, builtin_dict=None, transform_dict=None):
         """
