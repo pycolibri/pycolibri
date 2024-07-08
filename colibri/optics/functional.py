@@ -204,9 +204,15 @@ def get_space_coords(M: int, N: int, pixel_size: float, device=torch.device('cpu
     
     Generate the spatial coordinates for wave optics simulations in a specific coordinate system.
     
-    if type is 'cartesian', the coordinates are generated in the cartesian coordinate system $(x, y)$
-    if type is 'polar', the coordinates are generated in the polar coordinate system $(r, \theta)$
+    .. note::
+        * if type is 'cartesian', we generate :math:`(x, y)` coordinates in the Cartesian coordinate system, where
+            * :math:`x \in \bigg[-\frac{\Delta\cdot N}{2}, \frac{\Delta\cdot N}{2} \bigg]`
+            * :math:`y \in \bigg[-\frac{\Delta\cdot M}{2}, \frac{\Delta\cdot M}{2} \bigg]`
+        * if type is 'polar', we generate :math:`(r, \theta)` coordinates in the Polar coordinate system, where
+            * :math:`r \in \Bigg[0, \sqrt{\bigg(\frac{\Delta\cdot N}{2}\bigg)^2 + \bigg(\frac{\Delta\cdot M}{2}\bigg)^2} \Bigg]`
+            * :math:`\theta \in [-\pi, \pi]`
         
+        with :math:`\Delta` being the pixel size, :math:`M` the number of pixels in the y axis, and :math:`N` the number of pixels in the x axis.
     Args:
         M (int): number of pixels in the y axis.
         N (int): number of pixels in the x axis.
