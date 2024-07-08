@@ -124,6 +124,7 @@ for i in range(3):
     plt.plot(spec_image[i, :, coord1[0], coord1[1]].cpu().numpy(), linewidth=2, label='p1')
     plt.plot(spec_image[i, :, coord2[0], coord1[1]].cpu().numpy(), linewidth=2, label='p2')
     plt.title('spec signatures')
+    plt.xlabel('Wavelength [nm]')
     plt.grid()
     plt.legend()
 

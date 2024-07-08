@@ -75,7 +75,7 @@ class CustomDataset(Dataset):
         - 'fashion_mnist'
         - 'cave'
 
-    This class is dividied in two parts:
+    This class is divided in two parts:
         - builtin datasets: datasets that are predefined in the repository.
         - custom datasets: datasets that are not predefined in the repository.
 
