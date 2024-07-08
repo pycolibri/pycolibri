@@ -151,7 +151,7 @@ plt.show()
 
 
 from colibri.models import build_network, Unet, Autoencoder
-from colibri.archs import E2E
+from colibri.misc import E2E
 from colibri.train import Training
 from colibri.metrics import psnr, ssim
 

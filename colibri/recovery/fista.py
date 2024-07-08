@@ -48,10 +48,10 @@ class Fista(nn.Module):
         self.algo_params = algo_params
         self.transform = transform
 
-        self.H = lambda x: self.acquistion_model.forward(self.transform.inverse(x))
+        self.H = lambda alpha: self.acquistion_model.forward(self.transform.inverse(alpha))
         self.tol = algo_params["tol"]
 
-    def forward(self, y, x0=None):
+    def forward(self, y, x0=None, verbose=False):
         """Runs the FISTA algorithm to solve the optimization problem.
 
         Args:
@@ -85,7 +85,9 @@ class Fista(nn.Module):
             z = x + ((t_old - 1) / t) * (x - x_old)
 
             error = self.fidelity.forward(x, y, self.H).item()
-            print("Iter: ", i, "fidelity: ", error)
+            
+            if verbose:
+                print("Iter: ", i, "fidelity: ", error)
 
         x_hat = self.transform.inverse(x)
         return x_hat

@@ -1,4 +1,4 @@
-.. _archs:
+.. _misc:
 
 
 Architectures
@@ -16,4 +16,4 @@ End-to-End models
     :template: class_template.rst
     :nosignatures:
 
-    colibri.archs.e2e.E2E
+    colibri.misc.e2e.E2E
