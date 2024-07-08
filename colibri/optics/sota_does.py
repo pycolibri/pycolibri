@@ -4,11 +4,15 @@ from colibri.optics.functional import get_space_coords, circular_aperture
 
 def nbk7_refractive_index(wavelength):
     r"""
+    
     nbk refractive index at a given wavelength
+
     Args:
         wavelength: Wavelength in meters
+
     Returns:
         val: Refractive index - 1
+
     """
     wavelength_squared = (wavelength * 1e6)**2
     n_power2_minus_1 = (1.03961212 * wavelength_squared )/(wavelength_squared - 0.00600069867) + (0.231792344 * wavelength_squared) / (wavelength_squared - 0.0200179144) + (1.01046945 * wavelength_squared) / (wavelength_squared - 103.560653)
@@ -17,11 +21,15 @@ def nbk7_refractive_index(wavelength):
 
 def spiral_refractive_index(wavelength):
     r"""
+
     Spiral refractive index at a given wavelength
+
     Args:
         wavelength: Wavelength in meters
+
     Returns:
         val: Refractive index - 1
+
     """
     wavelength = (wavelength * 1e6)
     IdLens = 1.5375+0.00829045*wavelength**(-2)-0.000211046*wavelength**(-4)
@@ -78,7 +86,8 @@ def conventional_lens(M: int, N: int, focal = None, radius = None):
     For more information, please refer to:  
     Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
     (2017). Design and fabrication of diffractive optical elements with MATLAB.
-    Creates a conventional lens 
+
+    
     Args:
         M: Number of pixels in the y direction,
         N: Number of pixels in the x direction,

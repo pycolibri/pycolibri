@@ -416,14 +416,14 @@ def ifft(field: torch.Tensor, axis = (-2, -1)):
 
 def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
     r"""
-    Compute the optical field propagation using a scalar diffraction theory model which is given by the following equation: 
+    Compute the optical field propagation using a scalar diffraction theory model which is given by the specific approximation selected.
     
-    .. math::
-        U_2(x, y) = \mathcal{F}^{-1}\left\{ \mathcal{F}\{U_1(x, y)\} H(f_x, f_y, \lambda) \right\} 
     
-    where :math:`U_1(x, y)` is the input field, :math:`U_2(x, y)` is the output field, :math:`H(f_x, f_y, \lambda)` is the transfer function and :math:`\mathcal{F}` is the Fourier transform operator.
-    
-    For more information see Goodman, J. W. (2005). Introduction to Fourier optics. Roberts and Company Publishers.
+    .. note::
+        * if 'approximation' is 'fresnel', the transfer function is calculated using :func:`colibri.optics.functional.transfer_function_fresnel`.
+        * if 'approximation' is 'angular_spectrum', the transfer function is calculated using :func:`colibri.optics.functional.transfer_function_angular_spectrum`.
+        * if 'approximation' is 'fraunhofer', the transfer function is calculated using :func:`colibri.optics.functional.fraunhofer_propagation`.
+        * if 'approximation' is 'fraunhofer_inverse', the transfer function is calculated using :func:`colibri.optics.functional.fraunhofer_inverse_propagation`.
 
     Args:
         field (torch.Tensor): Input optical field of shape (C, M, N).
@@ -730,9 +730,8 @@ def wiener_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
         \begin{aligned}
             X(x, y) &= \mathcal{F}^{-1}\{Y(u, v) \frac{H^*(u, v)}{|H(u, v)|^2 + \alpha}\}
         \end{aligned}
-        
-    where :math:`H(u, v)` is the optical transfer function, :math:`Y(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, and :math:`X(x, y)` is the filtered image.
 
+    where :math:`H(u, v)` is the optical transfer function, :math:`Y(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, and :math:`X(x, y)` is the filtered image.
 
     Args:
         image (torch.Tensor): Image to apply the Wiener filter (B, L, M, N)
