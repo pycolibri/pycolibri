@@ -3,7 +3,9 @@ import torch.nn as nn
 
 class E2E(nn.Module):
     def __init__(self, optical_layer: nn.Module, decoder: nn.Module):
-        r""" End-to-end model (E2E) for image reconstruction from compressed measurements.
+        r""" 
+        
+        End-to-end model (E2E) for image reconstruction from compressed measurements.
         
         In E2E models, the optical system and the computational decoder are modeled as layers of a neural network, denoted as :math:`\forwardLinear_{\learnedOptics}` and :math:`\reconnet`, respectively. The optimization problem is formulated as following:
 
@@ -22,13 +24,15 @@ class E2E(nn.Module):
         Args:
             optical_layer (nn.Module): Optical Layer module.
             decoder (nn.Module): Computational decoder module.
+            
         """
         super(E2E, self).__init__()
         self.optical_layer = optical_layer
         self.decoder = decoder
     
     def forward(self, x):
-        r""" Forward pass of the E2E model.
+        r""" 
+        Forward pass of the E2E model.
 
         .. math::
             \begin{equation}
@@ -38,10 +42,13 @@ class E2E(nn.Module):
                     \hat{\mathbf{x}} &=\reconnet(\mathbf{x}_{\text{init}})
                 \end{aligned}
             \end{equation}
+
         Args:
             x (torch.Tensor): Input tensor with shape (B, L, M, N).
+
         Returns:
             torch.Tensor: Output tensor with shape (B, L, M, N).
+
         """
         y      = self.optical_layer(x) # y = A(x)
         x_init = self.optical_layer(y, type_calculation="backward") # x_init = A^T(y)

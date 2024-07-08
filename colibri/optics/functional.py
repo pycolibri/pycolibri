@@ -213,6 +213,7 @@ def get_space_coords(M: int, N: int, pixel_size: float, device=torch.device('cpu
             * :math:`\theta \in [-\pi, \pi]`
         
         with :math:`\Delta` being the pixel size, :math:`M` the number of pixels in the y axis, and :math:`N` the number of pixels in the x axis.
+
     Args:
         M (int): number of pixels in the y axis.
         N (int): number of pixels in the x axis.
@@ -223,6 +224,8 @@ def get_space_coords(M: int, N: int, pixel_size: float, device=torch.device('cpu
     Returns:
         tuple[torch.Tensor, torch.Tensor]: A tuple of tensors representing the X and Y coordinates
                                             if 'cartesian', or radius (r) and angle (theta) if 'polar'.
+
+
     """
 
 
@@ -727,6 +730,7 @@ def wiener_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
         \begin{aligned}
             X(x, y) &= \mathcal{F}^{-1}\{Y(u, v) \frac{H^*(u, v)}{|H(u, v)|^2 + \alpha}\}
         \end{aligned}
+        
     where :math:`H(u, v)` is the optical transfer function, :math:`Y(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, and :math:`X(x, y)` is the filtered image.
 
 
@@ -734,8 +738,10 @@ def wiener_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float):
         image (torch.Tensor): Image to apply the Wiener filter (B, L, M, N)
         psf (torch.Tensor): Point Spread Function (1, L, M, N)
         alpha (float): Regularization parameter
+
     Returns:
         torch.Tensor: Filtered image (B, L, M, N)
+
     """
 
     # Fix psf and image size
