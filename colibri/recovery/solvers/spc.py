@@ -9,7 +9,7 @@ class SPCSolver(Solver):
     r"""
         Solver for the SPC acquisition model.
 
-        It describes the close-form solution of the optimization problem.
+        It describes the closed-form solution of the optimization problem.
 
         .. math::
             
@@ -18,8 +18,8 @@ class SPCSolver(Solver):
         where :math:`\textbf{X}` is the tensor to be recovered, :math:`\textbf{Y}` is the input tensor, 
         :math:`\textbf{H}` is the sensing matrix, and :math:`\rho` is the regularization parameter.
 
-        in the case of the SPC acquisition model, the :math:`\textbf{X}` is a matrix of size :math:`(h*w, c)`,
-        where :math:`h` and :math:`w` are the height and width of the image, and :math:`c` is the number of channels.
+        in the case of the SPC acquisition model, the :math:`\textbf{X}` is a matrix of size :math:`(M\timesN, L)`,
+        where :math:`M` and :math:`N` are the height and width of the image, and :math:`L` is the number of channels.
 
         In this sense, :math:`\textbf{X}` is the spatial vectorized form of the image. 
         (since the SPC its broadcasting the sensing matrix over the channels)
@@ -35,7 +35,7 @@ class SPCSolver(Solver):
     def __init__(self, y, acquisition_model: SPC):
         r"""
         Args:
-            y (torch.Tensor): Input tensor with shape (B, C, H, W)
+            y (torch.Tensor): Input tensor with shape (B, L, M, N)
             acquisition_model (SPC): Acquisition model
         """
 
@@ -44,10 +44,11 @@ class SPCSolver(Solver):
 
         self.Hty = acquisition_model(y, type_calculation="backward")
         self.H   = acquisition_model.learnable_optics
+        self.HtH = torch.matmul(self.H.permute(1, 0), self.H)
 
     def solve(self, xtilde, rho):
 
-        Hadj = torch.matmul(self.H.permute(1, 0), self.H) + rho * torch.eye(self.H.shape[1])
+        Hadj = self.HtH  + rho * torch.eye(self.H.shape[1])
         Hadj = torch.inverse(Hadj)
 
         b, c, h, w = xtilde.size()

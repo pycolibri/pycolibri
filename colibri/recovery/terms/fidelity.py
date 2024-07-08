@@ -30,7 +30,7 @@ class L2(torch.nn.Module):
     
     def grad(self, x, y, H=None, transform=None):
         r'''
-        Compute the gradient of the L1 fidelity term.
+        Compute the gradient of the L2 fidelity term.
 
         .. math::
             \nabla f(\mathbf{x}) = \nabla \frac{1}{2}||\forwardLinear(\mathbf{x}) - \mathbf{y}||^2_2

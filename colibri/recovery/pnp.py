@@ -23,10 +23,9 @@ class PnP_ADMM(nn.Module):
     def __init__(self, acquisition_model, fidelity=L2(), prior=Sparsity("dct"), solver="close", max_iters=20, _lambda=0.1, rho=0.1, alpha=0.01):
         r"""
         Args:
-
+            acquisition_model (nn.Module): The acquisition model of the imaging system. This is a function that models the process of data acquisition in the imaging system.
             fidelity (nn.Module): The fidelity term in the optimization problem. This is a function that measures the discrepancy between the data and the model prediction.
             prior (nn.Module): The prior term in the optimization problem. This is a function that encodes prior knowledge about the solution.
-            acquistion_model (nn.Module): The acquisition model of the imaging system. This is a function that models the process of data acquisition in the imaging system.
             max_iters (int): The maximum number of iterations for the FISTA algorithm. Defaults to 20.
             _lambda (float): The regularization parameter for the prior term. Defaults to 0.1.
             rho (float): The penalty parameter for the ADMM formulation. Defaults to 0.1.
@@ -57,7 +56,7 @@ class PnP_ADMM(nn.Module):
         r"""Runs the FISTA algorithm to solve the optimization problem.
 
         Args:
-            y (torch.Tensor): The data to be reconstructed.
+            y (torch.Tensor): The measurement data to be reconstructed.
             x0 (torch.Tensor, optional): The initial guess for the solution. Defaults to None.
 
         Returns:

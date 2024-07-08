@@ -9,9 +9,9 @@ class Sparsity(torch.nn.Module):
         
         .. math::
         
-            g(\mathbf{x}) = \|\Phi x\|_1
+            g(\mathbf{x}) = \| \transform \textbf{x}\|_1
         
-            where :math:`\Phi` is the sparsity basis and :math:`x` is the input tensor.
+        where :math:`\transform` is the sparsity basis and :math:`\textbf{x}` is the input tensor.
 
     """
     def __init__(self, basis=None):
