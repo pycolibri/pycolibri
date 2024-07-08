@@ -449,6 +449,22 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
                                             wavelength, 
                                             distance, 
                                             field.device)
+        
+    elif approximation == "fraunhofer":
+        return fraunhofer_propagation(field, 
+                                      M, 
+                                      N, 
+                                      pixel_size, 
+                                      wavelength, 
+                                      distance, 
+                                      field.device)
+
+    elif approximation == "fraunhofer_inverse":
+        return fraunhofer_inverse_propagation(field,
+                                            pixel_size,
+                                            wavelength,
+                                            distance,
+                                            field.device)
     else:
         raise NotImplementedError(f"{approximation} approximation is implemented")
     
