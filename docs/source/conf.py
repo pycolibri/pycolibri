@@ -63,6 +63,7 @@ mathjax3_config = {
         "macros": {
             "forwardLinear": r"\mathbf{H}",
             "learnedOptics": r"\mathbf{\Phi}",
+            "psf": r"\mathbf{h}",
             "noise":  r"\epsilon",
             "xset": r"\mathcal{X}",
             "thetaset": r"\mathcal{\Omega}",
