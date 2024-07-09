@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from colibri.optics.functional import get_space_coords, circular_aperture
+from colibri.optics.functional import get_spatial_coords, circular_aperture
 
 def nbk7_refractive_index(wavelength):
     r"""
@@ -61,7 +61,7 @@ def spiral_doe(M: int, N: int, number_spirals: int, radius: float, focal: float,
         torch.Tensor: Aperture of the spiral DOE
     """
     pixel_size = (2*radius)/np.min([M, N]) 
-    r, theta = get_space_coords(M = M, N = N, pixel_size = pixel_size, type='polar')
+    r, theta = get_spatial_coords(M = M, N = N, pixel_size = pixel_size, type='polar')
     aperture = circular_aperture(M = M, N = N, radius = radius, pixel_size = pixel_size)
     theta = torch.remainder(theta + torch.pi, 
                             (2 * torch.pi / number_spirals))
@@ -99,7 +99,7 @@ def conventional_lens(M: int, N: int, focal = None, radius = None):
         torch.Tensor: Aperture of the conventional lens
     """
     pixel_size = (2*radius)/np.min([M, N])
-    r, _ = get_space_coords(M = M, N = N, pixel_size = pixel_size, type='polar')
+    r, _ = get_spatial_coords(M = M, N = N, pixel_size = pixel_size, type='polar')
     aperture = circular_aperture(M = M, N = N, radius = radius, pixel_size = pixel_size)
     height_map = -(r**2)/(focal)
     return height_map*aperture, aperture

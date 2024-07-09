@@ -70,7 +70,7 @@ Functional operators of optical elements
     colibri.optics.functional.height2phase    
     colibri.optics.functional.ideal_panchromatic_sensor  
     colibri.optics.functional.wave_number 
-    colibri.optics.functional.get_space_coords    
+    colibri.optics.functional.get_spatial_coords    
 
 Functional operators of light propagation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -86,6 +86,7 @@ Functional operators of light propagation
     colibri.optics.functional.fraunhofer_propagation
     colibri.optics.functional.fraunhofer_inverse_propagation
 
+
 state-of-the-art optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -98,6 +99,18 @@ state-of-the-art optical elements
     colibri.optics.sota_does.spiral_doe
 
 
+
+utils
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.optics.functional.add_pad
+    colibri.optics.functional.unpad
+    colibri.optics.functional.fft
+    colibri.optics.functional.ifft
     
 
 
