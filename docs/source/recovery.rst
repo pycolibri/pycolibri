@@ -30,8 +30,8 @@ List of Solvers
     :template: class_template.rst
     :nosignatures:
 
-    colibri.recovery.solvers.core.LinearSolver
-    colibri.recovery.solvers.spc.SPCSolver
+    colibri.recovery.solvers.core.L2L2Solver
+    colibri.recovery.solvers.spc.SPCL2L2Solver
 
 
 Fidelity Terms
