@@ -664,6 +664,7 @@ def add_pad(x: torch.Tensor, pad: list) -> torch.Tensor:
         tensor([[0, 0, 0, 0],
                 [0, 1, 2, 0],
                 [0, 3, 4, 0],
+                [0, 0, 0, 0]])
 
     """
     assert len(x.shape) == len(pad), "The tensor and the padding must have the same number of dimensions"
@@ -691,8 +692,8 @@ def unpad(x: torch.Tensor, pad: list) -> torch.Tensor:
     Example:
         >>> x = torch.tensor([[0, 0, 0, 0],[0, 1, 2, 0],[0, 3, 4, 0],[0, 0, 0, 0]])
         >>> unpad(x, [1, 1])
-            tensor([[1, 2],
-                    [3, 4]])
+        tensor([[1, 2],
+                [3, 4]])
 
     """
     assert len(x.shape) == len(pad), "The tensor and the padding must have the same number of dimensions"
