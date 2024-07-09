@@ -689,11 +689,7 @@ def unpad(x: torch.Tensor, pad: list) -> torch.Tensor:
 
 
     Example:
-
-        >>> x = torch.tensor([[0, 0, 0, 0],
-                                [0, 1, 2, 0],
-                                [0, 3, 4, 0],
-                                [0, 0, 0, 0]])
+        >>> x = torch.tensor([[0, 0, 0, 0],[0, 1, 2, 0],[0, 3, 4, 0],[0, 0, 0, 0]])
         >>> unpad(x, [1, 1])
             tensor([[1, 2],
                     [3, 4]])
