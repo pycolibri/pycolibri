@@ -19,7 +19,7 @@ class L2(torch.nn.Module):
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
-            y (torch.Tensor): The data to be reconstructed.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function, optional): The forward model. Defaults to None.
 
         Returns:
@@ -37,7 +37,7 @@ class L2(torch.nn.Module):
 
         Args:
             x (torch.Tensor): Input tensor.
-            y (torch.Tensor): Measurements tensor.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function): Forward model.   
 
         Returns:
@@ -63,7 +63,7 @@ class L1(torch.nn.Module):
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
-            y (torch.Tensor): Measurements tensor.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function): The forward model.
 
         Returns:
@@ -82,7 +82,7 @@ class L1(torch.nn.Module):
 
         Args:
             x (torch.Tensor): Input tensor.
-            y (torch.Tensor): Measurements tensor.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function): Forward model.   
 
         Returns:

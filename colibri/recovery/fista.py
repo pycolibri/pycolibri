@@ -62,7 +62,7 @@ class Fista(nn.Module):
         r"""Runs the FISTA algorithm to solve the optimization problem.
 
         Args:
-            y (torch.Tensor): The data to be reconstructed.
+            y (torch.Tensor): The measurement data to be reconstructed.
             x0 (torch.Tensor, optional): The initial guess for the solution. Defaults to None.
 
         Returns:
