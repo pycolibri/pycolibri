@@ -28,8 +28,10 @@ where :math:`\mathcal{L}` is the loss function, :math:`\mathcal{R}` is the regul
 # %%
 # Select Working Directory and Device
 # -----------------------------------------------
-import os 
+import os, sys
 os.chdir(os.path.dirname(os.getcwd()))
+#os.chdir('colibri')
+#sys.path.append(os.path.dirname(os.getcwd()))
 print("Current Working Directory " , os.getcwd())
 
 #General imports
@@ -56,7 +58,7 @@ dataset_path = 'cifar10'
 keys = ''
 batch_size = 128
 dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'c_cassi' #  ['spc', 'cassi']
+adquistion_name = 'doe' #  ['spc', 'cassi']
 
 
 # %%
@@ -82,8 +84,8 @@ plt.show()
 
 
 import math
-from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
-
+from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI, SingleDOESpectral
+from colibri.optics.sota_does import spiral_doe, spiral_refractive_index
 img_size = sample.shape[1:]
 
 acquisition_config = dict(
@@ -95,11 +97,34 @@ if adquistion_name == 'spc':
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
+elif adquistion_name == 'doe':
+    wavelengths = torch.Tensor([450, 550, 650])*1e-9
+    doe_size = [100, 100]
+    radius_doe = 0.5e-3
+    source_distance = 1# meters
+    sensor_distance=50e-3
+    pixel_size = (2*radius_doe)/min(doe_size)
+    height_map, aperture = spiral_doe(M = doe_size[0], N = doe_size[1], 
+                    number_spirals = 3, radius = radius_doe, 
+                    focal = 50e-3, start_w = 450e-9, end_w = 650e-9)
+    refractive_index = spiral_refractive_index
+
+    acquisition_config.update({"height_map":height_map, 
+                        "aperture":aperture, 
+                        "wavelengths":wavelengths, 
+                        "source_distance":source_distance, 
+                        "sensor_distance":sensor_distance, 
+                        "sensor_spectral_sensitivity":lambda x: x,
+                        "pixel_size":pixel_size,
+                        "doe_refractive_index":refractive_index,
+                        "trainable":True})
+
 acquisition_model = {
     'spc': SPC(**acquisition_config),
     'sd_cassi': SD_CASSI(**acquisition_config),
     'dd_cassi': DD_CASSI(**acquisition_config),
-    'c_cassi': C_CASSI(**acquisition_config)
+    'c_cassi': C_CASSI(**acquisition_config),
+    'doe': SingleDOESpectral(**acquisition_config)
 }[adquistion_name]
 
 y = acquisition_model(sample)
@@ -129,6 +154,8 @@ from colibri.models import build_network, Unet, Autoencoder
 from colibri.misc import E2E
 from colibri.train import Training
 from colibri.metrics import psnr, ssim
+
+
 from colibri.regularizers import (
     Reg_Binary,
     Reg_Transmittance,
@@ -156,8 +183,14 @@ losses_weights = [1.0, 1.0]
 n_epochs = 10
 steps_per_epoch = 10
 frequency = 1
-regularizers_optics_ce = {"RB": Reg_Binary(), "RT": Reg_Transmittance()}
-regularizers_optics_ce_weights = [50, 1]
+
+if "cassi" in adquistion_name or "spc" in adquistion_name:
+    regularizers_optics_ce = {"RB": Reg_Binary(), "RT": Reg_Transmittance()}
+    regularizers_optics_ce_weights = [50, 1]
+else:
+    regularizers_optics_ce = {}
+    regularizers_optics_ce_weights = []
+
 
 regularizers_optics_mo = {"MV": MinVariance(), "KLG": KLGaussian(stddev=0.1)}
 regularizers_optics_mo_weights = [1e-3, 0.1]

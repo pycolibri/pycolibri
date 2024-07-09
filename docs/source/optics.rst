@@ -31,6 +31,7 @@ Spectral Imaging systems
     colibri.optics.cassi.DD_CASSI
     colibri.optics.cassi.C_CASSI
     colibri.optics.spc.SPC
+    colibri.optics.doe.SingleDOESpectral
 
 
 Functional operators of the optical systems
@@ -49,6 +50,12 @@ Functional operators of the optical systems
     colibri.optics.functional.backward_sd_cassi
     colibri.optics.functional.forward_spc
     colibri.optics.functional.backward_spc
+    colibri.optics.functional.psf_single_doe_spectral 
+    colibri.optics.functional.convolutional_sensing   
+    colibri.optics.functional.fourier_conv
+    colibri.optics.functional.signal_conv
+    colibri.optics.functional.wiener_filter     
+    colibri.optics.functional.gaussian_noise  
 
 Functional operators of optical elements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -59,5 +66,51 @@ Functional operators of optical elements
     :nosignatures:
 
     colibri.optics.functional.prism_operator
+    colibri.optics.functional.circular_aperture   
+    colibri.optics.functional.height2phase    
+    colibri.optics.functional.ideal_panchromatic_sensor  
+    colibri.optics.functional.wave_number 
+    colibri.optics.functional.get_spatial_coords    
+
+Functional operators of light propagation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.optics.functional.scalar_diffraction_propagation
+    colibri.optics.functional.transfer_function_angular_spectrum    
+    colibri.optics.functional.transfer_function_fresnel
+    colibri.optics.functional.fraunhofer_propagation
+    colibri.optics.functional.fraunhofer_inverse_propagation
+
+
+state-of-the-art optical elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.optics.sota_does.conventional_lens
+    colibri.optics.sota_does.spiral_doe
+
+
+
+utils
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.optics.functional.add_pad
+    colibri.optics.functional.unpad
+    colibri.optics.functional.fft
+    colibri.optics.functional.ifft
+    
 
 
