@@ -5,7 +5,7 @@ from colibri.optics.functional import forward_spc
 from .core import Solver
 
 
-class SPCSolver(Solver):
+class SPCL2L2Solver(Solver):
     r"""
         Solver for the SPC acquisition model.
 
@@ -39,7 +39,7 @@ class SPCSolver(Solver):
             acquisition_model (SPC): Acquisition model
         """
 
-        super(SPCSolver, self).__init__(y, acquisition_model)
+        super(SPCL2L2Solver, self).__init__(y, acquisition_model)
 
 
         self.Hty = acquisition_model(y, type_calculation="backward")

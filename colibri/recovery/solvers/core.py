@@ -27,7 +27,7 @@ class Solver(object):
         raise NotImplementedError("Subclasses should implement the solve method.")
 
 
-class LinearSolver(Solver):
+class L2L2Solver(Solver):
     r"""
 
     Base class for linear solvers.
@@ -48,7 +48,7 @@ class LinearSolver(Solver):
             acquisition_model (BaseOpticsLayer): Acquisition model
         """
 
-        super(LinearSolver, self).__init__(y, acquisition_model)
+        super(L2L2Solver, self).__init__(y, acquisition_model)
 
         # vectorized form of y
         y_vec = y.view(y.size(0), -1)

@@ -97,7 +97,7 @@ if acquisition_name == 'spc':
     n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
-elif adquistion_name == 'doe':
+elif acquisition_name == 'doe':
     wavelengths = torch.Tensor([450, 550, 650])*1e-9
     doe_size = [100, 100]
     radius_doe = 0.5e-3
@@ -186,7 +186,7 @@ n_epochs = 10
 steps_per_epoch = 10
 frequency = 1
 
-if "cassi" in adquistion_name or "spc" in adquistion_name:
+if "cassi" in acquisition_name or "spc" in acquisition_name:
     regularizers_optics_ce = {"RB": Reg_Binary(), "RT": Reg_Transmittance()}
     regularizers_optics_ce_weights = [50, 1]
 else:
