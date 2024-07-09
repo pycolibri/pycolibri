@@ -47,29 +47,40 @@ You can go to ``examples`` folder and run cells of the notebook ``demo_colibri.i
 
 ```python
 import matplotlib.pyplot as plt
-from colibri.data.datasets_ import Dataset
-from torchvision.utils import make_grid
+from torch.utils.data import DataLoader
+from colibri.data.datasets import CustomDataset
 
 # Load dataset
 
-dataset_path = 'cifar10'
-keys = ''
+name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+path = 'data'
 batch_size = 128
 
-dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'cassi'  # ['spc', 'cassi']
+builtin_dict = dict(train=True, download=True)
+dataset = CustomDataset(name, path,
+                        builtin_dict=builtin_dict,
+                        transform_dict=None)
 
-# get samples
+dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
-sample = next(iter(dataset.train_dataset))[0]
-img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
+# Visualize dataset
 
-# visualize samples
+import matplotlib.pyplot as plt
 
-plt.figure(figsize=(10, 10))
-plt.imshow(img.permute(1, 2, 0))
-plt.title('CIFAR10 dataset')
-plt.axis('off')
+data = next(iter(dataset_loader))
+image = data['input']
+label = data['output']
+
+plt.figure(figsize=(5, 5))
+plt.suptitle(f'{name.upper()} dataset Samples')
+
+for i in range(9):
+    plt.subplot(3, 3, i + 1)
+    plt.imshow(image[i].permute(1, 2, 0).cpu().numpy())
+    plt.title(f'Label: {label[i]}')
+    plt.axis('off')
+
+plt.tight_layout()
 plt.show()
 
 ```
