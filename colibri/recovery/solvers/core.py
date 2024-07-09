@@ -44,7 +44,7 @@ class L2L2Solver(Solver):
     def __init__(self, y, acquisition_model: BaseOpticsLayer):
         r"""
         Args:
-            y (torch.Tensor): Input tensor with shape (B, *)
+            y (torch.Tensor): Input tensor with shape (B, \*)
             acquisition_model (BaseOpticsLayer): Acquisition model
         """
 
