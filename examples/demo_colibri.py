@@ -26,16 +26,15 @@ where :math:`\mathcal{L}` is the loss function, :math:`\mathcal{R}` is the regul
 # %%
 # Select Working Directory and Device
 # -----------------------------------------------
-import os, sys
+import os
+
 os.chdir(os.path.dirname(os.getcwd()))
-#os.chdir('colibri')
-#sys.path.append(os.path.dirname(os.getcwd()))
-print("Current Working Directory " , os.getcwd())
+print("Current Working Directory ", os.getcwd())
 
 # General imports
 import matplotlib.pyplot as plt
 import torch
-import os
+from torch.utils.data import DataLoader
 
 manual_device = "cpu"
 # Check GPU support
@@ -51,20 +50,17 @@ else:
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = 'cifar10'
+name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = '.'
 batch_size = 128
-dataset = Dataset(dataset_path, keys, batch_size)
-adquistion_name = 'doe' #  ['spc', 'cassi']
+adquistion_name = 'doe'  # ['spc', 'cassi', 'doe']
 
 builtin_dict = dict(train=True, download=True)
 dataset = CustomDataset(name, path,
                         builtin_dict=builtin_dict,
                         transform_dict=None)
 
-dataset_loader = data.DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
-
-adquistion_name = 'c_cassi'  # ['spc', 'cassi']
+dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 # %%
 # Visualize dataset
@@ -90,6 +86,7 @@ plt.show()
 import math
 from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI, SingleDOESpectral
 from colibri.optics.sota_does import spiral_doe, spiral_refractive_index
+
 img_size = sample.shape[1:]
 
 acquisition_config = dict(
@@ -102,26 +99,26 @@ if adquistion_name == 'spc':
     acquisition_config['n_measurements'] = n_measurements
 
 elif adquistion_name == 'doe':
-    wavelengths = torch.Tensor([450, 550, 650])*1e-9
+    wavelengths = torch.Tensor([450, 550, 650]) * 1e-9
     doe_size = [100, 100]
     radius_doe = 0.5e-3
-    source_distance = 1# meters
-    sensor_distance=50e-3
-    pixel_size = (2*radius_doe)/min(doe_size)
-    height_map, aperture = spiral_doe(M = doe_size[0], N = doe_size[1], 
-                    number_spirals = 3, radius = radius_doe, 
-                    focal = 50e-3, start_w = 450e-9, end_w = 650e-9)
+    source_distance = 1  # meters
+    sensor_distance = 50e-3
+    pixel_size = (2 * radius_doe) / min(doe_size)
+    height_map, aperture = spiral_doe(M=doe_size[0], N=doe_size[1],
+                                      number_spirals=3, radius=radius_doe,
+                                      focal=50e-3, start_w=450e-9, end_w=650e-9)
     refractive_index = spiral_refractive_index
 
-    acquisition_config.update({"height_map":height_map, 
-                        "aperture":aperture, 
-                        "wavelengths":wavelengths, 
-                        "source_distance":source_distance, 
-                        "sensor_distance":sensor_distance, 
-                        "sensor_spectral_sensitivity":lambda x: x,
-                        "pixel_size":pixel_size,
-                        "doe_refractive_index":refractive_index,
-                        "trainable":True})
+    acquisition_config.update({"height_map": height_map,
+                               "aperture": aperture,
+                               "wavelengths": wavelengths,
+                               "source_distance": source_distance,
+                               "sensor_distance": sensor_distance,
+                               "sensor_spectral_sensitivity": lambda x: x,
+                               "pixel_size": pixel_size,
+                               "doe_refractive_index": refractive_index,
+                               "trainable": True})
 
 acquisition_model = {
     'spc': SPC(**acquisition_config),
@@ -158,7 +155,6 @@ from colibri.misc import E2E
 from colibri.train import Training
 from colibri.metrics import psnr, ssim
 
-
 from colibri.regularizers import (
     Reg_Binary,
     Reg_Transmittance,
@@ -192,7 +188,6 @@ if "cassi" in adquistion_name or "spc" in adquistion_name:
 else:
     regularizers_optics_ce = {}
     regularizers_optics_ce_weights = []
-
 
 regularizers_optics_mo = {"MV": MinVariance(), "KLG": KLGaussian(stddev=0.1)}
 regularizers_optics_mo_weights = [1e-3, 0.1]
