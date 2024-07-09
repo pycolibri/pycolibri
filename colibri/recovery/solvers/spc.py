@@ -18,7 +18,7 @@ class SPCSolver(Solver):
         where :math:`\textbf{X}` is the tensor to be recovered, :math:`\textbf{Y}` is the input tensor, 
         :math:`\textbf{H}` is the sensing matrix, and :math:`\rho` is the regularization parameter.
 
-        in the case of the SPC acquisition model, the :math:`\textbf{X}` is a matrix of size :math:`(M\timesN, L)`,
+        in the case of the SPC acquisition model, the :math:`\textbf{X}` is a matrix of size :math:`(M\times N, L)`,
         where :math:`M` and :math:`N` are the height and width of the image, and :math:`L` is the number of channels.
 
         In this sense, :math:`\textbf{X}` is the spatial vectorized form of the image. 
@@ -48,11 +48,11 @@ class SPCSolver(Solver):
 
     def solve(self, xtilde, rho):
 
-        Hadj = self.HtH  + rho * torch.eye(self.H.shape[1])
-        Hadj = torch.inverse(Hadj)
+        H_adjoint = self.HtH  + rho * torch.eye(self.H.shape[1])
+        H_adjoint = torch.inverse(H_adjoint)
 
         b, c, h, w = xtilde.size()
-        x_hat = forward_spc( self.Hty + rho * xtilde, Hadj)
+        x_hat = forward_spc( self.Hty + rho * xtilde, H_adjoint)
         x_hat = x_hat.permute(0, 2, 1)
         x_hat = x_hat.view(b, c, h, w)
 

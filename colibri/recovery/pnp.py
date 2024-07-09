@@ -14,8 +14,21 @@ class PnP_ADMM(nn.Module):
 
     .. math::
         \begin{equation}
-            \underset{\mathbf{x}}{\text{min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda||\mathbf{x}||_1
+            \underset{\mathbf{x}}{\text{arg min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda \mathcal{R}(\mathbf{x})
         \end{equation}
+
+    where :math:`\forwardLinear` is the forward model, :math:`\mathbf{y}` is the data to be reconstructed, :math:`\lambda` is the regularization parameter and :math:`\mathcal{R}` is the prior regularizer.
+
+    The PnP ADMM algorithm is an iterative algorithm that solves the optimization problem by performing a closed-form solution for the forward model and a proximal/denoising step for the prior term.
+
+    .. math::
+        \begin{align*}
+         \mathbf{x}_{k+1} &= \underset{\textbf{x}}{\text{arg min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \frac{\rho}{2} || \mathbf{x} - \tilde{\mathbf{x}} ||^2 \\
+         \mathbf{v}_{k+1} &= \text{prox}_{\mathcal{R}}( \tilde{\mathbf{v}}_k , \lambda) \\
+        \mathbf{u}_{k+1} &=  \mathbf{u}_{k}  + \mathbf{x}_{k+1} - \mathbf{v}_{k+1}
+        \end{align*}
+
+    with :math:`\tilde{\mathbf{x}} = \mathbf{v}_{k} - \mathbf{u}_{k}` and :math:`\tilde{\mathbf{v}} = \mathbf{x}_{k+1} + \mathbf{u}_{k}`, and  :math:`\rho` is the regularization influence in the :math:`\mathbf{x}` update and :math:`\lambda` is the regularization parameter for the prior term.
 
     Implementation based on the formulation of authors in https://doi.org/10.1109/TCI.2016.2629286
     """

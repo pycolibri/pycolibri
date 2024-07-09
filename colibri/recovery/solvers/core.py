@@ -76,10 +76,10 @@ class LinearSolver(Solver):
             torch.Tensor: Recovered tensor
         """
 
-        Hadj = self.HtH + rho * torch.eye(self.HtH.shape[1], device=self.HtH.device)
-        Hadj = torch.inverse(Hadj)
+        H_adjoint = self.HtH + rho * torch.eye(self.HtH.shape[1], device=self.HtH.device)
+        H_adjoint = torch.inverse(H_adjoint)
 
         b, c, h, w = xtilde.size()
-        x_hat = torch.bmm(Hadj, self.Hty + rho * xtilde.view(b, -1, 1)).view(b, c, h, w)
+        x_hat = torch.bmm(H_adjoint, self.Hty + rho * xtilde.view(b, -1, 1)).view(b, c, h, w)
 
         return x_hat

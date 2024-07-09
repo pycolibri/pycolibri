@@ -8,7 +8,7 @@ in image restoration on inverse problems.
 
     \textbf{x}^{*} \in  \underset{\textbf{x}}{ \argmin } \; f(\mathbf{x})+ \lambda g(\mathbf{x})
 
-where :math:`f(\mathbf{x})` is the fidelity term ( i.e, :math:`\Vert \textbf{y} - \textbf{H}(\textbf{x}) \Vert_2^2` ) and :math:`g(\mathbf{x})` is the prior term.
+where :math:`f(\mathbf{x})` is the fidelity term ( e.g., :math:`\Vert \textbf{y} - \textbf{H}(\textbf{x}) \Vert_2^2` ) and :math:`g(\mathbf{x})` is the prior term.
 
 List of Algorithms
 --------------------
