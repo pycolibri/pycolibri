@@ -35,12 +35,16 @@ else:
 # %%
 # Load dataset
 # -----------------------------------------------
-from colibri.data.datasets import Dataset
+from colibri.data.datasets import CustomDataset
 
-dataset_path = 'cifar10'
-keys = ''
+name = 'cifar10'
+path = '.'
 batch_size = 1
-dataset = Dataset(dataset_path, keys, batch_size)
+
+builtin_dict = dict(train=True, download=True)
+dataset = CustomDataset(name, path,
+                        builtin_dict=builtin_dict,
+                        transform_dict=None)
 acquisition_name = 'spc' #  ['spc', 'cassi']
 
 
@@ -52,7 +56,8 @@ acquisition_name = 'spc' #  ['spc', 'cassi']
 from torchvision.utils import make_grid
 from colibri.recovery.terms.transforms import DCT2D
 
-sample = next(iter(dataset.train_dataset))[0]
+sample = dataset[0]['input']
+sample = sample.unsqueeze(0).to(device)
 
 
 # %%
