@@ -1,8 +1,8 @@
-from .spc import SPCL2L2Solver
+from .spc import L2L2SolverSPC
 
 
 SOLVERS = {
-    "SPC": SPCL2L2Solver
+    "SPC": L2L2SolverSPC
 }
 
 
