@@ -6,9 +6,9 @@ in image restoration on inverse problems.
 
 .. math::
 
-    \min_{x} f(\mathbf{x})+ \lambda g(\mathbf{x})
+    \textbf{x}^{*} \in  \underset{\textbf{x}}{ \argmin } \; f(\mathbf{x})+ \lambda g(\mathbf{x})
 
-where :math:`f(\mathbf{x})` is the fidelity term and :math:`g(\mathbf{x})` is the prior term.
+where :math:`f(\mathbf{x})` is the fidelity term ( e.g., :math:`\Vert \textbf{y} - \textbf{H}(\textbf{x}) \Vert_2^2` ) and :math:`g(\mathbf{x})` is the prior term.
 
 List of Algorithms
 --------------------
@@ -19,8 +19,19 @@ List of Algorithms
     :nosignatures:
 
     colibri.recovery.fista.Fista
+    colibri.recovery.pnp.PnP_ADMM
     
 
+List of Solvers
+--------------------
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.recovery.solvers.core.L2L2Solver
+    colibri.recovery.solvers.spc.SPCL2L2Solver
 
 
 Fidelity Terms
@@ -62,4 +73,4 @@ The module contains differents signal transforms that can be used in the recover
     :template: class_template.rst
     :nosignatures:
 
-    colibri.recovery.transforms.DCT2D
+    colibri.recovery.terms.transforms.DCT2D

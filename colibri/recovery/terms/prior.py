@@ -1,27 +1,33 @@
 import torch
 
-
+from .transforms import DCT2D
 
 
 class Sparsity(torch.nn.Module):
-    '''
+    r"""
         Sparsity prior 
         
         .. math::
         
-            g(\mathbf{x}) = \|x\|_1
+            g(\mathbf{x}) = \| \transform \textbf{x}\|_1
+        
+        where :math:`\transform` is the sparsity basis and :math:`\textbf{x}` is the input tensor.
 
-
-    '''
-    def __init__(self):
-        '''
+    """
+    def __init__(self, basis=None):
+        r"""
         Args:
-            None
-        '''
+            basis (str): Basis function. 'dct', 'None'. Default is None.
+        """
         super(Sparsity, self).__init__()
 
+        if basis == 'dct':
+            self.transform = DCT2D()
+        else:
+            self.transform = None
+
     def forward(self, x):
-        '''
+        r"""
         Compute sparsity term.
 
         Args:
@@ -29,11 +35,12 @@ class Sparsity(torch.nn.Module):
         
         Returns:
             torch.Tensor: Sparsity term.
-        '''
-        return torch.norm(x,1)**2
+        """
+        x = self.transform.forward(x)
+        return torch.norm(x, 1)**2
     
     def prox(self, x, _lambda, type="soft"):
-        '''
+        r"""
         Compute proximal operator of the sparsity term.
 
         Args:
@@ -43,13 +50,32 @@ class Sparsity(torch.nn.Module):
         
         Returns:
             torch.Tensor: Proximal operator of the sparsity term.
-        '''
+        """
+        
         x = x.requires_grad_()
+        x = self.transform.forward(x)
 
         if type == 'soft':
-            return torch.sign(x)*torch.max(torch.abs(x) - _lambda, torch.zeros_like(x))
+            x = torch.sign(x)*torch.max(torch.abs(x) - _lambda, torch.zeros_like(x))
         elif type == 'hard':
-            return x*(torch.abs(x) > _lambda)
+            x = x*(torch.abs(x) > _lambda)
+        
+        x = self.transform.inverse(x)
+        return x
+        
+    def transform(self, x):
+        
+        if self.transform is not None:
+            return self.transform.forward(x)
+        else:
+            return x
+    
+    def inverse(self, x):
+        
+        if self.transform is not None:
+            return self.transform.inverse(x)
+        else:
+            return x
         
         
     

@@ -1,14 +1,18 @@
 import torch
 from torch import nn
 
+from colibri.recovery.terms.fidelity import L2
+from colibri.recovery.terms.prior import Sparsity
 
 class Fista(nn.Module):
     r"""
-    FISTA algorithm for solving the optimization problem
+    Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)
+
+    The FISTA algorithm solves the optimization problem:
 
     .. math::
         \begin{equation}
-            \underset{\mathbf{x}}{\text{min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda||\mathbf{x}||_1
+            \underset{\mathbf{x}}{\text{arg min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda||\mathbf{x}||_1
         \end{equation}
 
     where :math:`\forwardLinear` is the forward model, :math:`\mathbf{y}` is the data to be reconstructed, :math:`\lambda` is the regularization parameter and :math:`||\cdot||_1` is the L1 norm.
@@ -24,18 +28,19 @@ class Fista(nn.Module):
 
     where :math:`\alpha` is the step size and :math:`f` is the fidelity term.
 
+    Implementation based on the formulation of authors in https://doi.org/10.1137/080716542
     """
 
-    def __init__(self, fidelity, prior, acquistion_model, algo_params, transform):
-        """Initializes the Fista class.
-
+    def __init__(self, acquistion_model, fidelity=L2(), prior=Sparsity("dct"), max_iters=5, alpha=1e-3, _lambda=0.1):
+        r"""
         Args:
 
             fidelity (nn.Module): The fidelity term in the optimization problem. This is a function that measures the discrepancy between the data and the model prediction.
             prior (nn.Module): The prior term in the optimization problem. This is a function that encodes prior knowledge about the solution.
             acquistion_model (nn.Module): The acquisition model of the imaging system. This is a function that models the process of data acquisition in the imaging system.
-            algo_params (dict): A dictionary containing the parameters for the optimization algorithm. For example, it could contain the tolerance for the stopping criterion.
-            transform (object): The transform to be applied to the image. This is a function that transforms the image into a different domain, for example, the DCT domain.
+            max_iters (int): The maximum number of iterations for the FISTA algorithm. Defaults to 5.
+            alpha (float): The step size for the gradient step. Defaults to 1e-3.
+            _lambda (float): The regularization parameter for the prior term. Defaults to 0.1.
 
         Returns:
             None
@@ -45,17 +50,19 @@ class Fista(nn.Module):
         self.fidelity = fidelity
         self.acquistion_model = acquistion_model
         self.prior = prior
-        self.algo_params = algo_params
-        self.transform = transform
 
-        self.H = lambda alpha: self.acquistion_model.forward(self.transform.inverse(alpha))
-        self.tol = algo_params["tol"]
+        self.H = lambda x: self.acquistion_model.forward(x)
+
+        self.max_iters = max_iters
+        self.alpha = alpha
+        self._lambda = _lambda
+
 
     def forward(self, y, x0=None, verbose=False):
-        """Runs the FISTA algorithm to solve the optimization problem.
+        r"""Runs the FISTA algorithm to solve the optimization problem.
 
         Args:
-            y (torch.Tensor): The data to be reconstructed.
+            y (torch.Tensor): The measurement data to be reconstructed.
             x0 (torch.Tensor, optional): The initial guess for the solution. Defaults to None.
 
         Returns:
@@ -69,25 +76,22 @@ class Fista(nn.Module):
         t = 1
         z = x.clone()
 
-        for i in range(self.algo_params["max_iter"]):
+        for i in range(self.max_iters):
             x_old = x.clone()
-            z_old = z.clone()
 
             # gradient step
-            x = z - self.algo_params["alpha"] * self.fidelity.grad(z, y, self.H)
+            x = z - self.alpha * self.fidelity.grad(z, y, self.H) 
 
             # proximal step
-            x = self.prior.prox(x, self.algo_params["lambda"])
+            x = self.prior.prox(x, self._lambda)
 
             # FISTA step
             t_old = t
             t = (1 + (1 + 4 * t_old**2) ** 0.5) / 2
             z = x + ((t_old - 1) / t) * (x - x_old)
-
-            error = self.fidelity.forward(x, y, self.H).item()
             
             if verbose:
+                error = self.fidelity.forward(x, y, self.H).item()
                 print("Iter: ", i, "fidelity: ", error)
 
-        x_hat = self.transform.inverse(x)
-        return x_hat
+        return x

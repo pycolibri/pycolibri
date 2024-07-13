@@ -15,11 +15,11 @@ class L2(torch.nn.Module):
         super(L2, self).__init__()
 
     def forward(self, x, y, H=None):
-        """ Computes the L2 fidelity term.
+        r""" Computes the L2 fidelity term.
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
-            y (torch.Tensor): The data to be reconstructed.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function, optional): The forward model. Defaults to None.
 
         Returns:
@@ -30,14 +30,14 @@ class L2(torch.nn.Module):
     
     def grad(self, x, y, H=None, transform=None):
         r'''
-        Compute the gradient of the L1 fidelity term.
+        Compute the gradient of the L2 fidelity term.
 
         .. math::
             \nabla f(\mathbf{x}) = \nabla \frac{1}{2}||\forwardLinear(\mathbf{x}) - \mathbf{y}||^2_2
 
         Args:
             x (torch.Tensor): Input tensor.
-            y (torch.Tensor): Measurements tensor.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function): Forward model.   
 
         Returns:
@@ -59,11 +59,11 @@ class L1(torch.nn.Module):
         super(L2, self).__init__()
 
     def forward(self, x, y, H):
-        """ Computes the L1 fidelity term.
+        r""" Computes the L1 fidelity term.
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
-            y (torch.Tensor): Measurements tensor.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function): The forward model.
 
         Returns:
@@ -82,7 +82,7 @@ class L1(torch.nn.Module):
 
         Args:
             x (torch.Tensor): Input tensor.
-            y (torch.Tensor): Measurements tensor.
+            y (torch.Tensor): The measurement data to be reconstructed.
             H (function): Forward model.   
 
         Returns:

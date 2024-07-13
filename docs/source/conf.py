@@ -71,6 +71,7 @@ mathjax3_config = {
             'argmin': '\\operatorname{arg\\,min}',
             'coloneqq': '\\mathrel{:=}',
             'reconnet': '\\mathcal{N}_{\\theta}',
+            'transform': r"\mathbf{\Phi}",
         },
     }
 }

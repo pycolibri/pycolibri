@@ -5,9 +5,7 @@ from .utils import include_colibri
 
 include_colibri()
 
-import torch
-
-from colibri.recovery.transforms import DCT2D
+from colibri.recovery.terms.transforms import DCT2D
 
 
 def load_img():

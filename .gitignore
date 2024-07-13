@@ -8,6 +8,9 @@ docs/source/gen_modules
 # C extensions
 *.so
 
+# Datasets folders
+cifar10
+
 # Distribution / packaging
 .Python
 build/

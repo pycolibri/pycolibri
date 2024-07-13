@@ -53,7 +53,7 @@ from colibri.data.datasets import CustomDataset
 name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = '.'
 batch_size = 128
-adquistion_name = 'doe'  # ['spc', 'cassi', 'doe']
+acquisition_name = 'c_cassi'  # ['spc', 'cassi', 'doe']
 
 builtin_dict = dict(train=True, download=True)
 dataset = CustomDataset(name, path,
@@ -93,13 +93,13 @@ acquisition_config = dict(
     input_shape=img_size,
 )
 
-if adquistion_name == 'spc':
-    n_measurements = 256
-    n_measurements_sqrt = int(math.sqrt(n_measurements))
+if acquisition_name == 'spc':
+    n_measurements  = 256 
+    n_measurements_sqrt = int(math.sqrt(n_measurements))    
     acquisition_config['n_measurements'] = n_measurements
 
-elif adquistion_name == 'doe':
-    wavelengths = torch.Tensor([450, 550, 650]) * 1e-9
+elif acquisition_name == 'doe':
+    wavelengths = torch.Tensor([450, 550, 650])*1e-9
     doe_size = [100, 100]
     radius_doe = 0.5e-3
     source_distance = 1  # meters
@@ -121,16 +121,18 @@ elif adquistion_name == 'doe':
                                "trainable": True})
 
 acquisition_model = {
-    'spc': SPC(**acquisition_config),
-    'sd_cassi': SD_CASSI(**acquisition_config),
-    'dd_cassi': DD_CASSI(**acquisition_config),
-    'c_cassi': C_CASSI(**acquisition_config),
-    'doe': SingleDOESpectral(**acquisition_config)
-}[adquistion_name]
+    'spc': SPC,
+    'sd_cassi': SD_CASSI,
+    'dd_cassi': DD_CASSI,
+    'c_cassi': C_CASSI,
+    'doe': SingleDOESpectral,
+}[acquisition_name]
+
+acquisition_model = acquisition_model(**acquisition_config)
 
 y = acquisition_model(sample)
 
-if adquistion_name == 'spc':
+if acquisition_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
@@ -138,7 +140,7 @@ img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad
 plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
 plt.axis('off')
-plt.title(f'{adquistion_name.upper()} measurements')
+plt.title(f'{acquisition_name.upper()} measurements')
 plt.show()
 
 # %%
@@ -182,7 +184,7 @@ n_epochs = 10
 steps_per_epoch = 10
 frequency = 1
 
-if "cassi" in adquistion_name or "spc" in adquistion_name:
+if "cassi" in acquisition_name or "spc" in acquisition_name:
     regularizers_optics_ce = {"RB": Reg_Binary(), "RT": Reg_Transmittance()}
     regularizers_optics_ce_weights = [50, 1]
 else:
@@ -222,7 +224,7 @@ results = train_schedule.fit(
 x_est = model(sample.to(device)).cpu()
 y = acquisition_model(sample.to(device)).cpu()
 
-if adquistion_name == 'spc':
+if acquisition_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 img = make_grid(sample[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
@@ -230,8 +232,8 @@ img_est = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, scale_each=Fa
 img_y = make_grid(y[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 imgs_dict = {
-    "CIFAR10 dataset": img,
-    f"{adquistion_name.upper()} measurements": img_y,
+    "CIFAR10 dataset": img, 
+    f"{acquisition_name.upper()} measurements": img_y,
     "Recons CIFAR10": img_est
 }
 
@@ -244,9 +246,9 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.axis('off')
 
 ca = acquisition_model.learnable_optics.cpu().detach().numpy().squeeze()
-if adquistion_name == 'spc':
+if acquisition_name == 'spc':
     ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
-elif adquistion_name == 'c_cassi':
+elif acquisition_name == 'c_cassi':
     ca = ca.transpose(1, 2, 0)
 plt.subplot(1, 4, 4)
 plt.imshow(ca, cmap='gray')
