@@ -23,21 +23,18 @@ where :math:`\mathcal{L}` is the loss function, :math:`\mathcal{R}` is the regul
 
 """
 
-
-
 # %%
 # Select Working Directory and Device
 # -----------------------------------------------
-import os, sys
-os.chdir(os.path.dirname(os.getcwd()))
-#os.chdir('colibri')
-#sys.path.append(os.path.dirname(os.getcwd()))
-print("Current Working Directory " , os.getcwd())
+import os
 
-#General imports
+os.chdir(os.path.dirname(os.getcwd()))
+print("Current Working Directory ", os.getcwd())
+
+# General imports
 import matplotlib.pyplot as plt
 import torch
-import os
+from torch.utils.data import DataLoader
 
 manual_device = "cpu"
 # Check GPU support
@@ -48,28 +45,32 @@ if manual_device:
 else:
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-
 # %%
 # Load dataset
 # -----------------------------------------------
-from colibri.data.datasets import Dataset
+from colibri.data.datasets import CustomDataset
 
-dataset_path = 'cifar10'
-keys = ''
+name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+path = '.'
 batch_size = 128
-dataset = Dataset(dataset_path, keys, batch_size)
-acquisition_name = 'c_cassi' #  ['spc', 'cassi', 'doe']
+acquisition_name = 'c_cassi'  # ['spc', 'cassi', 'doe']
 
+builtin_dict = dict(train=True, download=True)
+dataset = CustomDataset(name, path,
+                        builtin_dict=builtin_dict,
+                        transform_dict=None)
+
+dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 # %%
 # Visualize dataset
 # -----------------------------------------------
 from torchvision.utils import make_grid
 
-sample = next(iter(dataset.train_dataset))[0]
+sample = next(iter(dataset_loader))['input']
 img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
-plt.figure(figsize=(10,10))
+plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
 plt.title('CIFAR10 dataset')
 plt.axis('off')
@@ -82,14 +83,14 @@ plt.show()
 # Each optics model can comptute the forward and backward operators i.e., :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}` and :math:`\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}`.
 
 
-
 import math
 from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI, SingleDOESpectral
 from colibri.optics.sota_does import spiral_doe, spiral_refractive_index
+
 img_size = sample.shape[1:]
 
 acquisition_config = dict(
-    input_shape = img_size,
+    input_shape=img_size,
 )
 
 if acquisition_name == 'spc':
@@ -101,23 +102,23 @@ elif acquisition_name == 'doe':
     wavelengths = torch.Tensor([450, 550, 650])*1e-9
     doe_size = [100, 100]
     radius_doe = 0.5e-3
-    source_distance = 1# meters
-    sensor_distance=50e-3
-    pixel_size = (2*radius_doe)/min(doe_size)
-    height_map, aperture = spiral_doe(M = doe_size[0], N = doe_size[1], 
-                    number_spirals = 3, radius = radius_doe, 
-                    focal = 50e-3, start_w = 450e-9, end_w = 650e-9)
+    source_distance = 1  # meters
+    sensor_distance = 50e-3
+    pixel_size = (2 * radius_doe) / min(doe_size)
+    height_map, aperture = spiral_doe(M=doe_size[0], N=doe_size[1],
+                                      number_spirals=3, radius=radius_doe,
+                                      focal=50e-3, start_w=450e-9, end_w=650e-9)
     refractive_index = spiral_refractive_index
 
-    acquisition_config.update({"height_map":height_map, 
-                        "aperture":aperture, 
-                        "wavelengths":wavelengths, 
-                        "source_distance":source_distance, 
-                        "sensor_distance":sensor_distance, 
-                        "sensor_spectral_sensitivity":lambda x: x,
-                        "pixel_size":pixel_size,
-                        "doe_refractive_index":refractive_index,
-                        "trainable":True})
+    acquisition_config.update({"height_map": height_map,
+                               "aperture": aperture,
+                               "wavelengths": wavelengths,
+                               "source_distance": source_distance,
+                               "sensor_distance": sensor_distance,
+                               "sensor_spectral_sensitivity": lambda x: x,
+                               "pixel_size": pixel_size,
+                               "doe_refractive_index": refractive_index,
+                               "trainable": True})
 
 acquisition_model = {
     'spc': SPC,
@@ -136,12 +137,11 @@ if acquisition_name == 'spc':
 
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
-plt.figure(figsize=(10,10))
+plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
 plt.axis('off')
 plt.title(f'{acquisition_name.upper()} measurements')
 plt.show()
-
 
 # %%
 # Reconstruction model
@@ -157,7 +157,6 @@ from colibri.misc import E2E
 from colibri.train import Training
 from colibri.metrics import psnr, ssim
 
-
 from colibri.regularizers import (
     Reg_Binary,
     Reg_Transmittance,
@@ -165,11 +164,10 @@ from colibri.regularizers import (
     KLGaussian,
 )
 
-
 network_config = dict(
     in_channels=sample.shape[1],
     out_channels=sample.shape[1],
-    reduce_spatial = True           # Only for Autoencoder
+    reduce_spatial=True  # Only for Autoencoder
 )
 
 recovery_model = build_network(Unet, **network_config)
@@ -193,13 +191,12 @@ else:
     regularizers_optics_ce = {}
     regularizers_optics_ce_weights = []
 
-
 regularizers_optics_mo = {"MV": MinVariance(), "KLG": KLGaussian(stddev=0.1)}
 regularizers_optics_mo_weights = [1e-3, 0.1]
 
 train_schedule = Training(
     model=model,
-    train_loader=dataset.train_dataset,
+    train_loader=dataset_loader,
     optimizer=optimizer,
     loss_func=losses,
     losses_weights=losses_weights,
@@ -219,7 +216,6 @@ results = train_schedule.fit(
     n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
 )
 
-
 # %%
 # Visualize results
 # -----------------------------------------------
@@ -231,9 +227,9 @@ y = acquisition_model(sample.to(device)).cpu()
 if acquisition_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
-img      = make_grid(sample[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
-img_est  = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
-img_y    = make_grid(y[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+img = make_grid(sample[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+img_est = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
+img_y = make_grid(y[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 imgs_dict = {
     "CIFAR10 dataset": img, 
@@ -244,7 +240,7 @@ imgs_dict = {
 plt.figure(figsize=(14, 2.7))
 
 for i, (title, img) in enumerate(imgs_dict.items()):
-    plt.subplot(1, 4, i+1)
+    plt.subplot(1, 4, i + 1)
     plt.imshow(img.permute(1, 2, 0))
     plt.title(title)
     plt.axis('off')

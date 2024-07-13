@@ -20,13 +20,12 @@ def prism_operator(x:torch.Tensor, shift_sign:int = 1) -> torch.Tensor:
 
     x = torch.unbind(x, dim=1)
 
-
     if shift_sign == 1:
         # Shifting produced by the prism 
         x = [torch.nn.functional.pad(x[l], (l, L - l - 1)) for l in range(L)]
     else:
         # Unshifting produced by the prism
-        x = [x[l][:, :, l:N - (L- 1)+l] for l in range(L)]
+        x = [x[l][:, :, l:N - (L - 1) + l] for l in range(L)]
 
     x = torch.stack(x, dim=1)
     return x
@@ -47,7 +46,7 @@ def forward_color_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
         torch.Tensor: Measurement with shape (B, 1, M, N + L - 1)
     """
     y = torch.multiply(x, ca)
-    y = prism_operator(y, shift_sign = 1)
+    y = prism_operator(y, shift_sign=1)
     return y.sum(dim=1, keepdim=True)
 
 def backward_color_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
@@ -64,7 +63,7 @@ def backward_color_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
         torch.Tensor: Spectral image with shape (B, L, M, N)
     """
     y = torch.tile(y, [1, ca.shape[1], 1, 1])
-    y = prism_operator(y, shift_sign = -1)
+    y = prism_operator(y, shift_sign=-1)
     x = torch.multiply(y, ca)
     return x
 
@@ -85,7 +84,7 @@ def forward_dd_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     _, L, M, N = x.shape  # Extract spectral image shape
     assert ca.shape[-1] == N + L - 1, "The coded aperture must have the same size as a dispersed scene"
     ca = torch.tile(ca, [1, L, 1, 1])
-    ca = prism_operator(ca, shift_sign = -1)
+    ca = prism_operator(ca, shift_sign=-1)
     y = torch.multiply(x, ca)
     return y.sum(dim=1, keepdim=True)
 
@@ -107,7 +106,7 @@ def backward_dd_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     L = N_hat - M + 1  # Number of shifts
     y = torch.tile(y, [1, L, 1, 1])
     ca = torch.tile(ca, [1, L, 1, 1])
-    ca = prism_operator(ca, shift_sign = -1)
+    ca = prism_operator(ca, shift_sign=-1)
     return torch.multiply(y, ca)
 
 def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
@@ -125,7 +124,7 @@ def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     y1 = torch.multiply(x, ca)  # Multiplication of the scene by the coded aperture
     _, M, N, L = y1.shape  # Extract spectral image shape
     # shift and sum
-    y2 = prism_operator(y1, shift_sign = 1)
+    y2 = prism_operator(y1, shift_sign=1)
     return y2.sum(dim=1, keepdim=True)
 
 
@@ -145,7 +144,7 @@ def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     _, _, M, N = y.shape  # Extract spectral image shape
     L = N - M + 1  # Number of shifts
     y = torch.tile(y, [1, L, 1, 1])
-    y = prism_operator(y, shift_sign = -1)
+    y = prism_operator(y, shift_sign=-1)
     return torch.multiply(y, ca)
 
 
@@ -164,7 +163,7 @@ def forward_spc(x: torch.Tensor, H: torch.Tensor) -> torch.Tensor:
         torch.Tensor: Output measurement tensor of size (B, S, L).
     """
     B, L, M, N = x.size()
-    x = x.contiguous().view(B, L, M*N)
+    x = x.contiguous().view(B, L, M * N)
     x = x.permute(0, 2, 1)
 
     # measurement
