@@ -1,0 +1,15 @@
+﻿L2L2Solver
+==========
+
+.. currentmodule:: colibri.recovery.solvers.core
+
+.. autoclass:: L2L2Solver
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.recovery.solvers.core.L2L2Solver:
+
+.. minigallery:: colibri.recovery.solvers.core.L2L2Solver
+    :add-heading: Examples using ``L2L2Solver``:

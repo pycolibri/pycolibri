@@ -1,0 +1,9 @@
+﻿spiral\_doe
+===========
+
+.. currentmodule:: colibri.optics.sota_does
+
+.. autofunction:: spiral_doe
+
+.. minigallery:: colibri.optics.sota_does.spiral_doe
+    :add-heading: Examples using ``spiral_doe``:

@@ -1,0 +1,9 @@
+﻿signal\_conv
+============
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: signal_conv
+
+.. minigallery:: colibri.optics.functional.signal_conv
+    :add-heading: Examples using ``signal_conv``:

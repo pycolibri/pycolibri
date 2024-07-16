@@ -1,0 +1,795 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Demo DOEs." href="demo_does.html" /><link rel="prev" title="Demo Algorithms." href="demo_fista.html" />
+
+    <!-- Generated with Sphinx 7.4.4 and Furo 2024.05.06 -->
+        <title>Demo Algorithms. - Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=387cc868" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" /
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Colibri</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/colibri-logo.svg" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Colibri</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../architectures.html">Architectures</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Architectures</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.misc.e2e.E2E.html">E2E</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../models.html">Models</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.autoencoder.Autoencoder.html">Autoencoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.unet.Unet.html">Unet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.custom_layers.Activation.html">Activation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.custom_layers.convBlock.html">convBlock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.custom_layers.downBlock.html">downBlock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.custom_layers.upBlock.html">upBlock</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.custom_layers.upBlockNoSkip.html">upBlockNoSkip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.models.custom_layers.outBlock.html">outBlock</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../optics.html">Optics</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Optics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.cassi.SD_CASSI.html">SD_CASSI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.cassi.DD_CASSI.html">DD_CASSI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.cassi.C_CASSI.html">C_CASSI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.spc.SPC.html">SPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.doe.SingleDOESpectral.html">SingleDOESpectral</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.forward_color_cassi.html">forward_color_cassi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.backward_color_cassi.html">backward_color_cassi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.forward_dd_cassi.html">forward_dd_cassi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.backward_dd_cassi.html">backward_dd_cassi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.forward_sd_cassi.html">forward_sd_cassi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.backward_sd_cassi.html">backward_sd_cassi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.forward_spc.html">forward_spc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.backward_spc.html">backward_spc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.psf_single_doe_spectral.html">psf_single_doe_spectral</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.convolutional_sensing.html">convolutional_sensing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.fourier_conv.html">fourier_conv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.signal_conv.html">signal_conv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.wiener_filter.html">wiener_filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.gaussian_noise.html">gaussian_noise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.prism_operator.html">prism_operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.circular_aperture.html">circular_aperture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.height2phase.html">height2phase</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.ideal_panchromatic_sensor.html">ideal_panchromatic_sensor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.wave_number.html">wave_number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.get_spatial_coords.html">get_spatial_coords</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.scalar_diffraction_propagation.html">scalar_diffraction_propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.transfer_function_angular_spectrum.html">transfer_function_angular_spectrum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.transfer_function_fresnel.html">transfer_function_fresnel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.fraunhofer_propagation.html">fraunhofer_propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.fraunhofer_inverse_propagation.html">fraunhofer_inverse_propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.sota_does.conventional_lens.html">conventional_lens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.sota_does.spiral_doe.html">spiral_doe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.add_pad.html">add_pad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.unpad.html">unpad</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.fft.html">fft</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.optics.functional.ifft.html">ifft</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../regularizers.html">Regularizers</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Regularizers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.regularizers.Reg_Binary.html">Reg_Binary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.regularizers.Correlation.html">Correlation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.regularizers.Reg_Transmittance.html">Reg_Transmittance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.regularizers.KLGaussian.html">KLGaussian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.regularizers.MinVariance.html">MinVariance</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="demo_datasets.html">Demo Datasets.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fista.html">Demo Algorithms.</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Demo Algorithms.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_does.html">Demo DOEs.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_colibri.html">Demo Colibri.</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../recovery.html">Recovery</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Recovery</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.fista.Fista.html">Fista</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.pnp.PnP_ADMM.html">PnP_ADMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.solvers.core.L2L2Solver.html">L2L2Solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.terms.fidelity.L2.html">L2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.terms.fidelity.L1.html">L1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.terms.prior.Sparsity.html">Sparsity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stubs/colibri.recovery.terms.transforms.DCT2D.html">DCT2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/auto_examples/demo_pnp.rst.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-demo-pnp-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="demo-algorithms">
+<span id="sphx-glr-auto-examples-demo-pnp-py"></span><h1>Demo Algorithms.<a class="headerlink" href="#demo-algorithms" title="Link to this heading">¶</a></h1>
+<section id="select-working-directory-and-device">
+<h2>Select Working Directory and Device<a class="headerlink" href="#select-working-directory-and-device" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current Working Directory &quot;</span> <span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+
+<span class="c1">#General imports</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Set random seed for reproducibility</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">manual_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="c1"># Check GPU support</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU support: &quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">manual_device</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">manual_device</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Current Working Directory  /home/runner/work/pycolibri/pycolibri
+GPU support:  False
+</pre></div>
+</div>
+</section>
+<section id="load-dataset">
+<h2>Load dataset<a class="headerlink" href="#load-dataset" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">colibri.data.datasets</span> <span class="kn">import</span> <span class="n">CustomDataset</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;cifar10&#39;</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">builtin_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span>
+                        <span class="n">builtin_dict</span><span class="o">=</span><span class="n">builtin_dict</span><span class="p">,</span>
+                        <span class="n">transform_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">acquisition_name</span> <span class="o">=</span> <span class="s1">&#39;spc&#39;</span> <span class="c1">#  [&#39;spc&#39;, &#39;cassi&#39;]</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Files already downloaded and verified
+</pre></div>
+</div>
+</section>
+<section id="visualize-dataset">
+<h2>Visualize dataset<a class="headerlink" href="#visualize-dataset" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchvision.utils</span> <span class="kn">import</span> <span class="n">make_grid</span>
+<span class="kn">from</span> <span class="nn">colibri.recovery.terms.transforms</span> <span class="kn">import</span> <span class="n">DCT2D</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Optics forward model</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">colibri.optics</span> <span class="kn">import</span> <span class="n">SPC</span><span class="p">,</span> <span class="n">SD_CASSI</span><span class="p">,</span> <span class="n">DD_CASSI</span><span class="p">,</span> <span class="n">C_CASSI</span>
+
+<span class="n">img_size</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">acquisition_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">input_shape</span> <span class="o">=</span> <span class="n">img_size</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">n_measurements</span>  <span class="o">=</span> <span class="mi">25</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">n_measurements_sqrt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_measurements</span><span class="p">))</span>
+    <span class="n">acquisition_config</span><span class="p">[</span><span class="s1">&#39;n_measurements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_measurements</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;spc&#39;</span><span class="p">:</span> <span class="n">SPC</span><span class="p">,</span>
+    <span class="s1">&#39;sd_cassi&#39;</span><span class="p">:</span> <span class="n">SD_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;dd_cassi&#39;</span><span class="p">:</span> <span class="n">DD_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;c_cassi&#39;</span><span class="p">:</span> <span class="n">C_CASSI</span>
+<span class="p">}[</span><span class="n">acquisition_name</span><span class="p">]</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="o">**</span><span class="n">acquisition_config</span><span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="c1"># Reconstruct image</span>
+<span class="kn">from</span> <span class="nn">colibri.recovery.pnp</span> <span class="kn">import</span> <span class="n">PnP_ADMM</span>
+<span class="kn">from</span> <span class="nn">colibri.recovery.terms.prior</span> <span class="kn">import</span> <span class="n">Sparsity</span>
+<span class="kn">from</span> <span class="nn">colibri.recovery.terms.fidelity</span> <span class="kn">import</span> <span class="n">L2</span>
+<span class="kn">from</span> <span class="nn">colibri.recovery.terms.transforms</span> <span class="kn">import</span> <span class="n">DCT2D</span>
+
+<span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_iters&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s1">&#39;_lambda&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s1">&#39;rho&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+
+<span class="n">fidelity</span>  <span class="o">=</span> <span class="n">L2</span><span class="p">()</span>
+<span class="n">prior</span>     <span class="o">=</span> <span class="n">Sparsity</span><span class="p">(</span><span class="n">basis</span><span class="o">=</span><span class="s1">&#39;dct&#39;</span><span class="p">)</span>
+
+<span class="n">pnp</span> <span class="o">=</span> <span class="n">PnP_ADMM</span><span class="p">(</span><span class="n">acquisition_model</span><span class="p">,</span> <span class="n">fidelity</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_params</span><span class="p">)</span>
+
+<span class="n">x0</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">type_calculation</span><span class="o">=</span><span class="s2">&quot;backward&quot;</span><span class="p">)</span>
+<span class="n">x_hat</span> <span class="o">=</span> <span class="n">pnp</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>  <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">basis</span> <span class="o">=</span> <span class="n">DCT2D</span><span class="p">()</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_hat</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">x_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Reference&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Sparse Representation&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:])</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Measurement&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Reconstruction&#39;</span><span class="p">)</span>
+<span class="n">x_hat</span> <span class="o">-=</span> <span class="n">x_hat</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">x_hat</span> <span class="o">/=</span> <span class="n">x_hat</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">x_hat</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_pnp_001.png" srcset="../_images/sphx_glr_demo_pnp_001.png" alt="Reference, Sparse Representation, Measurement, Reconstruction" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iter:  0 fidelity:  1669.9232177734375
+Iter:  1 fidelity:  0.4094686806201935
+Iter:  2 fidelity:  0.38364526629447937
+Iter:  3 fidelity:  0.4318388104438782
+Iter:  4 fidelity:  0.4325319826602936
+Iter:  5 fidelity:  0.3927212953567505
+Iter:  6 fidelity:  0.4190705418586731
+Iter:  7 fidelity:  0.3942250609397888
+Iter:  8 fidelity:  0.4104157090187073
+Iter:  9 fidelity:  0.40157049894332886
+Iter:  10 fidelity:  0.4069956839084625
+Iter:  11 fidelity:  0.4140903353691101
+Iter:  12 fidelity:  0.42949146032333374
+Iter:  13 fidelity:  0.45015382766723633
+Iter:  14 fidelity:  0.4146665334701538
+Iter:  15 fidelity:  0.4146174490451813
+Iter:  16 fidelity:  0.41521814465522766
+Iter:  17 fidelity:  0.4170341491699219
+Iter:  18 fidelity:  0.4219473898410797
+Iter:  19 fidelity:  0.42955443263053894
+Iter:  20 fidelity:  0.439466655254364
+Iter:  21 fidelity:  0.41927191615104675
+Iter:  22 fidelity:  0.41847679018974304
+Iter:  23 fidelity:  0.39810076355934143
+Iter:  24 fidelity:  0.4386915862560272
+Iter:  25 fidelity:  0.4015481173992157
+Iter:  26 fidelity:  0.3806607723236084
+Iter:  27 fidelity:  0.4072086215019226
+Iter:  28 fidelity:  0.4182002544403076
+Iter:  29 fidelity:  0.43787264823913574
+Iter:  30 fidelity:  0.4079909324645996
+Iter:  31 fidelity:  0.40084782242774963
+Iter:  32 fidelity:  0.41479626297950745
+Iter:  33 fidelity:  0.3953186273574829
+Iter:  34 fidelity:  0.4198313057422638
+Iter:  35 fidelity:  0.4097757935523987
+Iter:  36 fidelity:  0.4252175986766815
+Iter:  37 fidelity:  0.4149603545665741
+Iter:  38 fidelity:  0.4338878393173218
+Iter:  39 fidelity:  0.4275112450122833
+Iter:  40 fidelity:  0.4005465805530548
+Iter:  41 fidelity:  0.3914053738117218
+Iter:  42 fidelity:  0.42212504148483276
+Iter:  43 fidelity:  0.4036572575569153
+Iter:  44 fidelity:  0.41174763441085815
+Iter:  45 fidelity:  0.4321576952934265
+Iter:  46 fidelity:  0.43159249424934387
+Iter:  47 fidelity:  0.40626224875450134
+Iter:  48 fidelity:  0.4079158902168274
+Iter:  49 fidelity:  0.3800809681415558
+Iter:  50 fidelity:  0.3799036741256714
+Iter:  51 fidelity:  0.36222052574157715
+Iter:  52 fidelity:  0.37108877301216125
+Iter:  53 fidelity:  0.40033993124961853
+Iter:  54 fidelity:  0.4125153124332428
+Iter:  55 fidelity:  0.40425097942352295
+Iter:  56 fidelity:  0.38411208987236023
+Iter:  57 fidelity:  0.39325785636901855
+Iter:  58 fidelity:  0.39177176356315613
+Iter:  59 fidelity:  0.4296285808086395
+Iter:  60 fidelity:  0.3989747166633606
+Iter:  61 fidelity:  0.41227394342422485
+Iter:  62 fidelity:  0.446757048368454
+Iter:  63 fidelity:  0.4077743589878082
+Iter:  64 fidelity:  0.42581695318222046
+Iter:  65 fidelity:  0.3999093770980835
+Iter:  66 fidelity:  0.40081265568733215
+Iter:  67 fidelity:  0.4121812880039215
+Iter:  68 fidelity:  0.41347599029541016
+Iter:  69 fidelity:  0.4455518126487732
+Iter:  70 fidelity:  0.4138506054878235
+Iter:  71 fidelity:  0.4276696741580963
+Iter:  72 fidelity:  0.40993839502334595
+Iter:  73 fidelity:  0.40260064601898193
+Iter:  74 fidelity:  0.3927026391029358
+Iter:  75 fidelity:  0.38913872838020325
+Iter:  76 fidelity:  0.39541828632354736
+Iter:  77 fidelity:  0.3979097902774811
+Iter:  78 fidelity:  0.3935462534427643
+Iter:  79 fidelity:  0.39704233407974243
+Iter:  80 fidelity:  0.3932282030582428
+Iter:  81 fidelity:  0.3991338610649109
+Iter:  82 fidelity:  0.4067072868347168
+Iter:  83 fidelity:  0.39987099170684814
+Iter:  84 fidelity:  0.39775726199150085
+Iter:  85 fidelity:  0.4197361469268799
+Iter:  86 fidelity:  0.4058372676372528
+Iter:  87 fidelity:  0.41850316524505615
+Iter:  88 fidelity:  0.42902660369873047
+Iter:  89 fidelity:  0.4057157039642334
+Iter:  90 fidelity:  0.42747873067855835
+Iter:  91 fidelity:  0.41186097264289856
+Iter:  92 fidelity:  0.38733911514282227
+Iter:  93 fidelity:  0.3984169065952301
+Iter:  94 fidelity:  0.4171242415904999
+Iter:  95 fidelity:  0.3998967707157135
+Iter:  96 fidelity:  0.3908005654811859
+Iter:  97 fidelity:  0.3889711797237396
+Iter:  98 fidelity:  0.4098595082759857
+Iter:  99 fidelity:  0.3978356420993805
+Iter:  100 fidelity:  0.4065708518028259
+Iter:  101 fidelity:  0.4021046757698059
+Iter:  102 fidelity:  0.3929083049297333
+Iter:  103 fidelity:  0.4182789623737335
+Iter:  104 fidelity:  0.42227301001548767
+Iter:  105 fidelity:  0.3957982063293457
+Iter:  106 fidelity:  0.3877260684967041
+Iter:  107 fidelity:  0.43848878145217896
+Iter:  108 fidelity:  0.41596099734306335
+Iter:  109 fidelity:  0.4320216178894043
+Iter:  110 fidelity:  0.41347575187683105
+Iter:  111 fidelity:  0.43774721026420593
+Iter:  112 fidelity:  0.4355454444885254
+Iter:  113 fidelity:  0.43320581316947937
+Iter:  114 fidelity:  0.4335811138153076
+Iter:  115 fidelity:  0.416973739862442
+Iter:  116 fidelity:  0.40249860286712646
+Iter:  117 fidelity:  0.41004952788352966
+Iter:  118 fidelity:  0.42165476083755493
+Iter:  119 fidelity:  0.44170621037483215
+Iter:  120 fidelity:  0.43481770157814026
+Iter:  121 fidelity:  0.42624539136886597
+Iter:  122 fidelity:  0.43531566858291626
+Iter:  123 fidelity:  0.4482935070991516
+Iter:  124 fidelity:  0.4362544119358063
+Iter:  125 fidelity:  0.44031810760498047
+Iter:  126 fidelity:  0.42735910415649414
+Iter:  127 fidelity:  0.4145521819591522
+Iter:  128 fidelity:  0.43071603775024414
+Iter:  129 fidelity:  0.4142044186592102
+Iter:  130 fidelity:  0.41212198138237
+Iter:  131 fidelity:  0.40301457047462463
+Iter:  132 fidelity:  0.41422101855278015
+Iter:  133 fidelity:  0.43103864789009094
+Iter:  134 fidelity:  0.42444610595703125
+Iter:  135 fidelity:  0.39256879687309265
+Iter:  136 fidelity:  0.3981992304325104
+Iter:  137 fidelity:  0.4113345146179199
+Iter:  138 fidelity:  0.3971279561519623
+Iter:  139 fidelity:  0.39923927187919617
+Iter:  140 fidelity:  0.4082997739315033
+Iter:  141 fidelity:  0.4383004903793335
+Iter:  142 fidelity:  0.4530999958515167
+Iter:  143 fidelity:  0.4232912063598633
+Iter:  144 fidelity:  0.4536299705505371
+Iter:  145 fidelity:  0.4485243558883667
+Iter:  146 fidelity:  0.430929958820343
+Iter:  147 fidelity:  0.4425649344921112
+Iter:  148 fidelity:  0.4165634214878082
+Iter:  149 fidelity:  0.44592034816741943
+Iter:  150 fidelity:  0.3935910165309906
+Iter:  151 fidelity:  0.3968771696090698
+Iter:  152 fidelity:  0.41596218943595886
+Iter:  153 fidelity:  0.41240665316581726
+Iter:  154 fidelity:  0.4070865213871002
+Iter:  155 fidelity:  0.4284876883029938
+Iter:  156 fidelity:  0.4008857309818268
+Iter:  157 fidelity:  0.4284467399120331
+Iter:  158 fidelity:  0.4307214319705963
+Iter:  159 fidelity:  0.42318224906921387
+Iter:  160 fidelity:  0.4244399070739746
+Iter:  161 fidelity:  0.4145662188529968
+Iter:  162 fidelity:  0.4098312258720398
+Iter:  163 fidelity:  0.4165533483028412
+Iter:  164 fidelity:  0.41291236877441406
+Iter:  165 fidelity:  0.40763217210769653
+Iter:  166 fidelity:  0.4217744767665863
+Iter:  167 fidelity:  0.41487109661102295
+Iter:  168 fidelity:  0.3932623565196991
+Iter:  169 fidelity:  0.39202195405960083
+Iter:  170 fidelity:  0.38220030069351196
+Iter:  171 fidelity:  0.40263745188713074
+Iter:  172 fidelity:  0.4180448651313782
+Iter:  173 fidelity:  0.4017086625099182
+Iter:  174 fidelity:  0.39509573578834534
+Iter:  175 fidelity:  0.4091462790966034
+Iter:  176 fidelity:  0.4028547406196594
+Iter:  177 fidelity:  0.4344608187675476
+Iter:  178 fidelity:  0.4224560558795929
+Iter:  179 fidelity:  0.3956838846206665
+Iter:  180 fidelity:  0.4036117196083069
+Iter:  181 fidelity:  0.4049101769924164
+Iter:  182 fidelity:  0.4247829020023346
+Iter:  183 fidelity:  0.4201778769493103
+Iter:  184 fidelity:  0.40205731987953186
+Iter:  185 fidelity:  0.40141230821609497
+Iter:  186 fidelity:  0.3858444094657898
+Iter:  187 fidelity:  0.40222790837287903
+Iter:  188 fidelity:  0.40037208795547485
+Iter:  189 fidelity:  0.391135036945343
+Iter:  190 fidelity:  0.4045924246311188
+Iter:  191 fidelity:  0.40400710701942444
+Iter:  192 fidelity:  0.4066256880760193
+Iter:  193 fidelity:  0.3965778946876526
+Iter:  194 fidelity:  0.410178542137146
+Iter:  195 fidelity:  0.38622158765792847
+Iter:  196 fidelity:  0.4043356478214264
+Iter:  197 fidelity:  0.39645278453826904
+Iter:  198 fidelity:  0.4112028181552887
+Iter:  199 fidelity:  0.39679816365242004
+torch.Size([1, 3, 32, 32])
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [0.0..17.648216].
+Clipping input data to the valid range for imshow with RGB data ([0..1] for floats or [0..255] for integers). Got range [-48.255157..47.9232].
+
+([], [])
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.954 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-pnp-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7c81280bbdec74c21d85a347ab4ed1f7/demo_pnp.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">demo_pnp.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/81a0d2abd9e7468cf35f4a24b4f141a3/demo_pnp.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">demo_pnp.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="demo_does.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Demo DOEs.</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="demo_fista.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Demo Algorithms.</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, colibri
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Demo Algorithms.</a><ul>
+<li><a class="reference internal" href="#select-working-directory-and-device">Select Working Directory and Device</a></li>
+<li><a class="reference internal" href="#load-dataset">Load dataset</a></li>
+<li><a class="reference internal" href="#visualize-dataset">Visualize dataset</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=4e2eecee"></script>
+    </body>
+</html>

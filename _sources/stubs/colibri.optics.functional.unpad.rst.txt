@@ -1,0 +1,9 @@
+﻿unpad
+=====
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: unpad
+
+.. minigallery:: colibri.optics.functional.unpad
+    :add-heading: Examples using ``unpad``:

@@ -1,0 +1,9 @@
+﻿circular\_aperture
+==================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: circular_aperture
+
+.. minigallery:: colibri.optics.functional.circular_aperture
+    :add-heading: Examples using ``circular_aperture``:
