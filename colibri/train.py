@@ -109,7 +109,7 @@ class Training:
                 tmp, reg_decoders = self.reg_decoder()
                 final_loss += tmp
                 txt_reg_decoders = "".join(
-                    [f"{key}: {reg_decoders[key]:.2E}, " for key in reg_decoders.keys()]
+                    [f"{key}: {reg_decoders[key]:.2f}, " for key in reg_decoders.keys()]
                 )
                 if txt_reg_tot is None:
                     txt_reg_tot = txt_reg_decoders
@@ -120,7 +120,7 @@ class Training:
                 tmp, reg_ce = self.reg_optics_ce(inputs)
                 final_loss += tmp
                 txt_reg_ce = "".join(
-                    [f"{key}: {reg_ce[key]:.2E}, " for key in reg_ce.keys()]
+                    [f"{key}: {reg_ce[key]:.2f}, " for key in reg_ce.keys()]
                 )
                 total_reg.update(reg_ce)
                 if txt_reg_tot is None:
@@ -131,7 +131,7 @@ class Training:
                 tmp, reg_mo = self.reg_optics_mo(inputs)
                 final_loss += tmp
                 txt_reg_mo = "".join(
-                    [f"{key}: {reg_mo[key]:.2E}, " for key in reg_mo.keys()]
+                    [f"{key}: {reg_mo[key]:.2f}, " for key in reg_mo.keys()]
                 )
                 total_reg.update(reg_mo)
                 if txt_reg_tot is None:
@@ -154,22 +154,25 @@ class Training:
                     metric_values[key] = res
                     final_metric += metric_values[key]
             # Elapsed time
+            txt_metrics = "".join(
+                [f"{key}: {metric_values[key]:.2f}, " for key in metric_values.keys()]
+            )
 
             elapsed_time = time.time() - start_time
             start_time = time.time()
             t = elapsed_time / freq
 
             txt_losses = "".join(
-                [f"{key}: {loss_values[key]:.2E}, " for key in loss_values.keys()]
+                [f"{key}: {loss_values[key]:.2f}, " for key in loss_values.keys()]
             )
 
             # print(f'  batch {i + 1}/{len(self.train_loader)}, {txt_losses}, {txt_reg_tot}, time per batch: {t:.1f} [s]')
-            tq.set_postfix(s=f"{txt_losses}, {txt_reg_tot}")
+            tq.set_postfix(s=f"{txt_losses}, {txt_reg_tot}, {txt_metrics}")
 
             if steps_per_epoch != None and i >= steps_per_epoch:
-                return loss_values, total_reg
+                return loss_values, total_reg, metric_values
 
-        return loss_values, total_reg
+        return loss_values, total_reg, metric_values
 
     def reg_decoder(self, verbose=False):
         """
@@ -244,13 +247,13 @@ class Training:
 
                 self.model.train(True)
                 if self.loss_func:
-                    results_fidelities, total_reg = self.train_one_epoch(
+                    results_fidelities, total_reg, metrics = self.train_one_epoch(
                         freq=freq, steps_per_epoch=steps_per_epoch, tq=tq
                     )
                 else:
                     results_fidelities = {}
 
-                results_losses = {**results_fidelities, **total_reg}
+                results_losses = {**results_fidelities, **total_reg, **metrics}
                 self.model.train(False)
 
                 for s in self.schedulers:
