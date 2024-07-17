@@ -10,7 +10,16 @@ from .utils import BaseOpticsLayer
 class Modulo(BaseOpticsLayer):
 
     r"""
-        Modulo operator
+        Modulo Sensing Operator
+
+        This operator applies the non-linear modulo operation to the input tensor.
+
+        Mathematically, this operator can be described as follows:
+
+        .. math::
+                \mathbf{y} = \mathcal{M}_t(\mathbf{x}) = \text{mod}(\mathbf{x}, t)
+        
+        where :math:`\mathbf{x}\in\xset` is the input tensor, :math:`\mathbf{y}\in\yset` is the output tensor, and :math:`t` is the threshold value.
 
     """
 

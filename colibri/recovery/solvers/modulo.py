@@ -14,10 +14,34 @@ center_modulo = lambda x, t: modulo(x  + t/2, t) - t/2
 class L2L2SolverModulo(Solver):
     r"""
         Solver for the Modulo acquisition model.
+
+        It describes the closed-form solution of the optimization problem.
+
+        .. math::
+                
+                    \min_{\textbf{x}} \frac{1}{2}|| \mathcal{M}_{t}( \Delta \textbf{y} ) -  \Delta \textbf{x}  ||_2^2 + \rho||\textbf{x} - \tilde{\textbf{x}}||_2^2
+    
+        where :math:`\textbf{x}` is the tensor to be recovered, :math:`\textbf{y}` is the input tensor, and :math:`\mathcal{M}_{t}` is the modulo operator with threshold :math:`t`.
+
+        The solution of the optimization problem is given by:
+        
+        .. math::        
+                \hat{\textbf{x}}_{mn+n} = \mathcal{D}^{-1} \Bigg(                  
+                \frac{ \mathcal{D}(  \Delta^{\top} \mathcal{M}_{t}(\Delta \textbf{y} ) + (\rho/2)\tilde{\textbf{x}} )_{mn+n} }
+                { 2(2 + \rho/4 - \cos(\pi m /M)  - \cos(\pi n /N) ) }  \Bigg) 
+
+        where :math:`\mathcal{D}` is the 2D Discrete Cosine Transform, :math:`\Delta` is the discrete gradient operator.
+ 
     """
 
-
     def __init__(self, y, acquisition_model: Modulo):
+        r"""
+
+        Args:
+            y (torch.Tensor): Input tensor with shape (B, L, M, N)
+            acquisition_model (Modulo): Acquisition model
+
+        """
         
         threshold = acquisition_model.threshold
 
