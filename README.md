@@ -12,6 +12,7 @@ to state-of-the-art algorithms in a straightforward and friendly manner.
 
 ``Colibri`` features:
 
+* A `datasets module <https://pycolibri.github.io/pycolibri/datasets.html>` that provides a streamlined approach to accessing and utilizing various datasets for computational imaging tasks 
 
 ## 📑 Documentation
 
