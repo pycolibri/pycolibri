@@ -18,6 +18,7 @@ to state-of-the-art algorithms in a straightforward and friendly manner.
 * A [collection of optical systems](https://pycolibri.github.io/pycolibri/optics.html) for spectral, depth, phase and others imaging applications.
 * A set of [regularization functions](https://pycolibri.github.io/pycolibri/regularizers.html) to force physical constraints on the optical coding elements.
 * A [recovery module](https://pycolibri.github.io/pycolibri/recovery.html) with state-of-the-art recovery algorithms used in image restoration on inverse problems.
+* A set of well-explained [examples](https://pycolibri.github.io/pycolibri/auto_examples/index.html) demonstrating how to use the features of``Colibri``.
 
 
 
