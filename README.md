@@ -10,7 +10,7 @@ state-of-the-art deep neural networks are implemented to be easily used or modif
 of ``Colibri`` is to boost the research-related areas where optics and networks are required and introduce new researchers
 to state-of-the-art algorithms in a straightforward and friendly manner.
 
-``Colibri`` features:
+## 🧰 Features
 
 * A [datasets module](https://pycolibri.github.io/pycolibri/datasets.html) with common datasets for computational imaging tasks.
 * A [collection of advanced architectures](https://pycolibri.github.io/pycolibri/architectures.html) that integrates optical systems with deep learning models.
@@ -99,13 +99,6 @@ plt.show()
 
 ```
 
-## 🧰 Features
-
-- Flexible and customizable code.
-- Train end-to-end models in an straightforward manner.
-- Easily modify the implemented models.
-- Easily add new optical systems.
-- Easily add new deep neural networks.
 
 ## Available Models
 
