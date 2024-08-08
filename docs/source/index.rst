@@ -1,10 +1,9 @@
 Welcome to Colibri
 ==================
 
-Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and
-state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose
-of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers
-to state-of-the-art algorithms in a straightforward and friendly manner.
+``Colibri`` is an open-source PyTorch library under development for solving computational imaging tasks, where optical systems and state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose of ``Colibri`` is to boost research in areas where optics and networks are required and to introduce new researchers to state-of-the-art algorithms in a straightforward and user-friendly manner.
+
+Github repository: `<https://github.com/pycolibri/pycolibri>`_.
 
 💿 Installation
 ------------------
