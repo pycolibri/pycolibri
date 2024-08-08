@@ -12,12 +12,12 @@ to state-of-the-art algorithms in a straightforward and friendly manner.
 
 ``Colibri`` features:
 
-* A [datasets module](https://pycolibri.github.io/pycolibri/datasets.html) that provides a streamlined approach to accessing and utilizing various datasets for computational imaging tasks.
+* A [datasets module](https://pycolibri.github.io/pycolibri/datasets.html) with common datasets for computational imaging tasks.
 * A [collection of advanced architectures](https://pycolibri.github.io/pycolibri/architectures.html) for computational imaging, integrating optical systems with deep learning models.
-* A module that provides implementations of [deep learning models](https://pycolibri.github.io/pycolibri/models.html) specifically designed for computational imaging.
-* A [collection of optical systems](https://pycolibri.github.io/pycolibri/optics.html) extensively employed in the computational imaging research for spectral, depth, phase and other imaging applications. 
-* A set of [regularization functions](https://pycolibri.github.io/pycolibri/regularizers.html) that force certain physical constraints on the learning parameters of the optical coding elements.
-* A [recovery module](https://pycolibri.github.io/pycolibri/recovery.html) that provides an implementation of state-of-the-art recovery algorithms widely used in image restoration on inverse problems.
+* A module of [deep learning models](https://pycolibri.github.io/pycolibri/models.html)  designed for computational imaging tasks.
+* A [collection of optical systems](https://pycolibri.github.io/pycolibri/optics.html)  employed in the computational imaging research (spectral, depth, phase and others) 
+* A set of [regularization functions](https://pycolibri.github.io/pycolibri/regularizers.html) that force physical constraints on the learning parameters of the optical coding elements.
+* A [recovery module](https://pycolibri.github.io/pycolibri/recovery.html) with state-of-the-art recovery algorithms used in image restoration on inverse problems.
 
 
 
