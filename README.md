@@ -21,10 +21,33 @@ to state-of-the-art algorithms in a straightforward and friendly manner.
 * A set of well-explained [examples](https://pycolibri.github.io/pycolibri/auto_examples/index.html) demonstrating how to use the features of``Colibri``.
 
 
+## Available Models
+
+### 📷 [Optical Systems](https://pycolibri.github.io/pycolibri/optics.html#)
+
+- Coded Aperture Snapshot Spectral Imager (CASSI).
+    - Single Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI)
+    - Dual Disperser CASSI [(DD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html)
+    - Color CASSI [(C-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html)
+- Single Pixel Camera [(SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html)
+- Single Diffractive Optical Element [(DOE)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.doe.SingleDOESpectral.html) for Spectral Imaging. 
+
+### 💻️ [Deep Neural Networks](https://pycolibri.github.io/pycolibri/models.html)
+
+- [Autoencoder](https://pycolibri.github.io/pycolibri/models.html)
+- [Unet](https://pycolibri.github.io/pycolibri/models.html)
+
+### 🖥 [Recovery Algorithms](https://pycolibri.github.io/pycolibri/recovery.html)
+
+- Fast Iterative Shrinkage-Thresholding Algorithm [(FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
+- Plug-and-Play (PnP) algorithm with Alternating Direction Method of Multipliers (ADMM)
+
+## 🎆 [Frameworks](https://pycolibri.github.io/pycolibri/architectures.html)
+
+- [End-to-end framework](https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E) with optical systems as encoder models and deep neural networks as decoder models.
 
 
-
-## 📑 Documentation
+## 📑 [Documentation](https://pycolibri.github.io/pycolibri/index.html)
 
 The documentation is available at [pycolibri.github.io/pycolibri](https://pycolibri.github.io/pycolibri/).
 
@@ -100,28 +123,7 @@ plt.show()
 ```
 
 
-## Available Models
 
-### 📷 Optical Systems
-
-- Coded Aperture Snapshot Spectral Imager (CASSI).
-    - Single Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI)
-    - Dual Disperser CASSI [(DD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html)
-    - Color CASSI [(C-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html)
-- Single Pixel Camera [(SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html)
-
-### 💻️ Deep Neural Networks
-
-- [Autoencoder](https://pycolibri.github.io/pycolibri/models.html)
-- [Unet](https://pycolibri.github.io/pycolibri/models.html)
-
-### 🖥 Recovery Algorithms
-
-- Fast Iterative Shrinkage-Thresholding Algorithm [(FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
-
-## 🎆 Frameworks
-
-- [End-to-end framework](https://pycolibri.github.io/pycolibri/architectures.html) with optical systems as encoder models and deep neural networks as decoder models.
 
 ## 💡 Contributing
 
