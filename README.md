@@ -4,9 +4,14 @@
 
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pycolibri/pycolibri/blob/main/main.ipynb)
-[![Tests](https://img.shields.io/badge/Tests-Passing-dgreen)]( https://github.com/pycolibri/pycolibri/actions/workflows/test.yml)
+[![Tests](https://img.shields.io/badge/Tests-Passing-dgreen)](https://github.com/pycolibri/pycolibri/actions/workflows/test.yml)
+[![Bdocs](https://img.shields.io/badge/Build_docs-Passing-dgreen)](https://github.com/pycolibri/pycolibri/actions/workflows/documentation.yml)
+[![Docs](https://img.shields.io/badge/Colibri%20docs-8A2BE2)](https://github.com/pycolibri/pycolibri)
+![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?logo=PyTorch&logoColor=white)
 
-``Colibri`` is an open-source PyTorch library under development for solving computational imaging tasks, where optical systems and state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose of ``Colibri`` is to boost research in areas where optics and networks are required and to introduce new researchers to state-of-the-art algorithms in a straightforward and user-friendly manner.
+``Colibri`` is a deep learning based library specialized in optimizing the key parameters of optical systems that can be learned from data to improve the performance of the system. 
+
+In ``Colibri``, optical systems, neural networks, model based recovery algorithms, and datasets are implemented to be easily used or modified for new research ideas. The purpose of Colibri is to boost the research-related areas where optics and networks are required and introduce new researchers to state-of-the-art algorithms in a straightforward and friendly manner.
 
 ## 🧰 Features
 
@@ -19,33 +24,67 @@
 * A set of well-explained [examples](https://pycolibri.github.io/pycolibri/auto_examples/index.html) demonstrating how to use the features of``Colibri``.
 
 
-## Available Models
+## Available Modules
 
-### 📷 [Optical Systems](https://pycolibri.github.io/pycolibri/optics.html#)
+ ### Spectral Imaging
 
-- Coded Aperture Snapshot Spectral Imager (CASSI).
-    - Single Disperser CASSI [(SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI)
-    - Dual Disperser CASSI [(DD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html)
-    - Color CASSI [(C-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html)
-- Single Pixel Camera [(SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html)
-- Single Diffractive Optical Element [(DOE)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.doe.SingleDOESpectral.html) for Spectral Imaging. 
+- [Single Pixel Camera (SPC)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html)
+- [Single Disperser CASSI (SD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI)
+- [Dual Disperser CASSI (DD-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html)
+- [Color CASSI (C-CASSI)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html)
+- [Diffractive Optical Element (DOE)](https://pycolibri.github.io/pycolibri/stubs/colibri.optics.doe.SingleDOESpectral.html)
 
-### 💻️ [Deep Neural Networks](https://pycolibri.github.io/pycolibri/models.html)
+### 📈 **Regularizers**
+
+#### Binary Regularizers
+
+- [Values](https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Reg_Binary.html#colibri.regularizers.Reg_Binary)
+- [Transmittance](https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Reg_Transmittance.html#colibri.regularizers.Reg_Transmittance)
+
+#### Stochastic Regularizers
+
+- [Correlation](https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Correlation.html#colibri.regularizers.Correlation)
+- [Kullback-Leibler Divergence](https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.KLGaussian.html#colibri.regularizers.KLGaussian)
+- [Minimal Variance](https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.MinVariance.html#colibri.regularizers.MinVariance)
+
+### 💻️ **Deep Neural Networks**
 
 - [Autoencoder](https://pycolibri.github.io/pycolibri/models.html)
 - [Unet](https://pycolibri.github.io/pycolibri/models.html)
 
-### 🖥 [Recovery Algorithms](https://pycolibri.github.io/pycolibri/recovery.html)
+### 🖥 **Recovery Algorithms**
 
-- Fast Iterative Shrinkage-Thresholding Algorithm [(FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
-- Plug-and-Play algorithm with Alternating Direction Method of Multipliers [(Plug-and-Play ADMM)](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.pnp.PnP_ADMM.html)
+#### Algorithms
 
-## 🎆 [Frameworks](https://pycolibri.github.io/pycolibri/architectures.html)
+- [Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
+- [Alternating Direction Method of Multipliers Plug and Play (ADMM-PnP)](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.pnp.PnP_ADMM.html#colibri.recovery.pnp.PnP_ADMM)
 
-- [End-to-end framework](https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E) with optical systems as encoder models and deep neural networks as decoder models.
+#### Solvers
+
+- [L2L2Solver](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.solvers.core.L2L2Solver.html#colibri.recovery.solvers.core.L2L2Solver)
+
+#### Fidelity Terms
+
+- [L2](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.fidelity.L2.html#colibri.recovery.terms.fidelity.L2)
+- [L1](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.fidelity.L1.html#colibri.recovery.terms.fidelity.L1)
+
+#### Priors
+
+- [Sparsity](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.prior.Sparsity.html#colibri.recovery.terms.prior.Sparsity)
+
+#### Transforms
+
+- [DCT](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.transforms.DCT2D.html#colibri.recovery.terms.transforms.DCT2D)
+
+### 🎆 **Frameworks**
+
+#### Coupled Optimization for Optics and Recovery 
+
+- [End-to-end framework](https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E)
 
 
-## 📑 [Documentation](https://pycolibri.github.io/pycolibri/index.html)
+
+## 📑 Documentation
 
 The documentation is available at [pycolibri.github.io/pycolibri](https://pycolibri.github.io/pycolibri/).
 
