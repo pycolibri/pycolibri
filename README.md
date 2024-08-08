@@ -40,7 +40,7 @@ to state-of-the-art algorithms in a straightforward and friendly manner.
 ### 🖥 [Recovery Algorithms](https://pycolibri.github.io/pycolibri/recovery.html)
 
 - Fast Iterative Shrinkage-Thresholding Algorithm [(FISTA)](https://pycolibri.github.io/pycolibri/recovery.html)
-- Plug-and-Play (PnP) algorithm with Alternating Direction Method of Multipliers (ADMM)
+- Plug-and-Play algorithm with Alternating Direction Method of Multipliers [(Plug-and-Play ADMM)](https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.pnp.PnP_ADMM.html)
 
 ## 🎆 [Frameworks](https://pycolibri.github.io/pycolibri/architectures.html)
 
@@ -134,6 +134,8 @@ Contributions are welcome! If you're interested in improving Colibri, please:
 3. Commit your changes (``git commit -am 'Add some AmazingFeature'``).
 4. Push to the branch (``git push origin feature/AmazingFeature``).
 5. Open a Pull Request.
+
+See our [contribution guide](https://pycolibri.github.io/pycolibri/contributing.html) for more details.
 
 ## 🛡️ License
 
