@@ -133,7 +133,7 @@ Contributions are welcome! If you're interested in improving Colibri, please:
 2. Create your feature branch (``git checkout -b feature/AmazingFeature``).
 3. Commit your changes (``git commit -am 'Add some AmazingFeature'``).
 4. Push to the branch (``git push origin feature/AmazingFeature``).
-5. Open a Pull Request.
+5. Run [build_and_test.sh](https://github.com/pycolibri/pycolibri/blob/150-readme-%2B-index/quick_validation.sh) to clear out old documentation, rebuild the documentation, run tests, and then open the newly generated documentation in a web browser.
 
 See our [contribution guide](https://pycolibri.github.io/pycolibri/contributing.html) for more details.
 
