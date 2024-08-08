@@ -18,7 +18,7 @@ In ``Colibri``, optical systems, neural networks, model based recovery algorithm
 * A [datasets module](https://pycolibri.github.io/pycolibri/datasets.html) with common datasets for computational imaging tasks.
 * A [collection of advanced architectures](https://pycolibri.github.io/pycolibri/architectures.html) that integrates optical systems with deep learning models.
 * A module of [deep learning models](https://pycolibri.github.io/pycolibri/models.html)  for computational imaging tasks.
-* A [collection of optical systems](https://pycolibri.github.io/pycolibri/optics.html) for spectral, depth, phase and others imaging applications.
+* A [collection of optical systems](https://pycolibri.github.io/pycolibri/optics.html) for spectral imaging tasks (SPC, SD-CASSI, C-CASSI, DD-CASSI, DOE)
 * A set of [regularization functions](https://pycolibri.github.io/pycolibri/regularizers.html) to force physical constraints on the optical coding elements.
 * A [recovery module](https://pycolibri.github.io/pycolibri/recovery.html) with state-of-the-art recovery algorithms used in image restoration on inverse problems.
 * A set of well-explained [examples](https://pycolibri.github.io/pycolibri/auto_examples/index.html) demonstrating how to use the features of``Colibri``.
@@ -115,49 +115,14 @@ pip install -r requirements.txt
 
 You can go to ``examples`` folder and run cells of the notebook ``demo_colibri.ipynb`` to see how the library works.
 
-### 💡 Examples
+## 💡 Examples
 
-#### Dataset Visualization
+* [Demo Colibri](https://pycolibri.github.io/pycolibri/auto_examples/demo_colibri.html)
+* [Demo PnP](https://pycolibri.github.io/pycolibri/auto_examples/demo_pnp.html)
+* [Demo FISTA](https://pycolibri.github.io/pycolibri/auto_examples/demo_fista.html)
+* [Demo DOEs](https://pycolibri.github.io/pycolibri/auto_examples/demo_does.html)
+* [Demo Datasets](https://pycolibri.github.io/pycolibri/auto_examples/demo_datasets.html)
 
-```python
-import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader
-from colibri.data.datasets import CustomDataset
-
-# Load dataset
-
-name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
-path = 'data'
-batch_size = 128
-
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path,
-                        builtin_dict=builtin_dict,
-                        transform_dict=None)
-
-dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
-
-# Visualize dataset
-
-import matplotlib.pyplot as plt
-
-data = next(iter(dataset_loader))
-image = data['input']
-label = data['output']
-
-plt.figure(figsize=(5, 5))
-plt.suptitle(f'{name.upper()} dataset Samples')
-
-for i in range(9):
-    plt.subplot(3, 3, i + 1)
-    plt.imshow(image[i].permute(1, 2, 0).cpu().numpy())
-    plt.title(f'Label: {label[i]}')
-    plt.axis('off')
-
-plt.tight_layout()
-plt.show()
-
-```
 
 
 
