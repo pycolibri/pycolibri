@@ -5,10 +5,13 @@
 [![Python 3.6](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
 [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pycolibri/pycolibri/blob/main/main.ipynb)
 
-Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and
+``Colibri`` is a PyTorch library in development for solving computational imaging tasks where optical systems and
 state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose
-of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers
+of ``Colibri`` is to boost the research-related areas where optics and networks are required and introduce new researchers
 to state-of-the-art algorithms in a straightforward and friendly manner.
+
+``Colibri`` features:
+
 
 ## 📑 Documentation
 
