@@ -176,14 +176,14 @@ acquisition_model = SingleDOESpectral(input_shape=sample.shape[1:],
 
 psf = acquisition_model.get_psf()
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-ax.imshow(((psf - psf.min()) / (psf.max() - psf.min())).permute(1, 2, 0), cmap="plasma")
+_ = ax.imshow(((psf - psf.min()) / (psf.max() - psf.min())).permute(1, 2, 0), cmap="plasma");
 
 image = acquisition_model(sample)
 
 img = make_grid(image, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
-plt.imshow(img.permute(1, 2, 0))
+_ = plt.imshow(img.permute(1, 2, 0));
 plt.title('CIFAR10 imaged')
 plt.axis('off')
 
@@ -192,7 +192,7 @@ image = ideal_panchromatic_sensor(image)
 img = make_grid(image, nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
-plt.imshow(img.permute(1, 2, 0))
+_ = plt.imshow(img.permute(1, 2, 0))
 plt.title('CIFAR10 imaged pancromatic sensor')
 plt.axis('off')
 
