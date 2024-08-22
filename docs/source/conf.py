@@ -81,10 +81,17 @@ autodoc_typehints = "description"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'furo'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = []
 
-
+html_theme_options = {
+    # Toc options
+    "collapse_navigation": True,
+    "sticky_navigation": True,
+    "navigation_depth": 4,
+    "includehidden": True,
+    "titles_only": False,
+}
 # sphinx_gallery_conf = {
 #      'examples_dirs': '../../examples',   # path to your example scripts
 #      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
