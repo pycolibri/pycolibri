@@ -30,7 +30,7 @@ class L2L2SolverModulo(Solver):
                 \frac{ \mathcal{D}(  \Delta^{\top} \mathcal{M}_{t}(\Delta \textbf{y} ) + (\rho/2)\tilde{\textbf{x}} )_{mn+n} }
                 { 2(2 + \rho/4 - \cos(\pi m /M)  - \cos(\pi n /N) ) }  \Bigg) 
 
-        where :math:`\mathcal{D}` is the 2D Discrete Cosine Transform, :math:`\Delta` is the discrete gradient operator.
+        where :math:`\mathcal{D}` is the 2D Discrete Cosine Transform, :math:`\Delta` is the discrete gradient operator. When the parameter :math:`\rho` is set to zero, the problem can be interpreted as the discretization of the Poisson's equation with Neumann boundary conditions.
  
     """
 
