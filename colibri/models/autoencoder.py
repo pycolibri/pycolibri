@@ -5,12 +5,17 @@ import torch.nn as nn
 
 
 class Autoencoder(nn.Module):
-    """
+    r"""
     Autoencoder Model
 
-    Adapted from 
+    The autoencoder model is a neural network that is trained to learn a latent representation of the input data. The model is composed of an encoder and a decoder. The encoder compresses the input data into a latent space representation, while the decoder reconstructs the input data from the latent space representation. Usually, the autoencoder model is trained to minimize the reconstruction error between the input data and the reconstructed data as follows:
 
-    Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. MIT press, 2016.
+    .. math::
+        \mathcal{L} = \lVert x - \hat{x} \rVert_2^2
+
+    where :math:`x` is the input data and :math:`\hat{x}` is the reconstructed data.
+   
+    Implementation based on the formulation of authors in https://dl.acm.org/doi/book/10.5555/3086952
     
     """
 
