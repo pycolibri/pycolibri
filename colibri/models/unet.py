@@ -5,12 +5,14 @@ import torch.nn as nn
 
 
 class Unet(nn.Module):
-    """
+    r"""
     Unet Model
 
-    Adapted from
+    The unet model is a fully convolutional neural network that is initially proposed for biomedical image segmentation.  The model is composed of an encoder and a decoder. The encoder is used to extract features from the input image, while the decoder is used to upsample the features to the original image size. 
+    During the upsampling process, the decoder uses skip connections to concatenate the features from the encoder with the upsampled features.
 
-    Ronneberger, O., Fischer, P., & Brox, T. (2015). U-net: Convolutional networks for biomedical image segmentation. In Medical image computing and computer-assisted intervention–MICCAI 2015: 18th international conference, Munich, Germany, October 5-9, 2015, proceedings, part III 18 (pp. 234-241). Springer International Publishing.
+    Implementation based on the formulation of authors in https://doi.org/10.1007/978-3-319-24574-4_28
+
     """
 
     def __init__(
@@ -21,7 +23,7 @@ class Unet(nn.Module):
         last_activation="sigmoid",
         **kwargs,
     ):
-        """
+        r"""
 
         Args:
             in_channels (int): number of input channels
@@ -65,7 +67,7 @@ class Unet(nn.Module):
 
     def forward(self, x):
 
-        """
+        r"""
         Args :
 
             x (torch.Tensor): Input tensor

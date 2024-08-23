@@ -28,7 +28,7 @@ class Autoencoder(nn.Module):
         reduce_spatial=False,
         **kwargs,
     ):
-        """
+        r"""
 
         Args:
 
@@ -87,7 +87,7 @@ class Autoencoder(nn.Module):
         self.outc = custom_layers.outBlock(features[0], out_channels, last_activation)
 
     def forward(self, inputs, get_latent=False, **kwargs):
-        """
+        r"""
         Forward pass of the autoencoder
 
         Args:
