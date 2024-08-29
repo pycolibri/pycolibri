@@ -158,8 +158,8 @@ from colibri.train import Training
 from colibri.metrics import psnr, ssim
 
 from colibri.regularizers import (
-    Reg_Binary,
-    Reg_Transmittance,
+    Binary,
+    Transmittance,
     MinVariance,
     KLGaussian,
 )
