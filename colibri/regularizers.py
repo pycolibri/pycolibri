@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 
 
-class Reg_Binary(nn.Module):
+class Binary(nn.Module):
     r"""
     Binary Regularization for Coded Aperture Design.
 
@@ -33,7 +33,7 @@ class Reg_Binary(nn.Module):
             max_v (float): Maximum value for weight clipping.
         """
         
-        super(Reg_Binary, self).__init__()
+        super(Binary, self).__init__()
         self.parameter = parameter
         self.min_v = min_v
         self.max_v = max_v
@@ -52,7 +52,7 @@ class Reg_Binary(nn.Module):
         regularization = self.parameter * (torch.sum(torch.mul(torch.square(x - self.min_v), torch.square(x - self.max_v))))
         return regularization
 
-class Reg_Transmittance(nn.Module):
+class Transmittance(nn.Module):
     r"""
     Transmittance Regularization for Coded Apeuture Design.
     
@@ -78,7 +78,7 @@ class Reg_Transmittance(nn.Module):
             t (float): Target transmittance value.
         """
 
-        super(Reg_Transmittance, self).__init__()
+        super(Transmittance, self).__init__()
         self.parameter = parameter
         self.t = t
         self.type_reg = 'ca'

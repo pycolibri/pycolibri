@@ -18,10 +18,10 @@ List of Regularizers
     :template: class_template.rst
     :nosignatures:
 
-    colibri.regularizers.Reg_Binary
+    colibri.regularizers.Binary
     colibri.regularizers.Correlation
 
-    colibri.regularizers.Reg_Transmittance
+    colibri.regularizers.Transmittance
 
     colibri.regularizers.KLGaussian
     colibri.regularizers.MinVariance
