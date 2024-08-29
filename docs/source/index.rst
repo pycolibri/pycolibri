@@ -138,11 +138,11 @@ Contributions are welcome! If you're interested in improving Colibri, please:
    :hidden:
    :caption: Contents:
 
-   architectures
+   miscellaneous
    models
    optics
    datasets
    regularizers
-   auto_examples/index
    recovery
+   auto_examples/index
    contributing
