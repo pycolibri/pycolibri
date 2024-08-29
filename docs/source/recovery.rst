@@ -31,7 +31,7 @@ List of Solvers
     :nosignatures:
 
     colibri.recovery.solvers.core.L2L2Solver
-    colibri.recovery.solvers.spc.SPCL2L2Solver
+    colibri.recovery.solvers.spc.L2L2SolverSPC
 
 
 Fidelity Terms

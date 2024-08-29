@@ -18,9 +18,9 @@ def imsize():
 def choose_regularizer(name):
 
     if name == "binary":
-        reg = regularizers.Reg_Binary()
+        reg = regularizers.Binary()
     elif name == "transmittance":
-        reg = regularizers.Reg_Transmittance(t=0.1)
+        reg = regularizers.Transmittance(t=0.1)
     elif name == "correlation":
         reg = regularizers.Correlation()
     elif name == "kl_gaussian":
