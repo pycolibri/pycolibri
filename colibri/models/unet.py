@@ -8,8 +8,11 @@ class Unet(nn.Module):
     r"""
     Unet Model
 
-    The unet model is a fully convolutional neural network that is initially proposed for biomedical image segmentation.  The model is composed of an encoder and a decoder. The encoder is used to extract features from the input image, while the decoder is used to upsample the features to the original image size. 
-    During the upsampling process, the decoder uses skip connections to concatenate the features from the encoder with the upsampled features.
+    The U-Net model is a fully convolutional neural network initially proposed for biomedical image segmentation. 
+    Similar to the autoencoder model, the U-Net model consists of an encoder and a decoder. 
+    The encoder extracts features from the input image, while the decoder upsamples these features to the original image size. 
+    During the upsampling process, the decoder uses skip connections to concatenate features from the encoder with the upsampled features. 
+    These skip connections help preserve the spatial information of the input image, which is the key difference between the U-Net and the autoencoder model.
 
     Implementation based on the formulation of authors in https://doi.org/10.1007/978-3-319-24574-4_28
 
