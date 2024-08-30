@@ -55,10 +55,9 @@ path = '.'
 batch_size = 128
 acquisition_name = 'c_cassi'  # ['spc', 'cassi', 'doe']
 
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path,
-                        builtin_dict=builtin_dict,
-                        transform_dict=None)
+
+dataset = CustomDataset(name, path)
+
 
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 

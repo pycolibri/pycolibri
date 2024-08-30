@@ -56,10 +56,9 @@ name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = 'data'
 batch_size = 128
 
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path,
-                        builtin_dict=builtin_dict,
-                        transform_dict=None)
+
+dataset = CustomDataset(name, path)
+
 
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 

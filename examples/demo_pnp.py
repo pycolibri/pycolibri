@@ -41,10 +41,9 @@ name = 'cifar10'
 path = '.'
 batch_size = 1
 
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path,
-                        builtin_dict=builtin_dict,
-                        transform_dict=None)
+
+dataset = CustomDataset(name, path)
+
 acquisition_name = 'spc' #  ['spc', 'cassi']
 
 

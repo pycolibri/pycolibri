@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 
 import torchvision
-
+import torch
 # Builtin datasets
 
 BUILTIN_DATASETS = {
@@ -60,85 +60,9 @@ def load_builtin_dataset(name: str, path: str, **kwargs):
     dataset['input'] = (dataset['input'] / 255.).astype(np.float32)
     if dataset['input'].ndim != 4:
         dataset['input'] = dataset['input'].unsqueeze(1)
+    dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
 
+    dataset['input'] = torch.from_numpy(dataset['input'])
+    dataset['output'] = torch.tensor(dataset['output'])
     return dataset
 
-
-# Custom datasets
-
-def get_cave_filenames(path:str):
-    r"""
-    Returns a list of cave filenames in the given path.
-
-    Args:
-        path (str): The path to the directory containing the cave files.
-    Returns:
-        list: A list of cave filenames.
-    """
-
-    return [os.path.join(path, name, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]
-
-
-def get_arad_filenames(path:str):
-    pass
-
-
-CUSTOM_DATASETS = {
-    'cave': get_cave_filenames,
-    'arad': get_arad_filenames
-}
-
-
-def get_filenames(name : str, path : str):
-    r"""
-    Get the filenames of the custom dataset.
-    Args:
-        name (str): The name of the dataset.
-        path (str): The path to the directory containing the dataset.
-    Returns:
-        list: A list of filenames.
-    Raises:
-        KeyError: If the specified dataset name is not found.
-    """
-
-    return CUSTOM_DATASETS[name](path)
-
-
-def load_arad_sample(filename: str, preprocessing, **kwargs):
-    r"""
-    
-    Load a sample from the ARAD dataset.
-    Args:
-        filename (str): The filename of the sample.
-        preprocessing (function): The preprocessing function to apply to the data.
-        **kwargs: Additional keyword arguments to pass to the preprocessing function.
-    Returns:
-        dict: A dictionary containing the input and output data of the sample.
-    
-    """
-    return Image.open(filename)
-
-
-def load_cave_sample(filename: str):
-    r"""
-    Load a sample from the CAVE dataset.
-    Args:
-        filename (str): The filename of the sample.
-    Returns:
-        dict: A dictionary containing the input and output data of the sample.
-    """
-    name = os.path.basename(filename).replace('_ms', '')
-
-    spectral_image = []
-    for i in range(1, 32):
-        spectral_band_filename = os.path.join(filename, f'{name}_ms_{i:02d}.png')
-        spectral_band = np.array(Image.open(spectral_band_filename))
-        spectral_band = spectral_band / (2 ** 16 - 1) if isinstance(spectral_band[0, 0], np.uint16) else spectral_band
-        spectral_band = spectral_band / (2 ** 8 - 1) if isinstance(spectral_band[0, 0], np.uint8) else spectral_band
-        spectral_image.append(spectral_band.astype(np.float32))
-    spectral_image = np.stack(spectral_image, axis=-1)
-
-    rgb_image = np.array(Image.open(os.path.join(filename, f'{name}_RGB.bmp'))) / 255.
-    rgb_image = rgb_image.astype(np.float32)
-
-    return dict(input=rgb_image, output=spectral_image)

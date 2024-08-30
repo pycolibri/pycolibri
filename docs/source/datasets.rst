@@ -18,31 +18,6 @@ The built-in datasets supported by this module include popular datasets like MNI
     colibri.data.utils.load_builtin_dataset
     colibri.data.utils.update_builtin_path
 
-Custom Datasets
----------------
-
-For more specific needs, the module also supports custom datasets. Currently, datasets like CAVE and ARAD are available, the full list of which can be found in the `colibri.data.utils.CUSTOM_DATASETS` dictionary.
-
-.. autosummary::
-    :toctree: stubs
-    :template: class_template.rst
-    :nosignatures:
-
-    colibri.data.utils.get_cave_filenames
-    colibri.data.utils.get_arad_filenames
-    colibri.data.utils.get_filenames
-
-Default Transformations
------------------------
-
-The module provides a default transformation class to handle the standard preprocessing tasks required for the input and output data. This includes conversion to tensors, among other operations, ensuring that the data is in the right format for model training.
-
-.. autosummary::
-    :toctree: stubs
-    :template: class_template.rst
-    :nosignatures:
-
-    colibri.data.datasets.DefaultTransform
 
 Custom Dataset Class
 --------------------
@@ -56,15 +31,26 @@ A flexible dataset class is available to handle both built-in and custom dataset
 
     colibri.data.datasets.CustomDataset
 
-Dataset Reader Functions
-------------------------
+Custom Datasets
+-----------------------
 
-This module includes specific functions to read samples from different datasets, including spectral imaging data from CAVE and ARAD datasets.
+Custom datasets are supported by the Handlers, Currently, the module supports the following datasets: Cave
 
 .. autosummary::
     :toctree: stubs
-    :template: methods_template.rst
+    :template: class_template.rst
     :nosignatures:
 
-    colibri.data.utils.load_cave_sample
-    colibri.data.utils.load_arad_sample
+    colibri.data.sota_datasets.CaveDatasetHandler
+
+Default Transformations
+-----------------------
+
+The module provides a default transformation class to handle the standard preprocessing tasks required for the input and output data. This includes conversion to tensors, among other operations, ensuring that the data is in the right format for model training.
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.data.datasets.DefaultTransform
