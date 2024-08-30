@@ -200,6 +200,7 @@ acquisition_model = SingleDOESpectral(
 psf = acquisition_model.get_psf()
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
 ax.imshow(((psf - psf.min()) / (psf.max() - psf.min())).permute(1, 2, 0), cmap="plasma")
+ax.set_title("RGB PSF")
 plt.show()
 
 image = acquisition_model(sample)
