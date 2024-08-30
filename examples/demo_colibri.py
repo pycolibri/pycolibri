@@ -157,8 +157,8 @@ from colibri.train import Training
 from colibri.metrics import psnr, ssim
 
 from colibri.regularizers import (
-    Reg_Binary,
-    Reg_Transmittance,
+    Binary,
+    Transmittance,
     MinVariance,
     KLGaussian,
 )
@@ -184,7 +184,7 @@ steps_per_epoch = 10
 frequency = 1
 
 if "cassi" in acquisition_name or "spc" in acquisition_name:
-    regularizers_optics_ce = {"RB": Reg_Binary(), "RT": Reg_Transmittance()}
+    regularizers_optics_ce = {"RB": Binary(), "RT": Transmittance()}
     regularizers_optics_ce_weights = [50, 1]
 else:
     regularizers_optics_ce = {}

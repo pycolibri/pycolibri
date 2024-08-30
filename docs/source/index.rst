@@ -134,15 +134,15 @@ Contributions are welcome! If you're interested in improving Colibri, please:
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :hidden:
    :caption: Contents:
 
-   architectures
+   miscellaneous
    models
    optics
    datasets
    regularizers
-   auto_examples/index
    recovery
+   auto_examples/index
    contributing
