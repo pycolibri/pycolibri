@@ -150,16 +150,15 @@ Information about contributing to Colibri can be found in the `CONTRIBUTING.md <
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :hidden:
    :caption: Contents:
 
-   architectures
+   miscellaneous
    models
    optics
    datasets
    regularizers
-   auto_examples/index
    recovery
    contributing
 
@@ -173,3 +172,4 @@ Information about contributing to Colibri can be found in the `CONTRIBUTING.md <
    :target: https://colab.research.google.com/github/pycolibri/pycolibri/blob/main/main.ipynb
 .. |Github| image:: https://img.shields.io/badge/github-%23121011.svg
    :target: https://github.com/pycolibri/pycolibri
+
