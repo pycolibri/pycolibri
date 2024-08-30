@@ -8,6 +8,7 @@ import torchvision
 # Builtin datasets
 
 BUILTIN_DATASETS = {
+
     'mnist': torchvision.datasets.MNIST,
     'fashion_mnist': torchvision.datasets.FashionMNIST,
     'cifar10': torchvision.datasets.CIFAR10,
@@ -15,14 +16,39 @@ BUILTIN_DATASETS = {
 }
 
 
-def update_builtin_path(name, path):
+def update_builtin_path(name: str, path: str):
+    r"""
+    Update the built-in path by creating a new directory with the given name
+    inside the specified path.
+    Args:
+        name (str): The name of the directory to be created.
+        path (str): The path where the new directory will be created.
+    Returns:
+        str: The path of the newly created directory.
+    """
+
     path = os.path.join(path, name)
     os.makedirs(path, exist_ok=True)
 
     return path
 
 
-def load_builtin_dataset(name, path, **kwargs):
+def load_builtin_dataset(name: str, path: str, **kwargs):
+    r"""
+    Load a built-in dataset.
+    Args:
+        name (str): The name of the dataset.
+        path (str): The path to save the dataset.
+        **kwargs: Additional keyword arguments to pass to the pytorch dataset loader.
+
+    Returns:
+        dict: A dictionary containing the input and output data of the dataset.
+
+    Raises:
+        KeyError: If the specified dataset name is not found.
+        
+    """
+
     train = kwargs['train'] if 'train' in kwargs else False
     download = kwargs['download'] if 'download' in kwargs else True
 
@@ -40,11 +66,20 @@ def load_builtin_dataset(name, path, **kwargs):
 
 # Custom datasets
 
-def get_cave_filenames(path):
+def get_cave_filenames(path:str):
+    r"""
+    Returns a list of cave filenames in the given path.
+
+    Args:
+        path (str): The path to the directory containing the cave files.
+    Returns:
+        list: A list of cave filenames.
+    """
+
     return [os.path.join(path, name, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]
 
 
-def get_arad_filenames(path):
+def get_arad_filenames(path:str):
     pass
 
 
@@ -54,15 +89,44 @@ CUSTOM_DATASETS = {
 }
 
 
-def get_filenames(name, path):
+def get_filenames(name : str, path : str):
+    r"""
+    Get the filenames of the custom dataset.
+    Args:
+        name (str): The name of the dataset.
+        path (str): The path to the directory containing the dataset.
+    Returns:
+        list: A list of filenames.
+    Raises:
+        KeyError: If the specified dataset name is not found.
+    """
+
     return CUSTOM_DATASETS[name](path)
 
 
-def load_arad_sample(filename, preprocessing, **kwargs):
+def load_arad_sample(filename: str, preprocessing, **kwargs):
+    r"""
+    
+    Load a sample from the ARAD dataset.
+    Args:
+        filename (str): The filename of the sample.
+        preprocessing (function): The preprocessing function to apply to the data.
+        **kwargs: Additional keyword arguments to pass to the preprocessing function.
+    Returns:
+        dict: A dictionary containing the input and output data of the sample.
+    
+    """
     return Image.open(filename)
 
 
-def load_cave_sample(filename):
+def load_cave_sample(filename: str):
+    r"""
+    Load a sample from the CAVE dataset.
+    Args:
+        filename (str): The filename of the sample.
+    Returns:
+        dict: A dictionary containing the input and output data of the sample.
+    """
     name = os.path.basename(filename).replace('_ms', '')
 
     spectral_image = []

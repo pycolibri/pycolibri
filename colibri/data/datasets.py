@@ -12,7 +12,7 @@ DATASET_READER = {
 
 
 class DefaultTransform:
-    """Default transformation class.
+    r"""Default transformation class.
 
     This class is used to apply the default transformations to the data.
 
@@ -26,8 +26,8 @@ class DefaultTransform:
     """
 
     def __init__(self, name):
-        """
-        Arguments:
+        r"""
+        Args:
             name (string): Name of the dataset.
         """
         self.transform_dict = dict(input=transforms.ToTensor(), default=transforms.ToTensor())
@@ -37,8 +37,8 @@ class DefaultTransform:
             self.transform_dict['output'] = transforms.ToTensor()
 
     def __call__(self, key, value):
-        """
-        Arguments:
+        r"""
+        Args:
             key (string): Key of the data.
             value (object): Data to transform.
 
@@ -51,8 +51,8 @@ class DefaultTransform:
             return self.default_transform(value)
 
     def default_transform(self, data):
-        """
-        Arguments:
+        r"""
+        Args:
             data (object): Data to transform
 
         Returns:
@@ -62,7 +62,7 @@ class DefaultTransform:
 
 
 class CustomDataset(Dataset):
-    """Custom dataset.
+    r"""Custom dataset.
 
     This class allows to load custom datasets and apply transformations to the data.
 
@@ -86,8 +86,8 @@ class CustomDataset(Dataset):
 
     """
     def __init__(self, name, path, builtin_dict=None, transform_dict=None):
-        """
-        Arguments:
+        r"""
+        Args:
             name (string): Name of the dataset.
                 Current options are: ('cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave').
             path (string): Path to directory with the dataset.
@@ -116,15 +116,15 @@ class CustomDataset(Dataset):
         self.default_transform = DefaultTransform(name)
 
     def __len__(self):
-        """
+        r"""
         Returns:
             int: Length of the dataset.
         """
         return self.len_dataset
 
     def __getitem__(self, idx):
-        """
-        Arguments:
+        r"""
+        Args:
             idx (int): Index of the sample to load.
 
         Returns:

@@ -1,13 +1,70 @@
+.. _datasets:
+
 Datasets
 ========
 
-The datasets module provides a streamlined approach to accessing and utilizing various datasets for computational imaging tasks. The central module is the `CustomDataset` class, an abstraction designed to facilitate easy selection and handling of datasets from a predefined collection.
+The PyColibri datasets module offers a variety of datasets widely used in machine learning and computer vision research, including both built-in datasets and custom datasets. This module simplifies the process of loading and transforming datasets, providing a consistent interface for researchers and developers to work with different data types.
 
-Dataset Class
--------------
+Built-in Datasets
+-----------------
 
-The `CustomDataset` class serves as a flexible interface for accessing builtin datasets and custom datasets. Using the `CustomDataset` class, researchers and developers can swiftly navigate through the available datasets, simplifying the process of dataset selection and loading. This abstraction layer ensures that users can focus on their computational imaging tasks without worrying about the underlying data handling intricacies.
+The built-in datasets supported by this module include popular datasets like MNIST, CIFAR-10, CIFAR-100, and Fashion MNIST. The complete list is aviailable in the `colibri.data.utils.BUILTIN_DATASETS` dictionary.
 
-.. autoclass:: colibri.data.datasets.CustomDataset
-    :members:
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
 
+    colibri.data.utils.load_builtin_dataset
+    colibri.data.utils.update_builtin_path
+
+Custom Datasets
+---------------
+
+For more specific needs, the module also supports custom datasets. Currently, datasets like CAVE and ARAD are available, the full list of which can be found in the `colibri.data.utils.CUSTOM_DATASETS` dictionary.
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.data.utils.get_cave_filenames
+    colibri.data.utils.get_arad_filenames
+    colibri.data.utils.get_filenames
+
+Default Transformations
+-----------------------
+
+The module provides a default transformation class to handle the standard preprocessing tasks required for the input and output data. This includes conversion to tensors, among other operations, ensuring that the data is in the right format for model training.
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.data.datasets.DefaultTransform
+
+Custom Dataset Class
+--------------------
+
+A flexible dataset class is available to handle both built-in and custom datasets. It includes methods for loading datasets and applying necessary transformations.
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.data.datasets.CustomDataset
+
+Dataset Reader Functions
+------------------------
+
+This module includes specific functions to read samples from different datasets, including spectral imaging data from CAVE and ARAD datasets.
+
+.. autosummary::
+    :toctree: stubs
+    :template: methods_template.rst
+    :nosignatures:
+
+    colibri.data.utils.load_cave_sample
+    colibri.data.utils.load_arad_sample
