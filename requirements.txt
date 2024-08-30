@@ -4,3 +4,4 @@ matplotlib
 torch
 torchvision
 torchmetrics
+requests
