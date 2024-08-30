@@ -224,6 +224,8 @@ results = train_schedule.fit(
 x_est = model(sample.to(device)).cpu()
 y = acquisition_model(sample.to(device)).cpu()
 
+normalize = lambda x: (x - torch.min(x)) / (torch.max(x) - torch.min(x)) 
+
 if acquisition_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
@@ -245,7 +247,9 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.title(title)
     plt.axis('off')
 
-ca = acquisition_model.learnable_optics.cpu().detach().numpy().squeeze()
+ca = normalize(acquisition_model.learnable_optics.cpu().detach())
+ca = ca.numpy().squeeze()
+
 if acquisition_name == 'spc':
     ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
 elif acquisition_name == 'c_cassi':
