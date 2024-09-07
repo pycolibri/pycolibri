@@ -118,11 +118,139 @@ plt.show()
 ## Collaborators
 
 <!-- readme: collaborators -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/romanjacome99">
+                    <img src="https://avatars.githubusercontent.com/u/18606737?v=4" width="100;" alt="romanjacome99"/>
+                    <br />
+                    <sub><b>Roman Alejandro Jacome Carrascal</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/David-Morales-Norato">
+                    <img src="https://avatars.githubusercontent.com/u/46037413?v=4" width="100;" alt="David-Morales-Norato"/>
+                    <br />
+                    <sub><b>David Santiago Morales Norato</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Enmartz">
+                    <img src="https://avatars.githubusercontent.com/u/58752635?v=4" width="100;" alt="Enmartz"/>
+                    <br />
+                    <sub><b>Emmanuel Martínez</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/yromariogh">
+                    <img src="https://avatars.githubusercontent.com/u/64557285?v=4" width="100;" alt="yromariogh"/>
+                    <br />
+                    <sub><b>Romario Gualdron Hurtado</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/JSebastianEC">
+                    <img src="https://avatars.githubusercontent.com/u/66753334?v=4" width="100;" alt="JSebastianEC"/>
+                    <br />
+                    <sub><b>Juan Sebastian Estupiñan Cobos</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/paularguello07">
+                    <img src="https://avatars.githubusercontent.com/u/68118520?v=4" width="100;" alt="paularguello07"/>
+                    <br />
+                    <sub><b>Paula Andrea Arguello Gutierrez</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/Factral">
+                    <img src="https://avatars.githubusercontent.com/u/74687828?v=4" width="100;" alt="Factral"/>
+                    <br />
+                    <sub><b>Fabian Perez *-*</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/leonsuarez24">
+                    <img src="https://avatars.githubusercontent.com/u/138550157?v=4" width="100;" alt="leonsuarez24"/>
+                    <br />
+                    <sub><b>leonsuarez24</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: collaborators -end -->
 
 ## Contributors
 
 <!-- readme: contributors -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/bemc22">
+                    <img src="https://avatars.githubusercontent.com/u/27647840?v=4" width="100;" alt="bemc22"/>
+                    <br />
+                    <sub><b>Brayan Monroy</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/David-Morales-Norato">
+                    <img src="https://avatars.githubusercontent.com/u/46037413?v=4" width="100;" alt="David-Morales-Norato"/>
+                    <br />
+                    <sub><b>David Santiago Morales Norato</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/romanjacome99">
+                    <img src="https://avatars.githubusercontent.com/u/18606737?v=4" width="100;" alt="romanjacome99"/>
+                    <br />
+                    <sub><b>Roman Alejandro Jacome Carrascal</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Factral">
+                    <img src="https://avatars.githubusercontent.com/u/74687828?v=4" width="100;" alt="Factral"/>
+                    <br />
+                    <sub><b>Fabian Perez *-*</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Enmartz">
+                    <img src="https://avatars.githubusercontent.com/u/58752635?v=4" width="100;" alt="Enmartz"/>
+                    <br />
+                    <sub><b>Emmanuel Martínez</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/yromariogh">
+                    <img src="https://avatars.githubusercontent.com/u/64557285?v=4" width="100;" alt="yromariogh"/>
+                    <br />
+                    <sub><b>Romario Gualdron Hurtado</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/paularguello07">
+                    <img src="https://avatars.githubusercontent.com/u/68118520?v=4" width="100;" alt="paularguello07"/>
+                    <br />
+                    <sub><b>Paula Andrea Arguello Gutierrez</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/leonsuarez24">
+                    <img src="https://avatars.githubusercontent.com/u/138550157?v=4" width="100;" alt="leonsuarez24"/>
+                    <br />
+                    <sub><b>leonsuarez24</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: contributors -end -->
 
 ## 💡 Contributing
