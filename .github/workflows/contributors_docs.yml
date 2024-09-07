@@ -1,3 +1,6 @@
+name: contributors list on docs
+
+
 on:
     push:
         branches:
