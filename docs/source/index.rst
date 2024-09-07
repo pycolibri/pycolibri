@@ -104,6 +104,70 @@ Available Models
 - `End-to-end framework <https://pycolibri.github.io/pycolibri/architectures.html>`_ with optical systems as encoder models and deep neural networks as decoder models.
 
 <!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/bemc22">
+                    <img src="https://avatars.githubusercontent.com/u/27647840?v=4" width="100;" alt="bemc22"/>
+                    <br />
+                    <sub><b>Brayan Monroy</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/david-morales-norato">
+                    <img src="https://avatars.githubusercontent.com/u/46037413?v=4" width="100;" alt="david-morales-norato"/>
+                    <br />
+                    <sub><b>David Santiago Morales Norato</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/leonsuarez24">
+                    <img src="https://avatars.githubusercontent.com/u/138550157?v=4" width="100;" alt="leonsuarez24"/>
+                    <br />
+                    <sub><b>leonsuarez24</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/romanjacome99">
+                    <img src="https://avatars.githubusercontent.com/u/18606737?v=4" width="100;" alt="romanjacome99"/>
+                    <br />
+                    <sub><b>Roman Alejandro Jacome Carrascal</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/paularguello07">
+                    <img src="https://avatars.githubusercontent.com/u/68118520?v=4" width="100;" alt="paularguello07"/>
+                    <br />
+                    <sub><b>Paula Andrea Arguello Gutierrez</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/enmartz">
+                    <img src="https://avatars.githubusercontent.com/u/58752635?v=4" width="100;" alt="enmartz"/>
+                    <br />
+                    <sub><b>Emmanuel Martínez</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/yromariogh">
+                    <img src="https://avatars.githubusercontent.com/u/64557285?v=4" width="100;" alt="yromariogh"/>
+                    <br />
+                    <sub><b>Romario Gualdron Hurtado</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/factral">
+                    <img src="https://avatars.githubusercontent.com/u/74687828?v=4" width="100;" alt="factral"/>
+                    <br />
+                    <sub><b>Fabian Perez *-*</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -end -->
 
 💡 Contributing
