@@ -117,7 +117,7 @@ plt.show()
 
 ## 🫂 Contributors
 
-[View Contributors](docs/source/contributors.html)
+![View Contributors](docs/source/contributors.html)
 
 
 ## 💡 Contributing
