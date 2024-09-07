@@ -117,10 +117,9 @@ plt.show()
 
 ## 🫂 Contributors
 
+<!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -start -->
+<!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -end -->
 
-```html
-<iframe src="docs/source/contributors.html" title="Contributors list"></iframe>
-```
 
 ## 💡 Contributing
 
