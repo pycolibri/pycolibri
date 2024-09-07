@@ -115,16 +115,13 @@ plt.show()
 
 - [End-to-end framework](https://pycolibri.github.io/pycolibri/architectures.html) with optical systems as encoder models and deep neural networks as decoder models.
 
-## Collaborators
-
-<!-- readme: collaborators -start -->
-<!-- readme: collaborators -end -->
-
 ## Contributors
 
-<!-- readme: contributors -start -->
-<!-- readme: contributors -end -->
+<!-- readme: <bemc22>,<David-Morales-Norato>,<romanjacome99>,<Factral>,<Enmartz>, <yromariogh>, <paularguello07>, <leonsuarez24>/- -start -->
+<!-- readme: <bemc22>,<David-Morales-Norato>,<romanjacome99>,<Factral>,<Enmartz>, <yromariogh>, <paularguello07>, <leonsuarez24>/- -end -->
 
+
+romanjacome99
 ## 💡 Contributing
 
 Contributions are welcome! If you're interested in improving Colibri, please:
