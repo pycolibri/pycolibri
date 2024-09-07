@@ -1,4 +1,4 @@
-﻿<div style="display:flex;">
+<div style="display:flex;">
   <img src="docs/source/figures/colibri-banner.svg" alt="colibri-banner-full" style="width:100%;margin-left:auto;marging-right:auto;">
 </div>
 
