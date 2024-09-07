@@ -103,6 +103,8 @@ Available Models
 
 - `End-to-end framework <https://pycolibri.github.io/pycolibri/architectures.html>`_ with optical systems as encoder models and deep neural networks as decoder models.
 
+<!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -start -->
+<!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -end -->
 
 💡 Contributing
 ------------------
