@@ -117,8 +117,10 @@ plt.show()
 
 ## 🫂 Contributors
 
-![View Contributors](docs/source/contributors.html)
 
+```html
+<iframe src="docs/source/contributors.html" title="Contributors list"></iframe>
+```
 
 ## 💡 Contributing
 
