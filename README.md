@@ -119,6 +119,7 @@ plt.show()
 
 <!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -start -->
 <!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -end -->
+
 ## 💡 Contributing
 
 Contributions are welcome! If you're interested in improving Colibri, please:
