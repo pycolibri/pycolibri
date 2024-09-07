@@ -1,4 +1,4 @@
-<div style="display:flex;">
+﻿<div style="display:flex;">
   <img src="docs/source/figures/colibri-banner.svg" alt="colibri-banner-full" style="width:100%;margin-left:auto;marging-right:auto;">
 </div>
 
@@ -117,11 +117,9 @@ plt.show()
 
 ## Contributors
 
-<!-- readme: <bemc22>,<David-Morales-Norato>,<romanjacome99>,<Factral>,<Enmartz>, <yromariogh>, <paularguello07>, <leonsuarez24>/- -start -->
-<!-- readme: <bemc22>,<David-Morales-Norato>,<romanjacome99>,<Factral>,<Enmartz>, <yromariogh>, <paularguello07>, <leonsuarez24>/- -end -->
+<!-- readme:bemc22,<David-Morales-Norato,<romanjacome99,<Factral,<Enmartz,yromariogh,paularguello07,leonsuarez24/- -start -->
+<!-- readme:bemc22,<David-Morales-Norato,<romanjacome99,<Factral,<Enmartz,yromariogh,paularguello07,leonsuarez24/- -end -->
 
-
-romanjacome99
 ## 💡 Contributing
 
 Contributions are welcome! If you're interested in improving Colibri, please:
