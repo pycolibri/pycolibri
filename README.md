@@ -117,8 +117,8 @@ plt.show()
 
 ## Contributors
 
-<!-- readme:bemc22,<David-Morales-Norato,<romanjacome99,<Factral,<Enmartz,yromariogh,paularguello07,leonsuarez24/- -start -->
-<!-- readme:bemc22,<David-Morales-Norato,<romanjacome99,<Factral,<Enmartz,yromariogh,paularguello07,leonsuarez24/- -end -->
+<!-- readme: bemc22,David-Morales-Norato,romanjacome99,Factral,Enmartz,yromariogh,paularguello07,leonsuarez24/- -start -->
+<!-- readme: bemc22,David-Morales-Norato,romanjacome99,Factral,Enmartz,yromariogh,paularguello07,leonsuarez24/- -end -->
 
 ## 💡 Contributing
 
