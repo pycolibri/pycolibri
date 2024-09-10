@@ -115,7 +115,7 @@ plt.show()
 
 - [End-to-end framework](https://pycolibri.github.io/pycolibri/architectures.html) with optical systems as encoder models and deep neural networks as decoder models.
 
-## 🫂 Contributors
+## 🫂 Current Contributors
 
 <!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -start -->
 <table>
