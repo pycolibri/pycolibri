@@ -39,6 +39,7 @@ napoleon_numpy_docstring = False
 
 html_title = "Colibri"
 html_logo = os.path.join("figures", "colibri-logo.svg")
+html_favicon = os.path.join("figures", "colibri-logo.svg")
 
 autodoc_default_options = {
     "exclude-members": "__init__"

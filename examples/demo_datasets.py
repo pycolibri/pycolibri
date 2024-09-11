@@ -75,6 +75,9 @@ dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_w
 # Visualize cave dataset
 # -----------------------------------------------
 
+def normalize(image):
+    return (image - image.min()) / (image.max() - image.min())
+
 data = next(iter(dataset_loader))
 rgb_image = data['input']
 spec_image = data['output']
@@ -88,20 +91,20 @@ for i in range(3):
     coord2 = [randint(0, M), randint(0, N)]
 
     plt.subplot(3, 3, (3 * i) + 1)
-    plt.imshow(rgb_image[i].permute(1, 2, 0).cpu().numpy())
+    plt.imshow(normalize(rgb_image[i].permute(1, 2, 0).cpu().numpy()))
     plt.title('rgb')
     plt.axis('off')
 
     plt.subplot(3, 3, (3 * i) + 2)
-    plt.imshow(spec_image[i, [18, 12, 8]].permute(1, 2, 0).cpu().numpy())
+    plt.imshow(normalize(spec_image[i, [18, 12, 8]].permute(1, 2, 0).cpu().numpy()))
     plt.scatter(coord1[1], coord1[0], s=120, edgecolors='black')
     plt.scatter(coord2[1], coord2[0], s=120, edgecolors='black')
     plt.title('spec bands [18, 12, 8]')
     plt.axis('off')
 
     plt.subplot(3, 3, (3 * i) + 3)
-    plt.plot(spec_image[i, :, coord1[0], coord1[1]].cpu().numpy(), linewidth=2, label='p1')
-    plt.plot(spec_image[i, :, coord2[0], coord1[1]].cpu().numpy(), linewidth=2, label='p2')
+    plt.plot(normalize(spec_image[i, :, coord1[0], coord1[1]].cpu().numpy()), linewidth=2, label='p1')
+    plt.plot(normalize(spec_image[i, :, coord2[0], coord1[1]].cpu().numpy()), linewidth=2, label='p2')
     plt.title('spec signatures')
     plt.xlabel('Wavelength [nm]')
     plt.grid()
