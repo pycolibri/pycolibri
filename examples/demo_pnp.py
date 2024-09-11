@@ -1,5 +1,5 @@
 r"""
-Demo Algorithms.
+Demo PnP.
 ===================================================
 
 """
@@ -54,6 +54,9 @@ acquisition_name = 'spc' #  ['spc', 'cassi']
 # -----------------------------------------------
 from torchvision.utils import make_grid
 from colibri.recovery.terms.transforms import DCT2D
+
+def normalize(image):
+    return (image - image.min()) / (image.max() - image.min())
 
 sample = dataset[0]['input']
 sample = sample.unsqueeze(0).to(device)
@@ -119,13 +122,13 @@ plt.figure(figsize=(10,10))
 
 plt.subplot(1,4,1)
 plt.title('Reference')
-plt.imshow(sample[0,:,:].permute(1, 2, 0), cmap='gray')
+plt.imshow(normalize(sample[0,:,:].permute(1, 2, 0)), cmap='gray')
 plt.xticks([])
 plt.yticks([])
 
 plt.subplot(1,4,2)
 plt.title('Sparse Representation')
-plt.imshow(abs(theta[0,:,:]).permute(1, 2, 0), cmap='gray')
+plt.imshow(normalize(abs(theta[0,:,:]).permute(1, 2, 0)), cmap='gray')
 plt.xticks([])
 plt.yticks([])
 
@@ -136,7 +139,7 @@ if acquisition_name == 'spc':
 
 plt.subplot(1,4,3)
 plt.title('Measurement')
-plt.imshow(y[0,:,:].permute(1, 2, 0), cmap='gray')
+plt.imshow(normalize(y[0,:,:].permute(1, 2, 0)), cmap='gray')
 plt.xticks([])
 plt.yticks([])
 
@@ -144,6 +147,6 @@ plt.subplot(1,4,4)
 plt.title('Reconstruction')
 x_hat -= x_hat.min()
 x_hat /= x_hat.max()
-plt.imshow(x_hat[0,:,:].permute(1, 2, 0).detach().cpu().numpy(), cmap='gray')
+plt.imshow(normalize(x_hat[0,:,:].permute(1, 2, 0).detach().cpu().numpy()), cmap='gray')
 plt.xticks([])
 plt.yticks([])

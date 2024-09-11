@@ -30,6 +30,8 @@ check the following points:
    * - ``make html-noplot``
      - Generates documentation faster but without plots
 
+You can also run `quick_validation.sh <https://github.com/pycolibri/pycolibri/blob/150-readme-%2B-index/quick_validation.sh>`_ to clear out old documentation, run the tests, and build and open the newly generated documentation.
+
 For those unfamiliar with the GitHub contribution process, an alternative option is to initiate an issue via the 
 `issue tracker <https://github.com/colibri-hdsp/colibri-hdsp/issues>`_. We commit to promptly addressing any raised issues. 
 Alternatively, you may directly communicate your inquiries or suggestions by emailing any of the principal developers.
