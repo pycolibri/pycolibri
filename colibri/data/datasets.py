@@ -2,11 +2,11 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-from colibri.data.sota_datasets import CaveDatasetHandler
+from colibri.data.sota_datasets import CaveDataset
 from colibri.data.utils import BUILTIN_DATASETS, update_builtin_path, load_builtin_dataset
 
 DATASET_HANDLERS = {
-    'cave': CaveDatasetHandler,
+    'cave': CaveDataset,
 }
 
 

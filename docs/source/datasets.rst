@@ -41,7 +41,7 @@ Custom datasets are supported by the Handlers, Currently, the module supports th
     :template: class_template.rst
     :nosignatures:
 
-    colibri.data.sota_datasets.CaveDatasetHandler
+    colibri.data.sota_datasets.CaveDataset
 
 Default Transformations
 -----------------------
