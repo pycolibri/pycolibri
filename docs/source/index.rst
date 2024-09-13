@@ -161,6 +161,7 @@ Information about contributing to Colibri can be found in the `CONTRIBUTING.md <
    regularizers
    recovery
    contributing
+   auto_examples/index
 
 .. |Test Status| image:: https://github.com/pycolibri/pycolibri/actions/workflows/test.yml/badge.svg
    :target: https://github.com/pycolibri/pycolibri/actions/workflows/test.yml
