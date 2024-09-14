@@ -47,8 +47,10 @@ response = requests.get(url)
 img = Image.open(BytesIO(response.content))
 img = np.array(img) / (255 + 1e-3)
 img = torch.tensor(img).permute(2, 0, 1).unsqueeze(0).float()
+img -= img.min(dim=2, keepdim=True)[0].min(dim=3, keepdim=True)[0]
+img /= img.max(dim=2, keepdim=True)[0].max(dim=3, keepdim=True)[0]
 
-img_size = 1024
+img_size = 512
 saturation_factor = 1.5
 blur_fn = transforms.GaussianBlur(7, sigma=(1, 1))
 
@@ -64,10 +66,12 @@ recons_fn = L2L2SolverModulo(img, modulo_sensing)
 xtilde    = None
 rho       = 0.0
 
-recons_img = recons_fn.solve(xtilde, rho)
+recons_img  = recons_fn.solve(xtilde, rho)
+recons_img -= recons_img.min(dim=2, keepdim=True)[0].min(dim=3, keepdim=True)[0]
+recons_img /= recons_img.max(dim=2, keepdim=True)[0].max(dim=3, keepdim=True)[0]
 
 
-fig, ax = plt.subplots(3, 1, figsize=(10, 10))
+fig, ax = plt.subplots(1, 3, figsize=(10, 10))
 
 
 ax[0].imshow(img[0].permute(1, 2, 0) / saturation_factor)
