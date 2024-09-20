@@ -91,7 +91,7 @@ class CustomDataset(Dataset):
                 Current options are: ('cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave').
             path (string): Path to directory with the dataset.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
-            kwargs_builtin (dict,object): Dictionary with the parameters to load the builtin datasets.
+            kwargs_builtin (dict,object): Dictionary with the parameters to load the builtin datasets, each pytorch dataset has its own parameters please refer to the pytorch documentation.
         """
 
         self.is_builtin_dataset = False

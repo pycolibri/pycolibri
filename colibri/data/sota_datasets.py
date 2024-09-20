@@ -19,7 +19,7 @@ class CaveDataset():
         self.url = url
         self.tmp_name = 'cave_dataset'
         self.path = os.path.join(path, self.tmp_name)
-        self.num_channels = 32
+        self.num_channels = 31
         if download:
             self.download()
 
@@ -66,7 +66,7 @@ class CaveDataset():
         name = os.path.basename(filename).replace('_ms', '')
 
         spectral_image = []
-        for i in range(1, self.num_channels):
+        for i in range(1, self.num_channels+1):
             spectral_band_filename = os.path.join(filename, f'{name}_ms_{i:02d}.png')
             spectral_band = np.array(Image.open(spectral_band_filename))
             if len(spectral_band.shape)>2:

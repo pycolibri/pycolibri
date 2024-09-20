@@ -60,7 +60,7 @@ def load_builtin_dataset(name: str, path: str, **kwargs):
     dataset['input'] = (dataset['input'] / 255.).astype(np.float32)
     if dataset['input'].ndim != 4:
         dataset['input'] = dataset['input'].unsqueeze(1)
-    dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
+    dataset['input'] = np.transpose(dataset['input'], (0, 3, 1, 2))
 
     dataset['input'] = torch.from_numpy(dataset['input'])
     dataset['output'] = torch.tensor(dataset['output'])
