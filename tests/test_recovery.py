@@ -27,10 +27,8 @@ def load_img():
     name = 'cifar10'
     path = '.'
 
-    builtin_dict = dict(train=True, download=True)
-    dataset = CustomDataset(name, path,
-                            builtin_dict=builtin_dict,
-                            transform_dict=None)
+
+    dataset = CustomDataset(name, path)
     sample = dataset[0]['input']
     return sample.unsqueeze(0)
 
