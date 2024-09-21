@@ -8,7 +8,7 @@ The PyColibri datasets module offers a variety of datasets widely used in machin
 Built-in Datasets
 -----------------
 
-The built-in datasets supported by this module include popular datasets like MNIST, CIFAR-10, CIFAR-100, and Fashion MNIST. The complete list is aviailable in the `colibri.data.utils.BUILTIN_DATASETS` dictionary.
+The built-in datasets supported by this module include popular datasets like MNIST, CIFAR-10, CIFAR-100, and Fashion MNIST. The complete list is aviailable in the :py:mod:`colibri.data.utils.BUILTIN_DATASETS` dictionary.
 
 .. autosummary::
     :toctree: stubs
@@ -41,7 +41,7 @@ Custom datasets are supported by the Handlers, Currently, the module supports th
     :template: class_template.rst
     :nosignatures:
 
-    colibri.data.sota_datasets.CaveDatasetHandler
+    colibri.data.sota_datasets.CaveDataset
 
 Default Transformations
 -----------------------

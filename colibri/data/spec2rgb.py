@@ -1,3 +1,4 @@
+# The code is taken from: https://github.com/hdspgroup/spec2rgb
 import numpy as np
 
 
@@ -89,25 +90,3 @@ class ColourSystem:
         M = self.get_transform_matrix()
         rgb = spec @ M
         return rgb
-
-    # def xyz_to_rgb(self, xyz, out_fmt=None):
-
-    #     rgb = self.T.dot(xyz)
-    #     if np.any(rgb < 0):
-    #         # We're not in the RGB gamut: approximate by desaturating
-    #         w = - np.min(rgb)
-    #         rgb += w
-    #     if not np.all(rgb == 0):
-    #         # Normalize the rgb vector
-    #         rgb /= np.max(rgb)
-    #     return rgb
-
-    # def rgb_to_hex(self, rgb):
-    #     hex_rgb = (255 * rgb).astype(int)
-    #     return '#{:02x}{:02x}{:02x}'.format(*hex_rgb)
-
-    # def spec_to_xyz(self, spec):
-
-    #     XYZ = np.dot(spec, self.cmf.T)
-    #     # XYZ = np.sum(spec[:, np.newaxis] * self.cmf, axis=0)
-    #     return XYZ

@@ -2,11 +2,11 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 
-from colibri.data.sota_datasets import CaveDatasetHandler
+from colibri.data.sota_datasets import CaveDataset
 from colibri.data.utils import BUILTIN_DATASETS, update_builtin_path, load_builtin_dataset
 
 DATASET_HANDLERS = {
-    'cave': CaveDatasetHandler,
+    'cave': CaveDataset,
 }
 
 
@@ -91,7 +91,7 @@ class CustomDataset(Dataset):
                 Current options are: ('cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave').
             path (string): Path to directory with the dataset.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
-            kwargs_builtin (dict,object): Dictionary with the parameters to load the builtin datasets.
+            kwargs_builtin (dict,object): Dictionary with the parameters to load the builtin datasets, each pytorch dataset has its own parameters please refer to the pytorch documentation.
         """
 
         self.is_builtin_dataset = False

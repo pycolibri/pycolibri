@@ -5,7 +5,7 @@ import numpy as np
 import PIL.Image as Image
 import torch
 
-class CaveDatasetHandler():
+class CaveDataset():
     r"""
 
     Class to handle the CAVE dataset. 
@@ -19,6 +19,7 @@ class CaveDatasetHandler():
         self.url = url
         self.tmp_name = 'cave_dataset'
         self.path = os.path.join(path, self.tmp_name)
+        self.num_channels = 31
         if download:
             self.download()
 
@@ -65,7 +66,7 @@ class CaveDatasetHandler():
         name = os.path.basename(filename).replace('_ms', '')
 
         spectral_image = []
-        for i in range(1, 32):
+        for i in range(1, self.num_channels+1):
             spectral_band_filename = os.path.join(filename, f'{name}_ms_{i:02d}.png')
             spectral_band = np.array(Image.open(spectral_band_filename))
             if len(spectral_band.shape)>2:
