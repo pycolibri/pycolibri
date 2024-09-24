@@ -126,6 +126,13 @@ Check out the demo list in the `examples <https://pycolibri.github.io/pycolibri/
    - `End-to-end framework <https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E>`_ 
 
 
+🫂 Contributors
+------------------
+
+.. raw:: html
+    :file: contributors.html
+
+
 💡 Contributing
 ------------------
 
