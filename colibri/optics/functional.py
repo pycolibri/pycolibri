@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 
-def prism_operator(x:torch.Tensor, shift_sign:int = 1) -> torch.Tensor:
+
+def prism_operator(x: torch.Tensor, shift_sign: int = 1) -> torch.Tensor:
     r"""
 
     Prism operator, shifts linearly the input tensor x in the spectral dimension.
@@ -30,8 +31,8 @@ def prism_operator(x:torch.Tensor, shift_sign:int = 1) -> torch.Tensor:
     x = torch.stack(x, dim=1)
     return x
 
-def forward_color_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
 
+def forward_color_cassi(x: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     r"""
 
     Forward operator of color coded aperture snapshot spectral imager (Color-CASSI)
@@ -49,7 +50,8 @@ def forward_color_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     y = prism_operator(y, shift_sign=1)
     return y.sum(dim=1, keepdim=True)
 
-def backward_color_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
+
+def backward_color_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     r"""
 
     Backward operator of color coded aperture snapshot spectral imager (Color-CASSI)
@@ -68,7 +70,7 @@ def backward_color_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     return x
 
 
-def forward_dd_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
+def forward_dd_cassi(x: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     r"""
 
     Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)
@@ -89,7 +91,7 @@ def forward_dd_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     return y.sum(dim=1, keepdim=True)
 
 
-def backward_dd_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
+def backward_dd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     r"""
 
     Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)
@@ -109,7 +111,8 @@ def backward_dd_cassi(y: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
     ca = prism_operator(ca, shift_sign=-1)
     return torch.multiply(y, ca)
 
-def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor)-> torch.Tensor:
+
+def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     r"""
     Forward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)
     
@@ -146,6 +149,44 @@ def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     y = torch.tile(y, [1, L, 1, 1])
     y = prism_operator(y, shift_sign=-1)
     return torch.multiply(y, ca)
+
+
+def forward_tensor_cassi(x, ca):
+    """
+    Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Fast matrix inversion in compressive spectral imaging based on a tensorial representation: https://doi.org/10.1117/1.JEI.33.1.013034
+    Args:
+        x (torch.Tensor): Spectral image with shape (1, L, M, N)
+        ca (torch.Tensor): Coded aperture with shape (1, M, N)
+    Returns:
+        torch.Tensor: Measurement with shape (1, 1, M, N + L - 1)
+    """
+    [b, L, M, N] = x.shape
+    S = ca.shape[0]
+    y = torch.zeros(b, S, M, N + L - 1).to(x.device)
+
+    y_noshift = x[:, :, None] * ca
+    for k in range(L):
+        y[..., k:N + k] += + y_noshift[:, k]
+
+    return y
+
+def backward_tensor_cassi(y, ca):
+    """
+    Backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Fast matrix inversion in compressive spectral imaging based on a tensorial representation: https://doi.org/10.1117/1.JEI.33.1.013034
+    Args:
+        y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
+        ca (torch.Tensor): Coded aperture with shape (1, M, N)
+    Returns:
+        torch.Tensor: Spectral image with shape (1, L, M, N)
+    """
+    [_, M, N] = ca.shape
+    L = y.shape[-1] - N + 1
+
+    y1 = torch.zeros(y.shape[0], L, M, N).to(y.device)
+    for k in range(L):
+        y1[:, k] += torch.sum(y[..., k:N + k] * ca, dim=1)
+
+    return y1
 
 
 def forward_spc(x: torch.Tensor, H: torch.Tensor) -> torch.Tensor:
@@ -187,8 +228,8 @@ def backward_spc(y: torch.Tensor, H: torch.Tensor, pinv=False) -> torch.Tensor:
         torch.Tensor: Reconstructed image tensor of size (B, L, M, N).
     """
 
-    Hinv   = torch.pinverse(H) if pinv else torch.transpose(H, 0, 1)
-    Hinv   = Hinv.unsqueeze(0).repeat(y.shape[0], 1, 1)
+    Hinv = torch.pinverse(H) if pinv else torch.transpose(H, 0, 1)
+    Hinv = Hinv.unsqueeze(0).repeat(y.shape[0], 1, 1)
 
     x = torch.bmm(Hinv, y)
     x = x.permute(0, 2, 1)
@@ -229,17 +270,16 @@ def get_spatial_coords(M: int, N: int, pixel_size: float, device=torch.device('c
 
     """
 
-
-    x = (torch.linspace(-pixel_size*N/2, pixel_size*N/2, N)).to(device=device)
-    y = (torch.linspace(-pixel_size*M/2, pixel_size*M/2, M)).to(device=device)
-    x,y = torch.meshgrid(y, x, indexing='ij')
-    if type=="polar":
-        r = torch.sqrt(x**2 + y**2)
+    x = (torch.linspace(-pixel_size * N / 2, pixel_size * N / 2, N)).to(device=device)
+    y = (torch.linspace(-pixel_size * M / 2, pixel_size * M / 2, M)).to(device=device)
+    x, y = torch.meshgrid(y, x, indexing='ij')
+    if type == "polar":
+        r = torch.sqrt(x ** 2 + y ** 2)
         theta = torch.atan2(y, x)
         return r, theta
     else:
         return x, y
-    
+
 
 def wave_number(wavelength: torch.Tensor):
     r"""
@@ -258,12 +298,12 @@ def wave_number(wavelength: torch.Tensor):
     return 2 * torch.pi / wavelength
 
 
-def transfer_function_fresnel(M: int, 
-                            N: int, 
-                            pixel_size: float, 
-                            wavelengths: torch.Tensor,
-                            distance: float, 
-                            device=torch.device('cpu')) -> torch.Tensor:
+def transfer_function_fresnel(M: int,
+                              N: int,
+                              pixel_size: float,
+                              wavelengths: torch.Tensor,
+                              distance: float,
+                              device=torch.device('cpu')) -> torch.Tensor:
     r"""
 
     The transfer function for the Fresnel propagation can be written as follows:
@@ -284,13 +324,14 @@ def transfer_function_fresnel(M: int,
     Returns:
         torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), M, N).
     """
-    fr,_ = get_spatial_coords(M, N, 1/(N*pixel_size), device=device, type='polar')
+    fr, _ = get_spatial_coords(M, N, 1 / (N * pixel_size), device=device, type='polar')
     fr = fr.unsqueeze(0)
-    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * (wavelengths**2)/2)) )
+    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr ** 2) * (wavelengths ** 2) / 2)))
     return H
 
 
-def transfer_function_angular_spectrum(M: int, N: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu')) -> torch.Tensor:
+def transfer_function_angular_spectrum(M: int, N: int, pixel_size: float, wavelengths: torch.Tensor, distance: float,
+                                       device: torch.device = torch.device('cpu')) -> torch.Tensor:
     r"""
 
     The transfer function for the angular spectrum propagation can be written as follows:
@@ -312,14 +353,15 @@ def transfer_function_angular_spectrum(M: int, N: int, pixel_size: float, wavele
         torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), M, N).
     """
 
-    fr,_ = get_spatial_coords(M, N, 1/(N*pixel_size), device=device, type='polar')
+    fr, _ = get_spatial_coords(M, N, 1 / (N * pixel_size), device=device, type='polar')
     fr = fr.unsqueeze(0)
-    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr**2) * wavelengths**2)) ** 0.5)
+    H = torch.exp(1j * wave_number(wavelengths) * distance * (1 - ((fr ** 2) * wavelengths ** 2)) ** 0.5)
 
     return H
 
 
-def fraunhofer_propagation(field: torch.Tensor, M: int, N: int, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu'))-> torch.Tensor:
+def fraunhofer_propagation(field: torch.Tensor, M: int, N: int, pixel_size: float, wavelengths: torch.Tensor,
+                           distance: float, device: torch.device = torch.device('cpu')) -> torch.Tensor:
     r"""
     The Fraunhofer approximation of :math:`U_0(x',y')` is its Fourier transform, :math:`\mathcal{F}\{U_0\}` with an additional phase factor that depends on the distance of propagation, :math:`z`. The Fraunhofer approximation is given by the following equation:
 
@@ -342,14 +384,16 @@ def fraunhofer_propagation(field: torch.Tensor, M: int, N: int, pixel_size: floa
     """
     r, _ = get_spatial_coords(M, N, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
-    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * (r**2))
+    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(
+        1j * wave_number(wavelengths) / (2 * distance) * (r ** 2))
     c = c.to(device=device)
-    result =  fft(field) * c * pixel_size**2
+    result = fft(field) * c * pixel_size ** 2
 
     return result
 
 
-def fraunhofer_inverse_propagation(field: torch.Tensor, pixel_size: float, wavelengths: torch.Tensor, distance: float, device: torch.device=torch.device('cpu')) -> torch.Tensor:
+def fraunhofer_inverse_propagation(field: torch.Tensor, pixel_size: float, wavelengths: torch.Tensor, distance: float,
+                                   device: torch.device = torch.device('cpu')) -> torch.Tensor:
     r"""
     The inverse Fraunhofer approximation (to reconstruct the field at the source from the field at the sensor) is given by the following equation:
 
@@ -372,14 +416,15 @@ def fraunhofer_inverse_propagation(field: torch.Tensor, pixel_size: float, wavel
     _, M, N = field.shape
     r, _ = get_spatial_coords(M, N, pixel_size, device=device, type='polar')
     r = r.unsqueeze(0)
-    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(1j * wave_number(wavelengths) / (2 * distance) * r**2)
+    c = torch.exp(1j * wave_number(wavelengths) * distance) / (1j * wavelengths * distance) * torch.exp(
+        1j * wave_number(wavelengths) / (2 * distance) * r ** 2)
     c = c.to(device=device)
-    result =  ifft(field / pixel_size**2 / c)
-    
+    result = ifft(field / pixel_size ** 2 / c)
+
     return result
 
 
-def fft(field: torch.Tensor, axis = (-2, -1)) -> torch.Tensor:
+def fft(field: torch.Tensor, axis=(-2, -1)) -> torch.Tensor:
     r"""
 
     Fast Fourier Transform of an optical field
@@ -399,7 +444,7 @@ def fft(field: torch.Tensor, axis = (-2, -1)) -> torch.Tensor:
     return field
 
 
-def ifft(field: torch.Tensor, axis = (-2, -1)) -> torch.Tensor:
+def ifft(field: torch.Tensor, axis=(-2, -1)) -> torch.Tensor:
     r"""
     
     Inverse Fast Fourier Transform of an optical field
@@ -417,7 +462,8 @@ def ifft(field: torch.Tensor, axis = (-2, -1)) -> torch.Tensor:
     return field
 
 
-def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str) -> torch.Tensor:
+def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_size: float, wavelength: list,
+                                   approximation: str) -> torch.Tensor:
     r"""
     Compute the optical field propagation using a scalar diffraction theory model which is given by the specific approximation selected.
     
@@ -439,42 +485,41 @@ def scalar_diffraction_propagation(field: torch.Tensor, distance: float, pixel_s
     """
 
     _, M, N = field.shape
-    
+
     if approximation == "fresnel":
-        
-        H = transfer_function_fresnel(M, 
-                                    N, 
-                                    pixel_size, 
-                                    wavelength, 
-                                    distance, 
-                                    field.device)
+
+        H = transfer_function_fresnel(M,
+                                      N,
+                                      pixel_size,
+                                      wavelength,
+                                      distance,
+                                      field.device)
     elif approximation == "angular_spectrum":
-        H = transfer_function_angular_spectrum(M, 
-                                            N, 
-                                            pixel_size, 
-                                            wavelength, 
-                                            distance, 
-                                            field.device)
-        
+        H = transfer_function_angular_spectrum(M,
+                                               N,
+                                               pixel_size,
+                                               wavelength,
+                                               distance,
+                                               field.device)
+
     elif approximation == "fraunhofer":
-        return fraunhofer_propagation(field, 
-                                        M, 
-                                        N, 
-                                        pixel_size, 
-                                        wavelength, 
-                                        distance, 
-                                        field.device)
+        return fraunhofer_propagation(field,
+                                      M,
+                                      N,
+                                      pixel_size,
+                                      wavelength,
+                                      distance,
+                                      field.device)
 
     elif approximation == "fraunhofer_inverse":
         return fraunhofer_inverse_propagation(field,
-                                            pixel_size,
-                                            wavelength,
-                                            distance,
-                                            field.device)
+                                              pixel_size,
+                                              wavelength,
+                                              distance,
+                                              field.device)
     else:
         raise NotImplementedError(f"{approximation} approximation is implemented")
-    
-    
+
     U1 = fft(field)
     U2 = U1 * H
     result = ifft(U2)
@@ -503,7 +548,7 @@ def circular_aperture(M: int, N: int, radius: float, pixel_size: float) -> torch
         torch.Tensor: A binary mask with 1's inside the radius and 0's outside.
     '''
     r, _ = get_spatial_coords(M, N, pixel_size, type='polar')
-    return r<=radius
+    return r <= radius
 
 
 def height2phase(height_map: torch.Tensor, wavelengths: torch.Tensor, refractive_index: callable) -> torch.Tensor:
@@ -525,13 +570,13 @@ def height2phase(height_map: torch.Tensor, wavelengths: torch.Tensor, refractive
         torch.Tensor: Phase.    
     """
     k0 = wave_number(wavelengths)
-    phase_doe =  refractive_index(wavelengths) * k0 * height_map
+    phase_doe = refractive_index(wavelengths) * k0 * height_map
     return phase_doe
 
 
 def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, refractive_index: callable,
-                        wavelengths: torch.Tensor, source_distance: float, 
-                        sensor_distance:float, pixel_size: float, approximation:str = "fresnel") -> torch.Tensor:
+                            wavelengths: torch.Tensor, source_distance: float,
+                            sensor_distance: float, pixel_size: float, approximation: str = "fresnel") -> torch.Tensor:
     r"""
     Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging. The PSF is calculated as follows:
     
@@ -560,27 +605,28 @@ def psf_single_doe_spectral(height_map: torch.Tensor, aperture: torch.Tensor, re
     Returns:
         torch.Tensor: PSF of the optical system, normalized to unit energy.
     """
-    
-    height_map = height_map*aperture
+
+    height_map = height_map * aperture
     M, N = height_map.shape
     wavelengths = wavelengths.unsqueeze(1).unsqueeze(2)
     k0 = wave_number(wavelengths)
-    doe = height2phase(height_map = torch.unsqueeze(height_map, 0), wavelengths = wavelengths, refractive_index = refractive_index)
-    doe = torch.exp(1j * doe*aperture)*aperture
+    doe = height2phase(height_map=torch.unsqueeze(height_map, 0), wavelengths=wavelengths,
+                       refractive_index=refractive_index)
+    doe = torch.exp(1j * doe * aperture) * aperture
     optical_field = torch.ones_like(doe)
-    if not(np.isinf(source_distance) or np.isnan(source_distance)):
+    if not (np.isinf(source_distance) or np.isnan(source_distance)):
         r, _ = get_spatial_coords(M, N, pixel_size, device=doe.device, type='polar')
-        spherical_phase = (k0/(2*source_distance))*(torch.unsqueeze(r, 0)**2)
-        optical_field = torch.exp(1j*spherical_phase) * (1/(1j*wavelengths*source_distance))
+        spherical_phase = (k0 / (2 * source_distance)) * (torch.unsqueeze(r, 0) ** 2)
+        optical_field = torch.exp(1j * spherical_phase) * (1 / (1j * wavelengths * source_distance))
 
     optical_field = optical_field * doe
-    optical_field_in_sensor = scalar_diffraction_propagation(field = optical_field, 
-                                                            distance = sensor_distance, 
-                                                            pixel_size = pixel_size, 
-                                                            wavelength = wavelengths, 
-                                                            approximation = approximation)
-    psf = torch.abs(optical_field_in_sensor)**2
-    psf = psf/torch.sum(psf, dim=(-2, -1), keepdim=True)
+    optical_field_in_sensor = scalar_diffraction_propagation(field=optical_field,
+                                                             distance=sensor_distance,
+                                                             pixel_size=pixel_size,
+                                                             wavelength=wavelengths,
+                                                             approximation=approximation)
+    psf = torch.abs(optical_field_in_sensor) ** 2
+    psf = psf / torch.sum(psf, dim=(-2, -1), keepdim=True)
     return psf
 
 
@@ -601,10 +647,10 @@ def gaussian_noise(y: torch.Tensor, snr: float) -> torch.Tensor:
         torch.Tensor: Noisy image tensor with the same shape as input.
     """
     noise = torch.zeros_like(y)
-    sigma_per_channel = torch.sum(torch.pow(y, 2), dim=(2, 3), keepdim=True) / (torch.numel(y[0,0,...]) * 10 ** (snr / 10))
+    sigma_per_channel = torch.sum(torch.pow(y, 2), dim=(2, 3), keepdim=True) / (
+                torch.numel(y[0, 0, ...]) * 10 ** (snr / 10))
     noise = torch.randn_like(y) * torch.sqrt(sigma_per_channel)
-    return y+noise
-
+    return y + noise
 
 
 def fourier_conv(image: torch.Tensor, psf: torch.Tensor) -> torch.Tensor:
@@ -626,19 +672,20 @@ def fourier_conv(image: torch.Tensor, psf: torch.Tensor) -> torch.Tensor:
     # Fix psf and image size
     psf_size = psf.shape[-2:]
     image_size = image.shape[-2:]
-    extra_size = [(psf_size[i]-image_size[i]) for i in range(len(image_size))]
+    extra_size = [(psf_size[i] - image_size[i]) for i in range(len(image_size))]
     if extra_size[0] < 0 or extra_size[1] < 0:
-        psf = add_pad(psf, [0, -extra_size[0]//2, -extra_size[1]//2])
+        psf = add_pad(psf, [0, -extra_size[0] // 2, -extra_size[1] // 2])
     else:
-        image = add_pad(image, [0, 0, extra_size[0]//2, extra_size[1]//2])
+        image = add_pad(image, [0, 0, extra_size[0] // 2, extra_size[1] // 2])
 
     img_fft = fft(image)
     otf = fft(psf)
     img_fft = img_fft * otf
     img = torch.abs(ifft(img_fft))
-    if not(extra_size[0] < 0 or extra_size[1] < 0):
-        img = unpad(img, pad = [0, 0, extra_size[0]//2, extra_size[1]//2])
+    if not (extra_size[0] < 0 or extra_size[1] < 0):
+        img = unpad(img, pad=[0, 0, extra_size[0] // 2, extra_size[1] // 2])
     return img
+
 
 def add_pad(x: torch.Tensor, pad: list) -> torch.Tensor:
     r"""
@@ -673,6 +720,7 @@ def add_pad(x: torch.Tensor, pad: list) -> torch.Tensor:
     pad_list = sum([[pa, pa] for pa in pad][::-1], [])
     return torch.nn.functional.pad(x, pad_list, mode='constant', value=0)
 
+
 def unpad(x: torch.Tensor, pad: list) -> torch.Tensor:
     r"""
 
@@ -698,15 +746,17 @@ def unpad(x: torch.Tensor, pad: list) -> torch.Tensor:
 
     """
     assert len(x.shape) == len(pad), "The tensor and the padding must have the same number of dimensions"
-    if len(x.shape) ==4:
-        return x[(0+pad[0]):(x.shape[0] - pad[0]), (0+pad[1]):(x.shape[1] - pad[1]), (0+pad[2]):(x.shape[2] - pad[2]), (0+pad[3]):(x.shape[3] - pad[3])]
-    elif len(x.shape) ==3:
-        return x[(0+pad[0]):(x.shape[0] - pad[0]), (0+pad[1]):(x.shape[1] - pad[1]), (0+pad[2]):(x.shape[2] - pad[2])]
-    elif len(x.shape) ==2:
-        return x[(0+pad[0]):(x.shape[0] - pad[0]), (0+pad[1]):(x.shape[1] - pad[1])]
+    if len(x.shape) == 4:
+        return x[(0 + pad[0]):(x.shape[0] - pad[0]), (0 + pad[1]):(x.shape[1] - pad[1]),
+               (0 + pad[2]):(x.shape[2] - pad[2]), (0 + pad[3]):(x.shape[3] - pad[3])]
+    elif len(x.shape) == 3:
+        return x[(0 + pad[0]):(x.shape[0] - pad[0]), (0 + pad[1]):(x.shape[1] - pad[1]),
+               (0 + pad[2]):(x.shape[2] - pad[2])]
+    elif len(x.shape) == 2:
+        return x[(0 + pad[0]):(x.shape[0] - pad[0]), (0 + pad[1]):(x.shape[1] - pad[1])]
     else:
         raise ValueError("The tensor must have 2, 3 or 4 dimensions")
-    
+
 
 def signal_conv(image: torch.Tensor, psf: torch.Tensor) -> torch.Tensor:
     r"""
@@ -729,11 +779,12 @@ def signal_conv(image: torch.Tensor, psf: torch.Tensor) -> torch.Tensor:
     original_size = image.shape[-2:]
     psf = psf.unsqueeze(1)
     C, _, _, N = psf.shape
-    image = torch.nn.functional.conv2d(image, torch.flip(psf, [-2, -1]), padding=(N-1, N-1), groups=C)
+    image = torch.nn.functional.conv2d(image, torch.flip(psf, [-2, -1]), padding=(N - 1, N - 1), groups=C)
 
     new_size = image.shape[-2:]
-    image = unpad(image, pad = [0, 0, (new_size[0]-original_size[0])//2, (new_size[1]-original_size[1])//2])
+    image = unpad(image, pad=[0, 0, (new_size[0] - original_size[0]) // 2, (new_size[1] - original_size[1]) // 2])
     return image
+
 
 def convolutional_sensing(image: torch.Tensor, psf: torch.Tensor, domain='fourier') -> torch.Tensor:
     r"""
@@ -786,12 +837,11 @@ def wiener_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float) -> torch
     # Fix psf and image size
     psf_size = psf.shape[-2:]
     image_size = image.shape[-2:]
-    extra_size = [(psf_size[i]-image_size[i]) for i in range(len(image_size))]
+    extra_size = [(psf_size[i] - image_size[i]) for i in range(len(image_size))]
     if extra_size[0] < 0 or extra_size[1] < 0:
-        psf = add_pad(psf, [0, -extra_size[0]//2, -extra_size[1]//2])
+        psf = add_pad(psf, [0, -extra_size[0] // 2, -extra_size[1] // 2])
     else:
-        image = add_pad(image, [0, 0, extra_size[0]//2, extra_size[1]//2])
-
+        image = add_pad(image, [0, 0, extra_size[0] // 2, extra_size[1] // 2])
 
     img_fft = fft(image)
     otf = fft(psf)
@@ -799,8 +849,8 @@ def wiener_filter(image: torch.Tensor, psf: torch.Tensor, alpha: float) -> torch
     img_fft = img_fft * filter
     img = torch.abs(ifft(img_fft))
 
-    if not(extra_size[0] < 0 or extra_size[1] < 0):
-        img = unpad(img, pad = [0, 0, extra_size[0]//2, extra_size[1]//2])
+    if not (extra_size[0] < 0 or extra_size[1] < 0):
+        img = unpad(img, pad=[0, 0, extra_size[0] // 2, extra_size[1] // 2])
     return img
 
 
@@ -821,4 +871,4 @@ def ideal_panchromatic_sensor(image: torch.Tensor) -> torch.Tensor:
         torch.Tensor: Simulated sensor output as measurement (B, 1, M, N).
 
     """
-    return torch.sum(image, dim=1, keepdim=True)/image.shape[1]
+    return torch.sum(image, dim=1, keepdim=True) / image.shape[1]

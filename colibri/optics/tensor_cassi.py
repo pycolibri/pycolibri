@@ -2,7 +2,7 @@
 # https://doi.org/10.1117/1.JEI.33.1.013034
 
 import torch
-from colibri_hdsp.optics.functional import forward_tensor_cassi, backward_tensor_cassi
+from colibri.optics.functional import forward_tensor_cassi, backward_tensor_cassi
 
 
 class TensorCASSI(torch.nn.Module):

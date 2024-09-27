@@ -14,7 +14,8 @@ import sys
 
 from skimage.transform import resize
 
-from colibri_hdsp.optics.tensor_cassi import TensorCASSI
+from colibri.data.datasets import CustomDataset
+from colibri.optics.tensor_cassi import TensorCASSI
 
 sys.path.append(os.getcwd())
 print("Current Working Directory ", os.getcwd())
@@ -43,14 +44,16 @@ M = 32
 N = M
 L = 4
 S = 2
+sample_index = 1
 
 # %%
 # Data
 # -----------------------------------------------
 
-x = sio.loadmat('examples/data/lego.mat')['hyperimg']
-x = resize(x[..., ::int(x.shape[-1] / L)], [M, N, L])
-x = torch.tensor(x, dtype=torch.float32).permute(2, 0, 1)[None]
+dataset = CustomDataset('cave', path='data')
+sample = dataset[sample_index]
+x = sample['output'].numpy()
+x = torch.from_numpy(resize(x[::int(x.shape[0] / L) + 1], [L, M, N]))[None, ...]
 
 plt.figure()
 plt.imshow(x[0, 0])
@@ -128,7 +131,7 @@ plt.subplot(121), plt.imshow(P[0, 0]), plt.title('$(I+P)_{11}^{-1}$')
 plt.subplot(122), plt.imshow(InvertedMeasurement[0, 0]), plt.title('Inverted Measurement')
 plt.show()
 
-error = torch.norm(y - InvertedMeasurement)
+error = torch.norm(y - InvertedMeasurement).item()
 print(f'Inversion error: {error}')
 
 # %%
@@ -145,7 +148,7 @@ plt.subplot(121), plt.imshow(Q[0, 0]), plt.title('$(I+Q)_{11}^{-1}$')
 plt.subplot(122), plt.imshow(InvertedImage[0, 0]), plt.title('Inverted Image')
 plt.show()
 
-error = torch.norm(x - InvertedImage)
+error = torch.norm(x - InvertedImage).item()
 print(f'Inversion error: {error}')
 
 # %%
