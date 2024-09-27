@@ -2,7 +2,7 @@ import pytest
 from .utils import include_colibri
 include_colibri()
 
-from colibri_hdsp.models import build_network, Autoencoder, Unet
+from colibri.models import build_network, Autoencoder, Unet
 import torch
 
 model_list = ["unet","autoencoder"]

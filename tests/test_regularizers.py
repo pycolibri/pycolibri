@@ -2,7 +2,7 @@ import pytest
 from .utils import include_colibri
 include_colibri()
 
-from colibri_hdsp import regularizers
+from colibri import regularizers
 import torch
 
 reg_list = ["binary", "transmittance", "correlation", "kl_gaussian", "min_variance"]  
@@ -18,9 +18,9 @@ def imsize():
 def choose_regularizer(name):
 
     if name == "binary":
-        reg = regularizers.Reg_Binary()
+        reg = regularizers.Binary()
     elif name == "transmittance":
-        reg = regularizers.Reg_Transmittance(t=0.1)
+        reg = regularizers.Transmittance(t=0.1)
     elif name == "correlation":
         reg = regularizers.Correlation()
     elif name == "kl_gaussian":

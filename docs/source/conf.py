@@ -10,9 +10,9 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-project = 'colibri'
-copyright = '2023, hdsp'
-author = 'hdsp'
+project = 'pycolibri'
+copyright = '2024, colibri'
+author = 'colibri'
 version  = '0.1'
 
 # -- General configuration ---------------------------------------------------
@@ -25,59 +25,102 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
     "autodocsumm",
+    'sphinx_gallery.gen_gallery'
 ]
 
 exec_code_working_dir = "../.."
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 
 autodoc_inherit_docstrings = False
 napoleon_google_docstring = True
-napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
 
 html_title = "Colibri"
-html_logo = "logo.png"
+html_logo = os.path.join("figures", "colibri-logo.svg")
+html_favicon = os.path.join("figures", "colibri-logo.svg")
 
-autodoc_mock_imports = [
-    "torch",
-    "tqdm",
-    "numpy",
-    "timm",
-    "cv2",
-    "PIL",
-    "pretrainedmodels",
-    "torchvision",
-    "efficientnet-pytorch",
-    "segmentation_models_pytorch.encoders",
-    "segmentation_models_pytorch.utils",
-    "h5py"
-    # 'segmentation_models_pytorch.base',
-]
+autodoc_default_options = {
+    "exclude-members": "__init__"
+}
+
+# autodoc_mock_imports = [
+#     "torch",
+#     "tqdm",
+#     "numpy",
+#     "timm",
+#     "cv2",
+#     "PIL",
+#     "torchvision",
+#     "h5py"
+# ]
+
+
+# how to define macros: https://docs.mathjax.org/en/latest/input/tex/macros.html
+mathjax3_config = {
+    "tex": {
+        "equationNumbers": {"autoNumber": "AMS", "useLabelIds": True},
+        "macros": {
+            "forwardLinear": r"\mathbf{H}",
+            "learnedOptics": r"\mathbf{\Phi}",
+            "psf": r"\mathbf{h}",
+            "noise":  r"\epsilon",
+            "xset": r"\mathcal{X}",
+            "thetaset": r"\mathcal{\Omega}",
+            "yset": r"\mathcal{Y}",
+            'argmin': '\\operatorname{arg\\,min}',
+            'coloneqq': '\\mathrel{:=}',
+            'reconnet': '\\mathcal{N}_{\\theta}',
+            'transform': r"\mathbf{\Phi}",
+        },
+    }
+}
 
 autoclass_content = "both"
 autodoc_typehints = "description"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'furo'
-html_static_path = ['_static']
+html_theme = 'sphinx_rtd_theme'
+html_static_path = []
 
+html_theme_options = {
+    # Toc options
+    "collapse_navigation": True,
+    "sticky_navigation": True,
+    "navigation_depth": 4,
+    "includehidden": True,
+    "titles_only": False,
+}
+# sphinx_gallery_conf = {
+#      'examples_dirs': '../../examples',   # path to your example scripts
+#      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+#      "filename_pattern": "/demo_",
+#      "ignore_pattern": r"__init__.py",
+# }
 
+sphinx_gallery_conf = {
+    "examples_dirs": ["../../examples/"],
+    "gallery_dirs": "auto_examples",  # path to where to save gallery generated output
+    "filename_pattern": "/demo_",
+    "run_stale_examples": True,
+    "ignore_pattern": r"__init__\.py",
+    "reference_url": {
+        # The module you locally document uses None
+        "sphinx_gallery": None
+    },
+    # directory where function/class granular galleries are stored
+    "backreferences_dir": "gen_modules/backreferences",
+    # Modules for which function/class level galleries are created. In
+    # this case sphinx_gallery and numpy in a tuple of strings.
+    "doc_module": ("colibri"),
+    # objects to exclude from implicit backreferences. The default option
+    # is an empty set, i.e. exclude nothing.
+    "exclude_implicit_doc": {},
+    "nested_sections": False,
+}
 
-class FakeSignature:
-    def __getattribute__(self, *args):
-        raise ValueError
-
-
-def f(app, obj, bound_method):
-    if "__new__" in obj.__name__:
-        obj.__signature__ = FakeSignature()
-
-
-def setup(app):
-    app.connect("autodoc-before-process-signature", f)
 
 autodoc_member_order = "bysource"
 

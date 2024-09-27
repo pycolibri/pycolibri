@@ -3,8 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 .vscode
+docs/source/stubs
+docs/source/gen_modules
 # C extensions
 *.so
+
+# Datasets folders
+cifar10
 
 # Distribution / packaging
 .Python
@@ -160,5 +165,8 @@ cython_debug/
 #.idea/
 
 .idea/
-
 data/
+!colibri/data/
+docs/source/auto_examples/*
+docs/source/sg_execution_times.rst
+/examples/pycolibri
