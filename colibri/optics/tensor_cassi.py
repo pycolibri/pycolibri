@@ -14,7 +14,7 @@ class TensorCASSI(torch.nn.Module):
         """
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
-            mode (str): String, mode of the coded aperture, it can be "base", "dd" or "color"
+            mode (str): String, mode of the coded aperture, it can be "base"
             trainable (bool): Boolean, if True the coded aperture is trainable
             initial_ca (torch.Tensor): Initial coded aperture with shape (1, M, N, 1)
         """

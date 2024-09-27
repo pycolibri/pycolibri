@@ -43,7 +43,6 @@ else:
 M = 32
 N = M
 L = 4
-S = 2
 sample_index = 1
 
 # %%
@@ -99,7 +98,7 @@ plt.subplot(121), plt.imshow(HHstarb1[0, 0]), plt.title('$HH^{*}$   (1)')
 plt.subplot(122), plt.imshow(HHstarb2[0, 0]), plt.title('$HH^{*}$   (2)')
 plt.show()
 
-error = torch.norm(HHstarb1 - HHstarb2)
+error = torch.norm(HHstarb1 - HHstarb2).item()
 print('$HH*$ error:', error)
 
 # %%
@@ -114,7 +113,7 @@ plt.subplot(121), plt.imshow(HstarHd1[0, 0]), plt.title('$H^{*}H$   (1)')
 plt.subplot(122), plt.imshow(HstarHd2[0, 0]), plt.title('$H^{*}H$   (2)')
 plt.show()
 
-error = torch.norm(HstarHd1 - HstarHd2)
+error = torch.norm(HstarHd1 - HstarHd2).item()
 print('$H*H$ error:', error)
 
 # %%
