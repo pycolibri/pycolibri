@@ -12,8 +12,6 @@ https://www.spiedigitallibrary.org/journals/journal-of-electronic-imaging/volume
 import os
 import sys
 
-from skimage.transform import resize
-
 from colibri.data.datasets import CustomDataset
 from colibri.optics.tensor_cassi import TensorCASSI
 
@@ -21,8 +19,8 @@ sys.path.append(os.getcwd())
 print("Current Working Directory ", os.getcwd())
 
 # Libraries
-import scipy.io as sio
 import matplotlib.pyplot as plt
+from skimage.transform import resize
 
 import torch
 
