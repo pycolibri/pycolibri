@@ -106,7 +106,7 @@ conda activate colibri
 3. Install the requirements:
 
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 4. Enjoy! 😄
