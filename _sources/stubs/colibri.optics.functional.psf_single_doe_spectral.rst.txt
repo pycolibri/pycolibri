@@ -1,0 +1,9 @@
+﻿psf\_single\_doe\_spectral
+==========================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: psf_single_doe_spectral
+
+.. minigallery:: colibri.optics.functional.psf_single_doe_spectral
+    :add-heading: Examples using ``psf_single_doe_spectral``:

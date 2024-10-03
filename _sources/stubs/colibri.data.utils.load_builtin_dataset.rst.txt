@@ -1,0 +1,15 @@
+﻿load\_builtin\_dataset
+======================
+
+.. currentmodule:: colibri.data.utils
+
+.. autoclass:: load_builtin_dataset
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.data.utils.load_builtin_dataset:
+
+.. minigallery:: colibri.data.utils.load_builtin_dataset
+    :add-heading: Examples using ``load_builtin_dataset``:

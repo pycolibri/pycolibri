@@ -1,0 +1,9 @@
+﻿fraunhofer\_inverse\_propagation
+================================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: fraunhofer_inverse_propagation
+
+.. minigallery:: colibri.optics.functional.fraunhofer_inverse_propagation
+    :add-heading: Examples using ``fraunhofer_inverse_propagation``:

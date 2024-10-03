@@ -1,0 +1,15 @@
+﻿update\_builtin\_path
+=====================
+
+.. currentmodule:: colibri.data.utils
+
+.. autoclass:: update_builtin_path
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.data.utils.update_builtin_path:
+
+.. minigallery:: colibri.data.utils.update_builtin_path
+    :add-heading: Examples using ``update_builtin_path``:

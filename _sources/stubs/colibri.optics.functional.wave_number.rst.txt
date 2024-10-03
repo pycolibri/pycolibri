@@ -1,0 +1,9 @@
+﻿wave\_number
+============
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: wave_number
+
+.. minigallery:: colibri.optics.functional.wave_number
+    :add-heading: Examples using ``wave_number``:

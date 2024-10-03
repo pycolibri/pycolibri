@@ -1,0 +1,9 @@
+﻿gaussian\_noise
+===============
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: gaussian_noise
+
+.. minigallery:: colibri.optics.functional.gaussian_noise
+    :add-heading: Examples using ``gaussian_noise``:

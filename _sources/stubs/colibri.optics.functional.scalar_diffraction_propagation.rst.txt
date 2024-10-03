@@ -1,0 +1,9 @@
+﻿scalar\_diffraction\_propagation
+================================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: scalar_diffraction_propagation
+
+.. minigallery:: colibri.optics.functional.scalar_diffraction_propagation
+    :add-heading: Examples using ``scalar_diffraction_propagation``:
