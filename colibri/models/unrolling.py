@@ -91,3 +91,5 @@ if __name__ == '__main__':
     print('Initial guess: ',  torch.norm(x0 - xgt).item())
     print('Reconstructed: ', torch.norm(x - xgt).item())
     # print(x.shape)
+
+
