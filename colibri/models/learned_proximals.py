@@ -1,6 +1,24 @@
 import torch.nn as nn
-from . import custom_layers
+from colibri.recovery.terms.prior import Prior
 
+class LearnedPrior(Prior):
+
+    def __init__(self, max_iter=5, model=None, prior_args=None):
+
+        self.count = 0
+        self.model = nn.ModuleList([model(**prior_args)]*max_iter)
+        super(LearnedPrior, self).__init__()
+        
+    def prox(self, x, **kwargs):
+
+        x = self.model[self.count](x)
+        
+        self.count += 1
+
+        return x
+    def reset(self):
+        self.count = 0
+        
 
 class SparseProximalMapping(nn.Module):
 

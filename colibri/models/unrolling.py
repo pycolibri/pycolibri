@@ -2,15 +2,15 @@ import torch
 from torch import nn
 
 from colibri.recovery.terms.fidelity import L2
-
-
-class UnrollingFISTA(nn.Module):
+from colibri.recovery.fista import Fista
+from colibri.models.learned_proximals import LearnedPrior
+class UnrollingFISTA(Fista):
 
     '''
     FISTA Unrolling algorithm
     '''
 
-    def __init__(self, acquistion_model, fidelity=L2(), max_iters=5, prior=None, alpha=1e-3, rho=1.0):
+    def __init__(self, acquistion_model, fidelity=L2(), max_iters=5, model=None, alpha=1e-3, rho=1.0, prior_args=None):
         '''
         Args:
 
@@ -31,8 +31,8 @@ class UnrollingFISTA(nn.Module):
 
         self.max_iters = max_iters
         self.alpha = nn.ParameterList([nn.Parameter(torch.tensor(alpha),requires_grad=True)] * max_iters)
-        self.rho = nn.ParameterList([nn.Parameter(torch.tensor(rho),requires_grad=True)] * max_iters)
-        self.prior = nn.ModuleList([prior] * max_iters) 
+        self.t_squence = nn.ParameterList([nn.Parameter(torch.tensor(rho),requires_grad=True)] * max_iters)
+        self.prior = LearnedPrior(max_iter=max_iters, model=model, prior_args=prior_args)
 
     def forward(self, y, x0=None):
         '''
@@ -46,25 +46,7 @@ class UnrollingFISTA(nn.Module):
             torch.Tensor: The reconstructed image.
         '''
 
-        if x0 is None:
-            x0 = torch.zeros_like(y)
-
-        x = x0
-        z = x.clone()
-
-        for i in range(self.max_iters):
-            x_old = x.clone()
-
-            # gradient step
-            x = z - self.alpha[i] * self.fidelity.grad(z, y, self.H) 
-
-            # deep proximal step
-            x = self.prior[i](x)
-
-            # update z
-            z = x + self.rho[i] * (x - x_old)
-
-        return x
+        return super(UnrollingFISTA, self).forward(y, x0=x0)
     
 
     

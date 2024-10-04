@@ -54,9 +54,16 @@ class Fista(nn.Module):
         self.H = lambda x: self.acquistion_model.forward(x)
 
         self.max_iters = max_iters
-        self.alpha = alpha
+        self.alpha = alpha if  type(alpha) is list else [alpha]* max_iters
         self._lambda = _lambda
-
+        t = 1
+        
+        self.t_squence = []
+        for _ in range(self.max_iters):
+            t_old = t
+            t = (1 + (1 + 4 * t_old**2) ** 0.5) / 2
+            
+            self.t_squence.append((t_old -1)/t)
 
     def forward(self, y, x0=None, verbose=False):
         r"""Runs the FISTA algorithm to solve the optimization problem.
@@ -67,28 +74,28 @@ class Fista(nn.Module):
 
         Returns:
             torch.Tensor: The reconstructed image.
-        """
+        """ 
+        self.prior.reset()
 
         if x0 is None:
             x0 = torch.zeros_like(y)
 
         x = x0
-        t = 1
         z = x.clone()
 
+        
         for i in range(self.max_iters):
             x_old = x.clone()
 
             # gradient step
-            x = z - self.alpha * self.fidelity.grad(z, y, self.H) 
+            x = z - self.alpha[i] * self.fidelity.grad(z, y, self.H) 
 
             # proximal step
             x = self.prior.prox(x, self._lambda)
 
             # FISTA step
-            t_old = t
-            t = (1 + (1 + 4 * t_old**2) ** 0.5) / 2
-            z = x + ((t_old - 1) / t) * (x - x_old)
+           
+            z = x + self.t_squence[i] * (x - x_old)
             
             if verbose:
                 error = self.fidelity.forward(x, y, self.H).item()

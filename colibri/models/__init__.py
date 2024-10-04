@@ -1,14 +1,13 @@
 from .unet import Unet
 from .autoencoder import Autoencoder
-from .learned_proximals import SparseProximalMapping
+from .learned_proximals import SparseProximalMapping, LearnedPrior
 import torch
 import torch.nn
 
 __all__ = [ 
     "Unet",
     "Autoencoder",
-    "SparseProximalMapping",
-    "build_network",
+    "LearnedPrior",
     ]
 
 def build_network(model=Unet, **network_params):
