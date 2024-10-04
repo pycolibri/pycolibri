@@ -85,11 +85,16 @@ y = acquisition_model(sample)
 
 # Reconstruct image
 import colibri
-print(dir(colibri))  
+from colibri import models
+print('dir(models) ->', dir(models))  
+from colibri import recovery
+
+
+print('dir(recover) ->', dir(recovery.terms.prior))  
 from colibri.recovery.fista import Fista
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
-from colibri.models.learned_proximals import LearnedPrior
+# from colibri.models.learned_proximals import LearnedPrior
 from colibri.models.unrolling import UnrollingFISTA
 from colibri.models.autoencoder import Autoencoder
 

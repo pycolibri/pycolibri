@@ -19,6 +19,12 @@ from colibri import optics
 
 __all__ += ['optics']
 
+from colibri import misc
+
+__all__ += ['misc']
+
+
+
 
 
 # def seed_everything(seed=42):

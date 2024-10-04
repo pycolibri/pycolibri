@@ -1,16 +1,16 @@
 import torch
 from torch import nn
 
-from colibri.recovery.terms.fidelity import L2
+# from colibri.recovery.terms.fidelity import L2
 from colibri.recovery.fista import Fista
-from colibri.models.learned_proximals import LearnedPrior
+from . import LearnedPrior
 class UnrollingFISTA(Fista):
 
     '''
     FISTA Unrolling algorithm
     '''
 
-    def __init__(self, acquistion_model, fidelity=L2(), max_iters=5, model=None, alpha=1e-3, rho=1.0, prior_args=None):
+    def __init__(self, acquistion_model, fidelity=None, max_iters=5, model=None, alpha=1e-3, rho=1.0, prior_args=None):
         '''
         Args:
 

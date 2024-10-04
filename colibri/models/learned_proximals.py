@@ -1,3 +1,5 @@
+""" Learned proximals """
+
 import torch.nn as nn
 from colibri.recovery.terms.prior import Prior
 
@@ -55,11 +57,11 @@ class SparseProximalMapping(nn.Module):
         return sp
     
 
-class SpatialSpectralPrior(nn.Module):
-    '''
-    [DEEP HYPERSPECTRAL SPATIAL SPECTRAL PRIOR]
-    '''
-    pass 
+# class SpatialSpectralPrior(nn.Module):
+#     '''
+#     [DEEP HYPERSPECTRAL SPATIAL SPECTRAL PRIOR]
+#     '''
+#     pass 
 
 
 
