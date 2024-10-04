@@ -23,7 +23,9 @@ from colibri import misc
 
 __all__ += ['misc']
 
+from colibri import metrics
 
+__all__ += ['metrics']
 
 
 

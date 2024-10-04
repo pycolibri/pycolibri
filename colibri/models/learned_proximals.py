@@ -6,12 +6,12 @@ from colibri.recovery.terms.prior import Prior
 class LearnedPrior(Prior):
 
     def __init__(self, max_iter=5, model=None, prior_args=None):
+        super(LearnedPrior, self).__init__()
 
         self.count = 0
-        self.model = nn.ModuleList([model(**prior_args)]*max_iter)
-        super(LearnedPrior, self).__init__()
+        self.model = model
         
-    def prox(self, x, **kwargs):
+    def prox(self, x,*args ,**kwargs):
 
         x = self.model[self.count](x)
         

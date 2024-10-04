@@ -82,7 +82,6 @@ class Fista(nn.Module):
 
         x = x0
         z = x.clone()
-
         
         for i in range(self.max_iters):
             x_old = x.clone()
