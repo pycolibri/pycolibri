@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.functional as F
+from colibri.optics.functional import fft
 
 
 class KD(nn.Module):
@@ -11,6 +12,7 @@ class KD(nn.Module):
         loss_fb_type: str,
         ft_idx: int,
         loss_rb_type: str,
+        att_config: dict = None,
     ):
         r"""
         Knowledge distillation (KD) for computational imaging system design.
@@ -21,7 +23,7 @@ class KD(nn.Module):
         super(KD, self).__init__()
         self.e2e_teacher = e2e_teacher
         self.e2e_student = e2e_student
-        self.loss_fb = KD_fb_loss(loss_fb_type, ft_idx)
+        self.loss_fb = KD_fb_loss(loss_fb_type, ft_idx, att_config)
         self.loss_rb = KD_rb_loss(loss_rb_type)
 
     def forward(self, x):
@@ -127,5 +129,7 @@ class KD_rb_loss(nn.Module):
             return torch.mean((x_hat_teacher - x_hat_student) ** 2)
         elif self.loss_type == "L1":
             return torch.mean(torch.abs(x_hat_teacher - x_hat_student))
+        elif self.loss_type == "FFT":
+            return torch.mean(torch.abs(fft(x_hat_teacher) - fft(x_hat_student)) ** 2)
         else:
             raise ValueError("Loss type not supported. Please choose between L1 and MSE.")
