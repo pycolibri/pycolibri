@@ -166,6 +166,8 @@ class KD_rb_loss(nn.Module):
         elif self.loss_type == "L1":
             return torch.mean(torch.abs(x_hat_teacher - x_hat_student))
         elif self.loss_type == "FFT":
-            return torch.mean(torch.abs(fft(x_hat_teacher) - fft(x_hat_student)) ** 2)
+            real_part = torch.mean((fft(x_hat_teacher).real - fft(x_hat_student).real) ** 2)
+            imag_part = torch.mean((fft(x_hat_teacher).imag - fft(x_hat_student).imag) ** 2)
+            return (real_part + imag_part) / 2
         else:
             raise ValueError("Loss type not supported. Please choose between L1 and MSE.")
