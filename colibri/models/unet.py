@@ -120,6 +120,7 @@ class Unet_KD(Unet):
             feats.append(x)
 
         x = self.bottle(x)
+        feats.append(x)
 
         for up in self.ups:
             x = up(x, outputs.pop())
