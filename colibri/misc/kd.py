@@ -9,10 +9,7 @@ class KD(nn.Module):
         self,
         e2e_teacher: nn.Module,
         e2e_student: nn.Module,
-        loss_fb_type: str,
-        ft_idx: int,
-        loss_rb_type: str,
-        att_config: dict = None,
+        kd_config: dict,
     ):
         r"""
         Knowledge distillation (KD) for computational imaging system design.
@@ -23,6 +20,10 @@ class KD(nn.Module):
         super(KD, self).__init__()
         self.e2e_teacher = e2e_teacher
         self.e2e_student = e2e_student
+        loss_fb_type = kd_config["loss_fb_type"]
+        loss_rb_type = kd_config["loss_rb_type"]
+        ft_idx = kd_config["ft_idx"]
+        att_config = kd_config["att_config"]
         self.loss_fb = KD_fb_loss(loss_fb_type, ft_idx, att_config)
         self.loss_rb = KD_rb_loss(loss_rb_type)
 
@@ -36,7 +37,7 @@ class KD(nn.Module):
 
         x_hat_student, feats_student = self.e2e_student(x)
 
-        loss_fb = self.loss_fb(x_hat_teacher, x_hat_student, feats_teacher, feats_student)
+        loss_fb = self.loss_fb(feats_teacher, feats_student)
 
         loss_rb = self.loss_rb(x_hat_teacher, x_hat_student)
 
