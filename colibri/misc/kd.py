@@ -61,6 +61,9 @@ class KD_fb_loss(nn.Module):
         elif self.loss_type == "L1":
             return torch.mean(torch.abs(feats_teacher[self.ft_idx] - feats_student[self.ft_idx]))
 
+        elif self.loss_type == "COS":
+            return 1 - F.cosine_similarity(feats_teacher[self.ft_idx], feats_student[self.ft_idx])
+
         elif self.loss_type == "ATT" and self.att_config:
             param = self.att_config["param"]
             exp = self.att_config["exp"]
@@ -70,6 +73,38 @@ class KD_fb_loss(nn.Module):
             attention_map_student = self.get_attention(feats_student[self.ft_idx], param, exp, norm)
 
             return torch.mean((attention_map_teacher - attention_map_student) ** 2)
+
+        elif self.loss_type == "MSE_all":
+            loss = 0
+            for i in range(len(feats_teacher)):
+                loss += torch.mean((feats_teacher[i] - feats_student[i]) ** 2)
+            return loss / len(feats_teacher)
+
+        elif self.loss_type == "L1_all":
+            loss = 0
+            for i in range(len(feats_teacher)):
+                loss += torch.mean(torch.abs(feats_teacher[i] - feats_student[i]))
+            return loss / len(feats_teacher)
+
+        elif self.loss_type == "COS_all":
+            loss = 0
+            for i in range(len(feats_teacher)):
+                loss = loss + 1 - F.cosine_similarity(feats_teacher[i], feats_student[i])
+            return loss / len(feats_teacher)
+
+        elif self.loss_type == "ATT_all" and self.att_config:
+            param = self.att_config["param"]
+            exp = self.att_config["exp"]
+            norm = self.att_config["norm"]
+
+            loss = 0
+            for i in range(len(feats_teacher)):
+                attention_map_teacher = self.get_attention(feats_teacher[i], param, exp, norm)
+                attention_map_student = self.get_attention(feats_student[i], param, exp, norm)
+
+                loss += torch.mean((attention_map_teacher - attention_map_student) ** 2)
+
+            return loss / len(feats_teacher)
 
         else:
             raise ValueError("Loss type not supported. Please choose between L1, MSE and ATT.")
@@ -101,6 +136,7 @@ class KD_fb_loss(nn.Module):
             normalized_attention_maps = un_vectorized_attention_map / fro_norm.unsqueeze(
                 dim=-1
             ).unsqueeze(dim=-1)
+
         elif norm == "l1":
 
             vectorized_attention_map = attention_map.view(feature_set.size(0), -1)
