@@ -18,8 +18,9 @@ class KD(nn.Module):
 
         """
         super(KD, self).__init__()
-        self.e2e_teacher = e2e_teacher
-        self.e2e_student = e2e_student
+        self.teacher = e2e_teacher
+        self.student = e2e_student
+        self.kd_config = kd_config
         loss_fb_type = kd_config["loss_fb_type"]
         loss_rb_type = kd_config["loss_rb_type"]
         layer_idxs = kd_config["layer_idxs"]
@@ -33,13 +34,13 @@ class KD(nn.Module):
         """
 
         with torch.no_grad():
-            x_hat_teacher, feats_teacher = self.e2e_teacher(x)
+            x_hat_teacher, feats_teacher = self.teacher(x)
 
-        x_hat_student, feats_student = self.e2e_student(x)
+        x_hat_student, feats_student = self.student(x)
 
-        loss_fb = self.loss_fb(feats_teacher, feats_student)
+        loss_fb = self.loss_fb(feats_teacher, feats_student) * self.kd_config["fb_weight"]
 
-        loss_rb = self.loss_rb(x_hat_teacher, x_hat_student)
+        loss_rb = self.loss_rb(x_hat_teacher, x_hat_student) * self.kd_config["rb_weight"]
 
         return x_hat_student, loss_fb, loss_rb
 
