@@ -22,9 +22,9 @@ class KD(nn.Module):
         self.e2e_student = e2e_student
         loss_fb_type = kd_config["loss_fb_type"]
         loss_rb_type = kd_config["loss_rb_type"]
-        ft_idx = kd_config["ft_idx"]
+        layer_idxs = kd_config["layer_idxs"]
         att_config = kd_config["att_config"]
-        self.loss_fb = KD_fb_loss(loss_fb_type, ft_idx, att_config)
+        self.loss_fb = KD_fb_loss(loss_fb_type, layer_idxs, att_config)
         self.loss_rb = KD_rb_loss(loss_rb_type)
 
     def forward(self, x):
@@ -45,70 +45,51 @@ class KD(nn.Module):
 
 
 class KD_fb_loss(nn.Module):
-    def __init__(self, loss_type: str, ft_idx: int, att_config: dict = None):
+    def __init__(self, loss_type: str, layer_idxs: list, att_config: dict = None):
         r"""
         KD feature based loss function.
         """
         super(KD_fb_loss, self).__init__()
         self.loss_type = loss_type
-        self.ft_idx = ft_idx
+        self.layer_idxs = layer_idxs
         self.att_config = att_config
 
     def forward(self, feats_teacher, feats_student):
 
         if self.loss_type == "MSE":
-            return torch.mean((feats_teacher[self.ft_idx] - feats_student[self.ft_idx]) ** 2)
+            loss = 0
+            for i in self.layer_idxs:
+                loss += torch.mean((feats_teacher[i] - feats_student[i]) ** 2)
+            return loss / len(self.layer_idxs)
 
         elif self.loss_type == "L1":
-            return torch.mean(torch.abs(feats_teacher[self.ft_idx] - feats_student[self.ft_idx]))
+            loss = 0
+            for i in self.layer_idxs:
+                loss += torch.mean(torch.abs(feats_teacher[i] - feats_student[i]))
+            return loss / len(self.layer_idxs)
 
         elif self.loss_type == "COS":
-            return 1 - F.cosine_similarity(feats_teacher[self.ft_idx], feats_student[self.ft_idx])
+            loss = 0
+            for i in self.layer_idxs:
+                loss = loss + 1 - F.cosine_similarity(feats_teacher[i], feats_student[i])
+            return loss / len(self.layer_idxs)
 
         elif self.loss_type == "ATT" and self.att_config:
             param = self.att_config["param"]
             exp = self.att_config["exp"]
             norm = self.att_config["norm"]
 
-            attention_map_teacher = self.get_attention(feats_teacher[self.ft_idx], param, exp, norm)
-            attention_map_student = self.get_attention(feats_student[self.ft_idx], param, exp, norm)
-
-            return torch.mean((attention_map_teacher - attention_map_student) ** 2)
-
-        elif self.loss_type == "MSE_all":
             loss = 0
-            for i in range(len(feats_teacher)):
-                loss += torch.mean((feats_teacher[i] - feats_student[i]) ** 2)
-            return loss / len(feats_teacher)
-
-        elif self.loss_type == "L1_all":
-            loss = 0
-            for i in range(len(feats_teacher)):
-                loss += torch.mean(torch.abs(feats_teacher[i] - feats_student[i]))
-            return loss / len(feats_teacher)
-
-        elif self.loss_type == "COS_all":
-            loss = 0
-            for i in range(len(feats_teacher)):
-                loss = loss + 1 - F.cosine_similarity(feats_teacher[i], feats_student[i])
-            return loss / len(feats_teacher)
-
-        elif self.loss_type == "ATT_all" and self.att_config:
-            param = self.att_config["param"]
-            exp = self.att_config["exp"]
-            norm = self.att_config["norm"]
-
-            loss = 0
-            for i in range(len(feats_teacher)):
+            for i in self.layer_idxs:
                 attention_map_teacher = self.get_attention(feats_teacher[i], param, exp, norm)
                 attention_map_student = self.get_attention(feats_student[i], param, exp, norm)
 
                 loss += torch.mean((attention_map_teacher - attention_map_student) ** 2)
 
-            return loss / len(feats_teacher)
+            return loss / len(self.layer_idxs)
 
         else:
-            raise ValueError("Loss type not supported. Please choose between L1, MSE and ATT.")
+            raise ValueError("Loss type not supported. Please choose between L1, MSE, COS and ATT.")
 
     def get_attention(feature_set, param=0, exp=4, norm="l2"):
         # Adapted from:
@@ -164,11 +145,14 @@ class KD_rb_loss(nn.Module):
 
         if self.loss_type == "MSE":
             return torch.mean((x_hat_teacher - x_hat_student) ** 2)
+        
         elif self.loss_type == "L1":
             return torch.mean(torch.abs(x_hat_teacher - x_hat_student))
+        
         elif self.loss_type == "FFT":
             real_part = torch.mean((fft(x_hat_teacher).real - fft(x_hat_student).real) ** 2)
             imag_part = torch.mean((fft(x_hat_teacher).imag - fft(x_hat_student).imag) ** 2)
             return (real_part + imag_part) / 2
+        
         else:
             raise ValueError("Loss type not supported. Please choose between L1 and MSE.")
