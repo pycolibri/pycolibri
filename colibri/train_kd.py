@@ -1,9 +1,10 @@
 import torch
 import time
 from tqdm import tqdm
+from colibri.misc.kd import KD
 
 
-class Training:
+class TrainingKD:
     """
     Class for training a neural network model.
     """
@@ -12,14 +13,12 @@ class Training:
         self,
         student_model,
         teacher_model,
-        teacher_path_wieghts,
+        teacher_path_weights,
         train_loader,
         optimizer=None,
         loss_func={"MSE": torch.nn.MSELoss()},
         losses_weights=[1.0],
-        losses_weights_kd=[1.0, 1.0],
-        fb_loss=None,
-        rb_loss=None,
+        kd_config={},
         metrics={},
         regularizers={},
         regularizers_optics_mo={},
@@ -33,11 +32,14 @@ class Training:
     ):
         """
         Args:
-            model (torch.nn.Module): Neural network model.
+            student_model (torch.nn.Module): Student neural network model.
+            teacher_model (torch.nn.Module): Teacher neural network model.
+            teacher_path_weights (str): Path to teacher model weights.
             train_loader (torch.utils.data.DataLoader): Training data loader.
             optimizer (torch.optim): Optimizer.
             loss_func (dict): Dictionary of loss functions, format: {"name_loss":function}.
             losses_weights (list): List of weights for each loss function.
+            kd_config (dict): Dictionary of knowledge distillation configuration.
             metrics (dict): Dictionary of metrics, format: {"name_metric":function}.
             regularizers (dict): Dictionary of regularizers, format: {"name_regularizer":function}.
             regularization_weights (list): List of weights for each regularizer.
@@ -46,13 +48,28 @@ class Training:
             regularizers_optics(dict): Dictionary of regularizers for optics, format: {"name_regularizer":function}.
             device (str): Device to use for training.
         """
-        self.student_model = student_model
+        student_model = student_model
+        teacher_model = teacher_model
+
+        if teacher_path_weights is not None:
+            teacher_model.load_state_dict(torch.load(teacher_path_weights))
+
+        else:
+            raise ValueError("Teacher model weights not found.")
+        
+        self.kd_model = KD(teacher_model, student_model, kd_config)
+
+        for param in self.kd_model.teacher.parameters():
+            param.requires_grad = False
+
         self.train_loader = train_loader
         self.loss_func = loss_func
         self.losses_weights = losses_weights
+        self.kd_config = kd_config
 
         if optimizer is None:
-            optimizer = torch.optim.Adam(student_model.parameters(), lr=1e-3)
+            optimizer = torch.optim.Adam(self.kd_model.e2e_student.parameters(), lr=1e-3)
+
         self.optimizer = optimizer
         self.metrics = metrics
         self.regularizers = regularizers
@@ -91,7 +108,7 @@ class Training:
             self.optimizer.zero_grad(set_to_none=True)
 
             # Make inference
-            outputs_pred = self.model(inputs)
+            outputs_pred, loss_fb, loss_rb = self.kd_model(inputs)
 
             final_loss = 0.0
             loss_values = {}  # loss_values = { key: 0.0 for key in self.loss_func.keys()}
@@ -100,6 +117,8 @@ class Training:
                 res = self.loss_func[key](outputs_pred, outputs_gt) * self.losses_weights[idx]
                 loss_values[key] = res
                 final_loss += loss_values[key]
+
+            final_loss += loss_fb + loss_rb
             txt_losses = ""
             txt_reg_ce = ""
             txt_reg_mo = ""
@@ -175,7 +194,7 @@ class Training:
         running_reg = 0.0
         reg_values = {}
         for idx, key in enumerate(self.regularizers.keys()):
-            for p in self.model.decoder.parameters():
+            for p in self.kd_model.student.decoder.parameters():
                 if p.requires_grad:
                     reg = self.regularizers[key](p) * self.regularization_weights[idx]
                     reg_values[key] = reg
@@ -191,7 +210,7 @@ class Training:
         for idx, key in enumerate(self.regularizers_optics_ce.keys()):
 
             reg = (
-                self.model.optical_layer.weights_reg(self.regularizers_optics_ce[key])
+                self.kd_model.student.optical_layer.weights_reg(self.regularizers_optics_ce[key])
                 * self.regularization_optics_weights_ce[idx]
             )
             reg_values[key] = reg
@@ -207,7 +226,7 @@ class Training:
         for idx, key in enumerate(self.regularizers_optics_mo.keys()):
 
             reg = (
-                self.model.optical_layer.output_reg(self.regularizers_optics_mo[key], x)
+                self.kd_model.student.optical_layer.output_reg(self.regularizers_optics_mo[key], x)
                 * self.regularization_optics_weights_mo[idx]
             )
             reg_values[key] = reg
@@ -235,7 +254,7 @@ class Training:
 
                 # print('Epoch {}/{}'.format(epoch + 1, n_epochs))
 
-                self.model.train(True)
+                self.kd_model.train(True)
                 if self.loss_func:
                     results_fidelities, total_reg, metrics = self.train_one_epoch(
                         freq=freq, steps_per_epoch=steps_per_epoch, tq=tq
@@ -244,13 +263,13 @@ class Training:
                     results_fidelities = {}
 
                 results_losses = {**results_fidelities, **total_reg, **metrics}
-                self.model.train(False)
+                self.kd_model.train(False)
 
                 for s in self.schedulers:
                     s.step()
 
                 for c in self.callbacks:
-                    c.step(self.model, results_losses, epoch)
+                    c.step(self.kd_model, results_losses, epoch)
 
                 elapsed_time = time.time() - start_time
                 start_time = time.time()
