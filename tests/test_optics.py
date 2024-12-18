@@ -127,7 +127,7 @@ def test_modulo_forward(modulo_config):
     modulo = Modulo()
     x = torch.randn(img_size)
     y = modulo(x)
-    assert y.shape == img_size, "Modulo forward shape is incorrect"
+    assert list(y.shape) == img_size, "Modulo forward shape is incorrect"
     assert torch.all(y >= 0), "Modulo forward output is negative"
     assert torch.all(y <= 1), "Modulo forward output is greater than 1"
     
