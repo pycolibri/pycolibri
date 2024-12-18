@@ -16,10 +16,7 @@ sys.path.append(os.path.join(os.getcwd()))
 
 
 #General imports
-import matplotlib.pyplot as plt
 import torch
-import os
-import numpy as np
 
 # Set random seed for reproducibility
 torch.manual_seed(0)
@@ -34,9 +31,15 @@ else:
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
+# %%
+# Load libraries and data
+# -----------------------------------------------
 from PIL import Image
 import requests
 from io import BytesIO
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 from colibri.optics import Modulo
 from colibri.recovery.solvers import L2L2SolverModulo
@@ -62,9 +65,12 @@ img = blur_fn(img)
 modulo_sensing = Modulo()
 mod_img = modulo_sensing(img)
 
+# %%
+# Setup and run reconstruction
+# -----------------------------------------------
 recons_fn = L2L2SolverModulo(img, modulo_sensing)
-xtilde    = None
-rho       = 0.0
+xtilde    = None # initial guess
+rho       = 0.0  # regularization parameter
 
 recons_img  = recons_fn.solve(xtilde, rho)
 recons_img -= recons_img.min(dim=2, keepdim=True)[0].min(dim=3, keepdim=True)[0]
