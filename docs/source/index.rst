@@ -1,10 +1,32 @@
-Welcome to Colibri
-==================
+Computational Optical Learning Library (Colibri) Documentation
+===================================================================
 
-Colibri is a PyTorch library in development for solving computational imaging tasks where optical systems and
-state-of-the-art deep neural networks are implemented to be easily used or modified for new research ideas. The purpose
-of Colobri is to boost the research-related areas where optics and networks are required and introduce new researchers
-to state-of-the-art algorithms in a straightforward and friendly manner.
+|Test Status| |Docs Status| |Python 3.8+| |colab|
+
+
+Colibri is a deep learning based library specialized in optimizing the key parameters of optical systems that can be learned from data to improve the performance of the system. 
+
+In Colibri, optical systems, neural networks, model based recovery algorithms, and datasets are implemented to be easily used or modified for new research ideas. The purpose of Colibri is to boost the research-related areas where optics and networks are required and introduce new researchers to state-of-the-art algorithms in a straightforward and friendly manner.
+
+
+
+🔗 Relevant Links
+------------------
+
+* Source code: `https://github.com/pycolibri/pycolibri <https://github.com/pycolibri/pycolibri>`_
+* Documentation: `https://pycolibri.github.io/pycolibri/ <https://pycolibri.github.io/pycolibri/>`_
+
+
+🥅 Goals
+------------------
+
+- Easy to use, customize and add modules.
+- Comprehensive documentation and examples.
+- High-quality code and tests.
+- Fast and efficient algorithms.
+- Wide range of optical systems, neural networks, recovery algorithms, and datasets.
+- Support for the latest research in the field.
+
 
 💿 Installation
 ------------------
@@ -35,85 +57,86 @@ To get started with Colibri, install the library using the following steps:
 🚀 Quick Start
 ------------------
 
-You can go to ``examples`` folder and run cells of the notebook ``demo_colibri.ipynb`` to see how the library works.
+Check out the demo list in the `examples <https://pycolibri.github.io/pycolibri/auto_examples/index.html>`_ folder to get started with Colibri.
 
-💡 **Examples**
+* `Demo Colibri <https://pycolibri.github.io/pycolibri/auto_examples/demo_datasets.html#sphx-glr-auto-examples-demo-datasets-py>`_
+* `Demo PnP <https://pycolibri.github.io/pycolibri/auto_examples/demo_pnp.html#sphx-glr-auto-examples-demo-pnp-py>`_
+* `Demo FISTA <https://pycolibri.github.io/pycolibri/auto_examples/demo_fista.html#sphx-glr-auto-examples-demo-fista-py>`_
+* `Demo DOEs <https://pycolibri.github.io/pycolibri/auto_examples/demo_does.html#sphx-glr-auto-examples-demo-does-py>`_
+* `Demo Datasets <https://pycolibri.github.io/pycolibri/auto_examples/demo_datasets.html#sphx-glr-auto-examples-demo-datasets-py>`_
 
-**Dataset Visualization**
-
-.. code-block:: python
-
-    import matplotlib.pyplot as plt
-    from colibri.data.datasets import Dataset
-    from torchvision.utils import make_grid
-
-    # Load dataset
-
-    dataset_path = 'cifar10'
-    keys = ''
-    batch_size = 128
-
-    dataset = Dataset(dataset_path, keys, batch_size)
-    adquistion_name = 'cassi' #  ['spc', 'cassi']
-
-    # get samples
-
-    sample = next(iter(dataset.train_dataset))[0]
-    img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, range=None, scale_each=False, pad_value=0)
-
-    # visualize samples
-
-    plt.figure(figsize=(10,10))
-    plt.imshow(img.permute(1, 2, 0))
-    plt.title('CIFAR10 dataset')
-    plt.axis('off')
-    plt.show()
-
-
-🧰 Features
-------------------
-
-- Flexible and customizable code.
-- Train end-to-end models in an straightforward manner.
-- Easily modify the implemented models.
-- Easily add new optical systems.
-- Easily add new deep neural networks.
-
-Available Models
-------------------
+🧰 Available Modules
+--------------------------
 
 📷 **Optical Systems**
 
-- Coded Aperture Snapshot Spectral Imager (CASSI).
-    - Single Disperser CASSI `(SD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI>`_
-    - Dual Disperser CASSI `(DD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html>`_
-    - Color CASSI `(C-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html>`_
-- Single Pixel Camera `(SPC) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html>`_
+* Spectral Imaging
+
+      -  `Single Pixel Camera (SPC) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html>`_
+      -  `Single Disperser CASSI (SD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI>`_
+      -  `Dual Disperser CASSI (DD-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html>`_
+      -  `Color CASSI (C-CASSI) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html>`_
+      -  `Diffractive Optical Element (DOE) <https://pycolibri.github.io/pycolibri/stubs/colibri.optics.doe.SingleDOESpectral.html>`_
+      
+📈 **Regularizers**
+
+* Binary Regularizers
+
+   - `Values <https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Reg_Binary.html#colibri.regularizers.Reg_Binary>`_
+   - `Transmitance <https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Reg_Transmittance.html#colibri.regularizers.Reg_Transmittance>`_
+
+* Stochastic Regularizers
+
+   - `Correlation <https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Correlation.html#colibri.regularizers.Correlation>`_
+   - `Kullback-Leibler Divergence <https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.KLGaussian.html#colibri.regularizers.KLGaussian>`_
+   - `Minimal Variance <https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.MinVariance.html#colibri.regularizers.MinVariance>`_
 
 💻️ **Deep Neural Networks**
 
-- `Autoencoder <https://pycolibri.github.io/pycolibri/models.html>`_
-- `Unet <https://pycolibri.github.io/pycolibri/models.html>`_
+    - `Autoencoder <https://pycolibri.github.io/pycolibri/models.html>`_
+    - `Unet <https://pycolibri.github.io/pycolibri/models.html>`_
 
 🖥 **Recovery Algorithms**
 
-- Fast Iterative Shrinkage-Thresholding Algorithm `(FISTA) <https://pycolibri.github.io/pycolibri/recovery.html>`_
+* Algorithms
+
+   - `Fast Iterative Shrinkage-Thresholding Algorithm (FISTA) <https://pycolibri.github.io/pycolibri/recovery.html>`_
+   - `Alternating Direction Method of Multipliers Plug and Play (ADMM-PnP) <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.pnp.PnP_ADMM.html#colibri.recovery.pnp.PnP_ADMM>`_
+
+* Solvers
+
+   - `L2L2Solver <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.solvers.core.L2L2Solver.html#colibri.recovery.solvers.core.L2L2Solver>`_
+* Fidelity Terms
+
+   - `L2 <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.fidelity.L2.html#colibri.recovery.terms.fidelity.L2>`_
+   - `L1 <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.fidelity.L1.html#colibri.recovery.terms.fidelity.L1>`_
+
+* Priors
+   
+      - `Sparsity <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.prior.Sparsity.html#colibri.recovery.terms.prior.Sparsity>`_
+
+* Transforms
+   
+      - `DCT <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.transforms.DCT2D.html#colibri.recovery.terms.transforms.DCT2D>`_
 
 🎆 **Frameworks**
 
-- `End-to-end framework <https://pycolibri.github.io/pycolibri/architectures.html>`_ with optical systems as encoder models and deep neural networks as decoder models.
+* Coupled Optimization for Optics and Recovery 
+
+   - `End-to-end framework <https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E>`_ 
+
+
+🫂 Contributors
+------------------
+
+.. raw:: html
+    :file: contributors.html
 
 
 💡 Contributing
 ------------------
 
-Contributions are welcome! If you're interested in improving Colibri, please:
-
-1. Fork the repository.
-2. Create your feature branch (``git checkout -b feature/AmazingFeature``).
-3. Commit your changes (``git commit -am 'Add some AmazingFeature'``).
-4. Push to the branch (``git push origin feature/AmazingFeature``).
-5. Open a Pull Request.
+Information about contributing to Colibri can be found in the `CONTRIBUTING.md <https://github.com/pycolibri/pycolibri/blob/main/README.md>`_ guide. and in the guide `How to Contribute <https://pycolibri.github.io/pycolibri/contributing.html>`_
 
 🛡️ License
 ------------------
@@ -134,15 +157,27 @@ Contributions are welcome! If you're interested in improving Colibri, please:
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :hidden:
    :caption: Contents:
 
-   architectures
+   miscellaneous
    models
    optics
    datasets
    regularizers
-   auto_examples/index
    recovery
    contributing
+   auto_examples/index
+
+.. |Test Status| image:: https://github.com/pycolibri/pycolibri/actions/workflows/test.yml/badge.svg
+   :target: https://github.com/pycolibri/pycolibri/actions/workflows/test.yml
+.. |Docs Status| image:: https://github.com/pycolibri/pycolibri/actions/workflows/documentation.yml/badge.svg
+   :target: https://github.com/pycolibri/pycolibri/actions/workflows/documentation.yml
+.. |Python 3.8+| image:: https://img.shields.io/badge/python-3.8%2B-blue
+   :target: https://www.python.org/downloads/release/python-380/
+.. |colab| image:: https://colab.research.google.com/assets/colab-badge.svg
+   :target: https://colab.research.google.com/github/pycolibri/pycolibri/blob/main/main.ipynb
+.. |Github| image:: https://img.shields.io/badge/github-%23121011.svg
+   :target: https://github.com/pycolibri/pycolibri
+

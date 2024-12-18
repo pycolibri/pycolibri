@@ -5,12 +5,17 @@ import torch.nn as nn
 
 
 class Autoencoder(nn.Module):
-    """
+    r"""
     Autoencoder Model
 
-    Adapted from 
+    The autoencoder model is a neural network that is trained to learn a latent representation of the input data. The model is composed of an encoder and a decoder. The encoder compresses the input data into a latent space representation, while the decoder reconstructs the input data from the latent space representation. Usually, the autoencoder model is trained to minimize the reconstruction error between the input data and the reconstructed data as follows:
 
-    Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. MIT press, 2016.
+    .. math::
+        \mathcal{L} = \left\| \mathbf{x}- D(E(\mathbf{x})) \right\|_2^2
+
+    where :math:`\mathbf{x}` is the input data and :math:`\hat{\mathbf{x}} = D(E(\mathbf{x}))` is the reconstructed data with :math:`E(\cdot)` and :math:`D(\cdot)` the encoder and decoder networks, respectively.
+   
+    Implementation based on the formulation of authors in https://dl.acm.org/doi/book/10.5555/3086952
     
     """
 
@@ -23,7 +28,7 @@ class Autoencoder(nn.Module):
         reduce_spatial=False,
         **kwargs,
     ):
-        """
+        r"""
 
         Args:
 
@@ -82,7 +87,7 @@ class Autoencoder(nn.Module):
         self.outc = custom_layers.outBlock(features[0], out_channels, last_activation)
 
     def forward(self, inputs, get_latent=False, **kwargs):
-        """
+        r"""
         Forward pass of the autoencoder
 
         Args:

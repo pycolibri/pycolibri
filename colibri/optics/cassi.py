@@ -92,7 +92,7 @@ class DD_CASSI(BaseOpticsLayer):
                         \mathbf{y}_{i, j} &=  \sum_{l=1}^{L} \learnedOptics_{i, j + l -1} \mathbf{x}_{i, j, l}
         \end{align*}
 
-    The dual dispersion of the scene :math:`\mathbf{x}` is achieved by two prisms, and mathematically can be represented as a single dispersion to the coded aperture:math:`\learnedOptics \in \{0,1\}^{M \times N + L-1}`. 
+    The dual dispersion of the scene :math:`\mathbf{x}` is achieved by two prisms, and mathematically can be represented as a single dispersion to the coded aperture :math:`\learnedOptics \in \{0,1\}^{M \times N + L-1}`. 
     """
 
     def __init__(self, input_shape, trainable=False, initial_ca=None, **kwargs):

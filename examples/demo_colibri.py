@@ -55,10 +55,9 @@ path = '.'
 batch_size = 128
 acquisition_name = 'c_cassi'  # ['spc', 'cassi', 'doe']
 
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path,
-                        builtin_dict=builtin_dict,
-                        transform_dict=None)
+
+dataset = CustomDataset(name, path)
+
 
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
@@ -158,8 +157,8 @@ from colibri.train import Training
 from colibri.metrics import psnr, ssim
 
 from colibri.regularizers import (
-    Reg_Binary,
-    Reg_Transmittance,
+    Binary,
+    Transmittance,
     MinVariance,
     KLGaussian,
 )
@@ -185,7 +184,7 @@ steps_per_epoch = 10
 frequency = 1
 
 if "cassi" in acquisition_name or "spc" in acquisition_name:
-    regularizers_optics_ce = {"RB": Reg_Binary(), "RT": Reg_Transmittance()}
+    regularizers_optics_ce = {"RB": Binary(), "RT": Transmittance()}
     regularizers_optics_ce_weights = [50, 1]
 else:
     regularizers_optics_ce = {}
@@ -224,6 +223,8 @@ results = train_schedule.fit(
 x_est = model(sample.to(device)).cpu()
 y = acquisition_model(sample.to(device)).cpu()
 
+normalize = lambda x: (x - torch.min(x)) / (torch.max(x) - torch.min(x)) 
+
 if acquisition_name == 'spc':
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
@@ -245,7 +246,9 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.title(title)
     plt.axis('off')
 
-ca = acquisition_model.learnable_optics.cpu().detach().numpy().squeeze()
+ca = normalize(acquisition_model.learnable_optics.cpu().detach())
+ca = ca.numpy().squeeze()
+
 if acquisition_name == 'spc':
     ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
 elif acquisition_name == 'c_cassi':

@@ -20,7 +20,7 @@ and :math:`\noise` is a stochastic mapping which characterizes the noise affecti
 
 
 Spectral Imaging systems
-~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 .. autosummary::
     :toctree: stubs
@@ -36,7 +36,7 @@ Spectral Imaging systems
 
 
 Functional operators of the optical systems
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------------
 
 .. autosummary::
     :toctree: stubs
@@ -60,7 +60,7 @@ Functional operators of the optical systems
     colibri.optics.functional.modulo
 
 Functional operators of optical elements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 .. autosummary::
     :toctree: stubs
@@ -75,7 +75,7 @@ Functional operators of optical elements
     colibri.optics.functional.get_spatial_coords    
 
 Functional operators of light propagation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 
 .. autosummary::
     :toctree: stubs
@@ -90,8 +90,7 @@ Functional operators of light propagation
 
 
 state-of-the-art optical elements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+-------------------------------------------
 .. autosummary::
     :toctree: stubs
     :template: methods_template.rst
@@ -103,7 +102,7 @@ state-of-the-art optical elements
 
 
 utils
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------------------
 .. autosummary::
     :toctree: stubs
     :template: methods_template.rst

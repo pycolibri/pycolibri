@@ -35,6 +35,7 @@ List of Solvers
     colibri.recovery.solvers.modulo.L2L2SolverModulo
 
 
+
 Fidelity Terms
 --------------------
 The module contains differents fidelity terms :math:`f(\mathbf{x})` that can be used in the recovery algorithms.
