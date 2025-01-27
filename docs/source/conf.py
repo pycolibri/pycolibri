@@ -69,10 +69,13 @@ mathjax3_config = {
             "xset": r"\mathcal{X}",
             "thetaset": r"\mathcal{\Omega}",
             "yset": r"\mathcal{Y}",
-            'argmin': '\\operatorname{arg\\,min}',
-            'coloneqq': '\\mathrel{:=}',
-            'reconnet': '\\mathcal{N}_{\\theta}',
-            'transform': r"\mathbf{\Phi}",
+            "argmin": r"\operatorname{arg\,min}",
+            "coloneqq": r"\mathrel{:=}",
+            "reconnet": r"\mathcal{N}_{\theta}",
+            "transform": r"\mathbf{\Phi}",
+            "generator": r"\mathcal{G}",
+            "discriminator": r"\mathcal{D}",
+            "expectation": r"\mathbb{E}",
         },
     }
 }
