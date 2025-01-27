@@ -1,8 +1,0 @@
-tqdm
-h5py
-matplotlib
-scikit-image
-torch
-torchvision
-torchmetrics
-requests
