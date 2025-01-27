@@ -139,7 +139,7 @@ class Training:
                 else:
                     txt_reg_tot = f"{txt_reg_tot}, {txt_reg_mo}"
 
-            final_loss.backward()
+            final_loss.mean().backward()
 
             # Adjust learning weights
             self.optimizer.step()
