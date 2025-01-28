@@ -33,7 +33,7 @@ class CaveDataset():
             print('-> Downloading cave dataset...')
             r = requests.get(self.url, allow_redirects=True)
             open(zip_path, 'wb').write(r.content)
-            
+
             if r.status_code == 404:
                 raise Exception(f"The URL {self.url} is not functioning correctly. "
                                 f"Kindly report this issue to the developers.")
