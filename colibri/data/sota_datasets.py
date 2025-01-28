@@ -15,7 +15,7 @@ class CaveDataset():
     URL: https://www.cs.columbia.edu/CAVE/databases/multispectral/
     """
 
-    def __init__(self, path: str, download: bool = True, url : str ='https://www.cs.columbia.edu/CAVE/databases/multispectral/zip/complete_ms_data.zip'):
+    def __init__(self, path: str, download: bool = True, url : str ='https://cave.cs.columbia.edu/old/databases/multispectral/zip/complete_ms_data.zip'):
         self.url = url
         self.tmp_name = 'cave_dataset'
         self.path = os.path.join(path, self.tmp_name)
@@ -30,14 +30,21 @@ class CaveDataset():
         
         zip_path = self.path+".zip"
         if not os.path.exists(self.path):
+            print('-> Downloading cave dataset...')
             r = requests.get(self.url, allow_redirects=True)
             open(zip_path, 'wb').write(r.content)
+            
+            if r.status_code == 404:
+                raise Exception(f"The URL {self.url} is not functioning correctly. "
+                                f"Kindly report this issue to the developers.")
 
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(self.path)
             os.remove(zip_path)
+            print('-> Cave Dataset downloaded!')
+
         else:
-            print('Dataset already downloaded')
+            print('-> Dataset already downloaded')
 
 
     def get_list_paths(self):
