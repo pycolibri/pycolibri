@@ -97,7 +97,7 @@ class Training:
                 res = (
                     self.loss_func[key](outputs_pred, outputs_gt)
                     * self.losses_weights[idx]
-                ).float()
+                )
                 loss_values[key] = res
                 final_loss += loss_values[key]
             txt_losses = ""
@@ -107,7 +107,7 @@ class Training:
             total_reg = {}
             if self.regularizers is not None:
                 tmp, reg_decoders = self.reg_decoder()
-                final_loss += tmp.float()
+                final_loss += tmp
                 txt_reg_decoders = "".join(
                     [f"{key}: {reg_decoders[key]:.2f}, " for key in reg_decoders.keys()]
                 )
@@ -118,7 +118,7 @@ class Training:
                 total_reg.update(reg_decoders)
             if self.regularizers_optics_ce is not None:
                 tmp, reg_ce = self.reg_optics_ce(inputs)
-                final_loss += tmp.float()
+                final_loss += tmp
                 txt_reg_ce = "".join(
                     [f"{key}: {reg_ce[key]:.2f}, " for key in reg_ce.keys()]
                 )
@@ -129,7 +129,7 @@ class Training:
                     txt_reg_tot = f"{txt_reg_tot}, {txt_reg_ce}"
             if self.regularizers_optics_mo is not None:
                 tmp, reg_mo = self.reg_optics_mo(inputs)
-                final_loss += tmp.float()
+                final_loss += tmp
                 txt_reg_mo = "".join(
                     [f"{key}: {reg_mo[key]:.2f}, " for key in reg_mo.keys()]
                 )
