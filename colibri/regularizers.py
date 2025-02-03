@@ -3,6 +3,33 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+class BinaryQuantize(torch.autograd.Function):  
+    r"""
+    Binary Quantization Function.
+
+    Coded adapted from Courbariaux, Matthieu, Bengio Yoshua, and David Warde-Farley.
+    "Binaryconnect: Training deep neural networks with binary weights during propagations."
+    Advances in neural information processing systems. 2015.
+
+    The function computes:
+
+    .. math:: 
+        \begin{equation*}
+        \boldsymbol{\Phi} = \text{sign}(\mathbf{W})
+        \end{equation*}
+
+    where :math:`\mathbf{W}` is the real-valued input tensor and :math:`\boldsymbol{\Phi}` is the binary output tensor.
+
+    """
+
+    @staticmethod
+    def forward(ctx, input):
+        output = torch.sign(input)
+        return output
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output
 
 
 class Binary(nn.Module):
