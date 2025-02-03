@@ -45,12 +45,12 @@ class KD(nn.Module):
         return x_hat_student, loss_fb, loss_rb
 
 
-class KD_fb_loss(nn.Module):
+class KD_dec_loss(nn.Module):
     def __init__(self, loss_type: str, layer_idxs: list, att_config: dict = None):
         r"""
         KD feature based loss function.
         """
-        super(KD_fb_loss, self).__init__()
+        super(KD_dec_loss, self).__init__()
         self.loss_type = loss_type
         self.layer_idxs = layer_idxs
         self.att_config = att_config
@@ -134,26 +134,23 @@ class KD_fb_loss(nn.Module):
         return normalized_attention_maps
 
 
-class KD_rb_loss(nn.Module):
+class KD_enc_loss(nn.Module):
     def __init__(self, loss_type: str):
         r"""
         KD response based loss function.
         """
-        super(KD_rb_loss, self).__init__()
+        super(KD_enc_loss, self).__init__()
         self.loss_type = loss_type
 
-    def forward(self, x_hat_teacher, x_hat_student):
+    def forward(self, cas_teacher, cas_student):
 
-        if self.loss_type == "MSE":
-            return torch.mean((x_hat_teacher - x_hat_student) ** 2)
-        
-        elif self.loss_type == "L1":
-            return torch.mean(torch.abs(x_hat_teacher - x_hat_student))
-        
-        elif self.loss_type == "FFT":
-            real_part = torch.mean((fft(x_hat_teacher).real - fft(x_hat_student).real) ** 2)
-            imag_part = torch.mean((fft(x_hat_teacher).imag - fft(x_hat_student).imag) ** 2)
-            return (real_part + imag_part) / 2
+        if self.loss_type == "GRAMM":
+            gram_student = torch.matmul(cas_student.T, cas_student)
+            gram_teacher = torch.matmul(cas_teacher.T, cas_teacher)
+
+            loss = torch.mean((gram_teacher - gram_student) ** 2)
+
+            return loss
         
         else:
             raise ValueError("Loss type not supported. Please choose between L1 and MSE.")
