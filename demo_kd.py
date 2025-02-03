@@ -35,7 +35,7 @@ else:
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = "fashion_mnist"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+name = "cifar10"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = "."
 batch_size = 64
 acquisition_name = "spc"  # ['spc', 'cassi', 'doe']
@@ -76,8 +76,22 @@ n_measurements = 256
 n_measurements_sqrt = int(math.sqrt(n_measurements))
 
 acquisition_model_teacher = SPC(
-    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
-)
-acquisition_model_student = SPC(
     input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
 )
+acquisition_model_student = SPC(
+    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
+)
+
+y = acquisition_model_student(sample)
+
+if acquisition_name == 'spc':
+    y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
+
+img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
+
+plt.figure(figsize=(10, 10))
+plt.imshow(img.permute(1, 2, 0))
+plt.axis('off')
+plt.title(f'{acquisition_name.upper()} measurements')
+plt.show()
+

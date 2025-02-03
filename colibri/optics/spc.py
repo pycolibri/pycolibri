@@ -2,8 +2,8 @@ import torch
 from .functional import forward_spc, backward_spc
 from .utils import BaseOpticsLayer
 
-class SPC(BaseOpticsLayer):
 
+class SPC(BaseOpticsLayer):
     r"""
     Single Pixel Camera (SPC).
 
@@ -27,8 +27,9 @@ class SPC(BaseOpticsLayer):
 
     
     """
+
     def __init__(self, input_shape, n_measurements=256, trainable=False, initial_ca=None, **kwargs):
-        r"""       
+        r"""
 
         Args:
             input_shape (tuple): Tuple, shape of the input image (L, M, N).
@@ -36,19 +37,19 @@ class SPC(BaseOpticsLayer):
             trainable (bool): Boolean, if True the coded aperture is trainable
             initial_ca (torch.Tensor): Initial coded aperture with shape (S, M*N)
         """
-        #super(SPC, self).__init__()
+        # super(SPC, self).__init__()
         _, M, N = input_shape
         self.trainable = trainable
         self.initial_ca = initial_ca
+        self.binary = kwargs["binary"]
         if self.initial_ca is None:
-            initializer = torch.randn((n_measurements, M*N), requires_grad=self.trainable)
+            initializer = torch.randn((n_measurements, M * N), requires_grad=self.trainable)
         else:
             initializer = torch.from_numpy(self.initial_ca).float()
 
-        #Add parameter CA in pytorch manner
+        # Add parameter CA in pytorch manner
         ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
         super(SPC, self).__init__(learnable_optics=ca, sensing=forward_spc, backward=backward_spc)
-
 
     def forward(self, x, type_calculation="forward"):
         r"""
@@ -60,5 +61,4 @@ class SPC(BaseOpticsLayer):
         Returns:
             torch.Tensor: Output tensor after measurement of size (B, S, L).
         """
-        return super(SPC, self).forward(x, type_calculation)
-        
+        return super(SPC, self).forward(x, type_calculation, binary=self.binary)
