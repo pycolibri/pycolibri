@@ -84,14 +84,57 @@ acquisition_model_student = SPC(
 
 y = acquisition_model_student(sample)
 
-if acquisition_name == 'spc':
+if acquisition_name == "spc":
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
-plt.axis('off')
-plt.title(f'{acquisition_name.upper()} measurements')
+plt.axis("off")
+plt.title(f"{acquisition_name.upper()} measurements")
 plt.show()
 
+
+from colibri.models import build_network, Unet
+from colibri.misc import E2E
+from colibri.train import Training
+from colibri.metrics import psnr, ssim
+
+network_config = dict(
+    in_channels=sample.shape[1],
+    out_channels=sample.shape[1],
+    reduce_spatial=True,  # Only for Autoencoder
+)
+
+recovery_model_teacher = build_network(Unet, **network_config)
+
+teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+optimizer = torch.optim.Adam(teacher.parameters(), lr=5e-4)
+losses = {"MSE": torch.nn.MSELoss()}
+metrics = {"PSNR": psnr, "SSIM": ssim}
+losses_weights = [1.0, 1.0]
+
+n_epochs = 50
+steps_per_epoch = None
+frequency = 1
+
+train_schedule = Training(
+    model=teacher,
+    train_loader=dataset_loader,
+    optimizer=optimizer,
+    loss_func=losses,
+    losses_weights=losses_weights,
+    metrics=metrics,
+    regularizers=None,
+    regularization_weights=None,
+    schedulers=[],
+    callbacks=[],
+    device=device,
+    regularizers_optics_ce=None,
+    regularization_optics_weights_ce=None,
+    regularizers_optics_mo=None,
+    regularization_optics_weights_mo=None,
+)
+
+results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
