@@ -7,7 +7,7 @@ class BinaryQuantize(torch.autograd.Function):
     r"""
     Binary Quantization Function.
 
-    Coded adapted from Courbariaux, Matthieu, Bengio Yoshua, and David Warde-Farley.
+    Coded adapted from Courbariaux, Matthieu, Bengio Yoshua, and Jean-Pierre David.
     "Binaryconnect: Training deep neural networks with binary weights during propagations."
     Advances in neural information processing systems. 2015.
 
@@ -19,7 +19,6 @@ class BinaryQuantize(torch.autograd.Function):
         \end{equation*}
 
     where :math:`\mathbf{W}` is the real-valued input tensor and :math:`\boldsymbol{\Phi}` is the binary output tensor.
-
     """
 
     @staticmethod
