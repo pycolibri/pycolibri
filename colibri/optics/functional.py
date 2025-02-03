@@ -1,6 +1,33 @@
 import torch
 import numpy as np
 
+class BinaryQuantize(torch.autograd.Function):  
+    r"""
+    Binary Quantization Function.
+
+    Coded adapted from Courbariaux, Matthieu, Bengio Yoshua, and Jean-Pierre David.
+    "Binaryconnect: Training deep neural networks with binary weights during propagations."
+    Advances in neural information processing systems. 2015.
+
+    The function computes:
+
+    .. math:: 
+        \begin{equation*}
+        \boldsymbol{\Phi} = \text{sign}(\mathbf{W})
+        \end{equation*}
+
+    where :math:`\mathbf{W}` is the real-valued input tensor and :math:`\boldsymbol{\Phi}` is the binary output tensor.
+    """
+
+    @staticmethod
+    def forward(ctx, input):
+        output = torch.sign(input)
+        return output
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output
+
 def prism_operator(x:torch.Tensor, shift_sign:int = 1) -> torch.Tensor:
     r"""
 
@@ -148,7 +175,7 @@ def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     return torch.multiply(y, ca)
 
 
-def forward_spc(x: torch.Tensor, H: torch.Tensor) -> torch.Tensor:
+def forward_spc(x: torch.Tensor, H: torch.Tensor, binary: bool = False) -> torch.Tensor:
     r"""
 
     Forward propagation through the Single Pixel Camera (SPC) model.
@@ -168,11 +195,12 @@ def forward_spc(x: torch.Tensor, H: torch.Tensor) -> torch.Tensor:
 
     # measurement
     H = H.unsqueeze(0).repeat(B, 1, 1)
+    H = H if not binary else BinaryQuantize.apply(H)
     y = torch.bmm(H, x)
     return y
 
 
-def backward_spc(y: torch.Tensor, H: torch.Tensor, pinv=False) -> torch.Tensor:
+def backward_spc(y: torch.Tensor, H: torch.Tensor, pinv: bool = False, binary: bool = False) -> torch.Tensor:
     r"""
 
     Inverse operation to reconstruct the image from measurements.
@@ -189,6 +217,8 @@ def backward_spc(y: torch.Tensor, H: torch.Tensor, pinv=False) -> torch.Tensor:
 
     Hinv   = torch.pinverse(H) if pinv else torch.transpose(H, 0, 1)
     Hinv   = Hinv.unsqueeze(0).repeat(y.shape[0], 1, 1)
+
+    Hinv = Hinv if not binary else BinaryQuantize.apply(Hinv)
 
     x = torch.bmm(Hinv, y)
     x = x.permute(0, 2, 1)
