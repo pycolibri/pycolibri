@@ -2,15 +2,18 @@ r"""
 Demo Colibri.
 ===================================================
 
-In this example we show how to use a simple pipeline of knowledge distillation learning with the Colored CASSI system as teacher  and the SD-CASSI system as the student.
+In this example we show how to use a simple pipeline of knowledge distillation learning with the SPC system as teacher and.
 """
 
 # %%
 # Select Working Directory and Device
 # -----------------------------------------------
 import os
+import sys
 
-os.chdir(os.path.dirname(os.getcwd()))
+parent_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
+sys.path.append(parent_dir)
+
 print("Current Working Directory ", os.getcwd())
 
 # General imports
@@ -32,10 +35,10 @@ else:
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = "cifar10"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+name = "fashion_mnist"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = "."
-batch_size = 128
-acquisition_name = "c_cassi"  # ['spc', 'cassi', 'doe']
+batch_size = 64
+acquisition_name = "spc"  # ['spc', 'cassi', 'doe']
 
 
 dataset = CustomDataset(name, path)
@@ -53,7 +56,7 @@ img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, scale_each=False
 
 plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
-plt.title("CIFAR10 dataset")
+plt.title(f"{name} dataset")
 plt.axis("off")
 plt.show()
 
@@ -65,13 +68,16 @@ plt.show()
 
 
 import math
-from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI, SingleDOESpectral
-from colibri.optics.sota_does import spiral_doe, spiral_refractive_index
+from colibri.optics import SPC
 
 img_size = sample.shape[1:]
 
-acquisition_config = dict(
-    input_shape=img_size,
+n_measurements = 256
+n_measurements_sqrt = int(math.sqrt(n_measurements))
+
+acquisition_model_teacher = SPC(
+    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
 )
-
-
+acquisition_model_student = SPC(
+    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
+)
