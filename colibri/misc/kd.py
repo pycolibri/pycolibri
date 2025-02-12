@@ -21,12 +21,12 @@ class KD(nn.Module):
         self.teacher = e2e_teacher
         self.student = e2e_student
         self.kd_config = kd_config
-        loss_fb_type = kd_config["loss_fb_type"]
-        loss_rb_type = kd_config["loss_rb_type"]
+        loss_fb_type = kd_config["loss_dec_type"]
+        loss_rb_type = kd_config["loss_enc_type"]
         layer_idxs = kd_config["layer_idxs"]
         att_config = kd_config["att_config"]
-        self.loss_fb = KD_fb_loss(loss_fb_type, layer_idxs, att_config)
-        self.loss_rb = KD_rb_loss(loss_rb_type)
+        self.loss_dec = KD_dec_loss(loss_fb_type, layer_idxs, att_config)
+        self.loss_enc = KD_enc_loss(loss_rb_type)
 
     def forward(self, x):
         r"""
@@ -38,9 +38,9 @@ class KD(nn.Module):
 
         x_hat_student, feats_student = self.student(x)
 
-        loss_fb = self.loss_fb(feats_teacher, feats_student) * self.kd_config["fb_weight"]
+        loss_fb = self.loss_dec(feats_teacher, feats_student) * self.kd_config["enc_weight"]
 
-        loss_rb = self.loss_rb(x_hat_teacher, x_hat_student) * self.kd_config["rb_weight"]
+        loss_rb = self.loss_enc(x_hat_teacher, x_hat_student) * self.kd_config["dec_weight"]
 
         return x_hat_student, loss_fb, loss_rb
 

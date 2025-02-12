@@ -99,6 +99,7 @@ plt.show()
 from colibri.models import build_network, Unet
 from colibri.misc import E2E
 from colibri.train import Training
+from colibri.train_kd import TrainingKD
 from colibri.metrics import psnr, ssim
 
 network_config = dict(
@@ -108,33 +109,70 @@ network_config = dict(
 )
 
 recovery_model_teacher = build_network(Unet, **network_config)
+recovery_model_student = build_network(Unet, **network_config)
 
 teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
-optimizer = torch.optim.Adam(teacher.parameters(), lr=5e-4)
+student = E2E(acquisition_model_student, recovery_model_student)
+
+# optimizer_teacher = torch.optim.Adam(teacher.parameters(), lr=5e-4)
+optimizer_student = torch.optim.Adam(student.parameters(), lr=5e-4)
+
 losses = {"MSE": torch.nn.MSELoss()}
 metrics = {"PSNR": psnr, "SSIM": ssim}
 losses_weights = [1.0, 1.0]
 
 n_epochs = 50
-steps_per_epoch = None
+steps_per_epoch = 1
 frequency = 1
 
-train_schedule = Training(
-    model=teacher,
+# train_schedule = Training(
+#     model=teacher,
+#     train_loader=dataset_loader,
+#     optimizer=optimizer_teacher,
+#     loss_func=losses,
+#     losses_weights=losses_weights,
+#     metrics=metrics,
+#     regularizers=None,
+#     regularization_weights=None,
+#     schedulers=[],
+#     callbacks=[],
+#     device=device,
+#     regularizers_optics_ce=None,
+#     regularization_optics_weights_ce=None,
+#     regularizers_optics_mo=None,
+#     regularization_optics_weights_mo=None,
+# )
+
+# results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
+
+# torch.save(teacher.state_dict(), "teacher.pth")
+
+train_schedule_kd = TrainingKD(
+    student_model=acquisition_model_student,
+    teacher_model=acquisition_model_teacher,
+    teacher_path_weights="teacher.pth",
     train_loader=dataset_loader,
-    optimizer=optimizer,
-    loss_func=losses,
+    optimizer=optimizer_student,
+    loss_func={"MSE": torch.nn.MSELoss()},
     losses_weights=losses_weights,
+    kd_config={
+        "enc_weight": 0.1,
+        "dec_weight": 0.1,
+        "loss_dec_type": "MSE",
+        "loss_enc_type": "MSE",
+        "layer_idxs": [0, 1, 2, 3],
+        "att_config": None,
+    },
     metrics=metrics,
     regularizers=None,
+    regularizers_optics_mo=None,
+    regularization_optics_weights_mo=None,
+    regularizers_optics_ce=None,
+    regularization_optics_weights_ce=None,
     regularization_weights=None,
     schedulers=[],
     callbacks=[],
     device=device,
-    regularizers_optics_ce=None,
-    regularization_optics_weights_ce=None,
-    regularizers_optics_mo=None,
-    regularization_optics_weights_mo=None,
 )
 
-results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
+results_kd = train_schedule_kd.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
