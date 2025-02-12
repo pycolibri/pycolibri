@@ -96,7 +96,8 @@ plt.title(f"{acquisition_name.upper()} measurements")
 plt.show()
 
 
-from colibri.models import build_network, Unet
+from colibri.models import build_network, Unet, Unet_KD
+
 from colibri.misc import E2E
 from colibri.train import Training
 from colibri.train_kd import TrainingKD
@@ -108,8 +109,8 @@ network_config = dict(
     reduce_spatial=True,  # Only for Autoencoder
 )
 
-recovery_model_teacher = build_network(Unet, **network_config)
-recovery_model_student = build_network(Unet, **network_config)
+recovery_model_teacher = build_network(Unet_KD, **network_config)
+recovery_model_student = build_network(Unet_KD, **network_config)
 
 teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
 student = E2E(acquisition_model_student, recovery_model_student)
@@ -148,8 +149,8 @@ frequency = 1
 # torch.save(teacher.state_dict(), "teacher.pth")
 
 train_schedule_kd = TrainingKD(
-    student_model=acquisition_model_student,
-    teacher_model=acquisition_model_teacher,
+    student_model=student,
+    teacher_model=teacher,
     teacher_path_weights="teacher.pth",
     train_loader=dataset_loader,
     optimizer=optimizer_student,
@@ -159,7 +160,7 @@ train_schedule_kd = TrainingKD(
         "enc_weight": 0.1,
         "dec_weight": 0.1,
         "loss_dec_type": "MSE",
-        "loss_enc_type": "MSE",
+        "loss_enc_type": "GRAMM",
         "layer_idxs": [0, 1, 2, 3],
         "att_config": None,
     },

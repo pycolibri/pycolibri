@@ -153,4 +153,4 @@ class KD_enc_loss(nn.Module):
             return loss
         
         else:
-            raise ValueError("Loss type not supported. Please choose between L1 and MSE.")
+            raise ValueError("Loss type not supported. Please choose between GRAMM.")

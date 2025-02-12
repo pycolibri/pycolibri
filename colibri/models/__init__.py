@@ -1,4 +1,4 @@
-from .unet import Unet
+from .unet import Unet, Unet_KD
 from .autoencoder import Autoencoder
 
 import torch
