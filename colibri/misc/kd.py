@@ -40,7 +40,7 @@ class KD(nn.Module):
 
         loss_fb = self.loss_dec(feats_teacher, feats_student) * self.kd_config["enc_weight"]
 
-        loss_rb = self.loss_enc(x_hat_teacher, x_hat_student) * self.kd_config["dec_weight"]
+        loss_rb = self.loss_enc(self.teacher.optical_layer.learnable_optics, self.student.optical_layer.learnable_optics) * self.kd_config["dec_weight"]
 
         return x_hat_student, loss_fb, loss_rb
 
