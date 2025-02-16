@@ -23,7 +23,7 @@ print("Current Working Directory ", os.getcwd())
 from colibri.data.datasets import CustomDataset
 
 
-name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+name = 'fashion_mnist'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = 'data'
 batch_size = 128
 
@@ -43,7 +43,7 @@ image = data['input']
 label = data['output']
 
 plt.figure(figsize=(5, 5))
-plt.suptitle(f'{name.upper()} dataset Samples')
+plt.suptitle(f'{name.upper()} dataset Samples - range: [{image.min()}, {image.max()}]')
 
 for i in range(9):
     plt.subplot(3, 3, i + 1)
@@ -85,6 +85,8 @@ spec_image = data['output']
 [_, _, M, N] = spec_image.shape
 
 plt.figure(figsize=(8, 8))
+plt.suptitle(f'CAVE dataset Samples - spectral range: [{spec_image.min():.2f}, {spec_image.max():.2f}] - '
+             f'RGB range: [{rgb_image.min():.2f}, {rgb_image.max():.2f}]')
 
 for i in range(3):
     coord1 = [randint(0, M), randint(0, N)]
