@@ -5,23 +5,35 @@ import torch.nn as nn
 from colibri.recovery.terms.prior import Prior
 
 class LearnedPrior(Prior):
+    r"""
+    Learned prior for hyperspectral image reconstruction.
+    
+    .. math::
+        \boldsymbol{f}^{(k+1)} = S(\boldsymbol{f}^{(k)})
 
-    def __init__(self, max_iter=5, model=None, prior_args=None):
+    Args:
+
+        model (nn.Sequential): The neural network acting as the prior.
+    
+    
+        
+    """
+
+    def __init__(self, models=None):
         super(LearnedPrior, self).__init__()
 
         self.count = 0
-        self.model = model
+        self.models = models
         
     def prox(self, x,*args ,**kwargs):
 
-        x = self.model[self.count](x)
+        x = self.models[self.count](x)
         
         self.count += 1
 
         return x
     def reset(self):
         self.count = 0
-        
 
 class SparseProximalMapping(nn.Module):
 

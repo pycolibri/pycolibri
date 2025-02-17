@@ -1,4 +1,4 @@
-from .learned_proximals import LearnedPrior
+# from .learned_proximals import LearnedPrior
 from .unet import Unet
 from .autoencoder import Autoencoder
 from .unrolling import UnrollingFISTA

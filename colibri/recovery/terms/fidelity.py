@@ -25,8 +25,9 @@ class L2(torch.nn.Module):
         Returns:
             torch.Tensor: The L2 fidelity term.
         """
-
-        return 1/2*torch.norm( H(x) - y,p=2)**2
+        r = H(x) - y
+        r = r.view(r.shape[0],-1)
+        return 1/2*torch.norm(r,p=2,dim=1)**2
     
     def grad(self, x, y, H=None, transform=None):
         r'''
@@ -44,8 +45,9 @@ class L2(torch.nn.Module):
             torch.Tensor: Gradient of the L1 fidelity term. 
         '''
         x = x.requires_grad_()
-        return torch.autograd.grad(self.forward(x,y, H), x, create_graph=True)[0]
-
+        norm = self.forward(x,y,H)
+ 
+        return torch.autograd.grad(norm, x, create_graph=True, grad_outputs=torch.ones_like(norm))[0]
 
 
 class L1(torch.nn.Module):

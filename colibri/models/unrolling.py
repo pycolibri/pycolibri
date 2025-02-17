@@ -12,7 +12,7 @@ class UnrollingFISTA(Fista):
     FISTA Unrolling algorithm
     '''
 
-    def __init__(self, acquistion_model, fidelity=None, max_iters=5, model=None, alpha=1e-3,  prior_args=None, _lambda=0.1):
+    def __init__(self, acquistion_model, fidelity=None, max_iters=5, models=None, alpha=1e-3, _lambda=0.1):
         '''
         Args:
 
@@ -34,7 +34,7 @@ class UnrollingFISTA(Fista):
         self.max_iters = max_iters
         self.alpha = nn.ParameterList([nn.Parameter(torch.tensor(alpha),requires_grad=True)] * max_iters)
         self.t_squence = nn.ParameterList([nn.Parameter(torch.tensor(1.0),requires_grad=True)] * max_iters)
-        self.prior = LearnedPrior(max_iter=max_iters, model=model, prior_args=prior_args)
+        self.prior = LearnedPrior(models=models)
 
     def forward(self, y, x0=None):
         '''
