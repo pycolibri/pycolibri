@@ -3,7 +3,9 @@ from torch import nn
 
 # from colibri.recovery.terms.fidelity import L2
 from colibri.recovery.fista import Fista
-from . import LearnedPrior
+from colibri.models.learned_proximals import LearnedPrior
+
+
 class UnrollingFISTA(Fista):
 
     '''

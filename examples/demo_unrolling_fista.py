@@ -94,14 +94,14 @@ print('dir(recover) ->', dir(recovery.terms.prior))
 from colibri.recovery.fista import Fista
 from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
-# from colibri.models.learned_proximals import LearnedPrior
+from colibri.models.learned_proximals import LearnedPrior
 from colibri.models.unrolling import UnrollingFISTA
 from colibri.models.autoencoder import Autoencoder
 
 
 
 algo_params = {
-    "max_iters": 2000,
+    "max_iters": 10,
     "alpha": 1e-4,
     "_lambda": 0.01,
 }
@@ -110,7 +110,7 @@ fidelity = L2()
 prior = Sparsity(basis="dct")
 prior_args ={'in_channels': 1, 'out_channels': 1, 'feautures': [32, 64, 128, 256]}
 model = Autoencoder
-prior = LearnedPrior(max_iter=2000, model=model, prior_args=prior_args)
+prior = LearnedPrior(max_iter=algo_params["max_iters"], model=model, prior_args=prior_args)
 
 fista_unrolling = UnrollingFISTA(acquisition_model, fidelity, **algo_params, model=model, prior_args=prior_args)
 

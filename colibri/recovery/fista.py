@@ -83,7 +83,7 @@ class Fista(nn.Module):
         x = x0
         z = x.clone()
 
-        
+        print("Running FISTA algorithm")
         for i in range(self.max_iters):
             x_old = x.clone()
 
@@ -102,3 +102,4 @@ class Fista(nn.Module):
                 print("Iter: ", i, "fidelity: ", error)
 
         return x
+
