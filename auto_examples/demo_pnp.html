@@ -1,0 +1,506 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo PnP. &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Demo DOEs." href="demo_does.html" />
+    <link rel="prev" title="Demo FISTA." href="demo_fista.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="demo_datasets.html">Demo Datasets.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fista.html">Demo FISTA.</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Demo PnP.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-working-directory-and-device">Select Working Directory and Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#load-dataset">Load dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-dataset">Visualize dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="demo_does.html">Demo DOEs.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_colibri.html">Demo Colibri.</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Demo PnP.</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/demo_pnp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-demo-pnp-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="demo-pnp">
+<span id="sphx-glr-auto-examples-demo-pnp-py"></span><h1>Demo PnP.<a class="headerlink" href="#demo-pnp" title="Link to this heading"></a></h1>
+<section id="select-working-directory-and-device">
+<h2>Select Working Directory and Device<a class="headerlink" href="#select-working-directory-and-device" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current Working Directory &quot;</span> <span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+
+<span class="c1">#General imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Set random seed for reproducibility</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">manual_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="c1"># Check GPU support</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU support: &quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">manual_device</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">manual_device</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Current Working Directory  /home/runner/work/pycolibri/pycolibri
+GPU support:  False
+</pre></div>
+</div>
+</section>
+<section id="load-dataset">
+<h2>Load dataset<a class="headerlink" href="#load-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">colibri.data.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomDataset</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;cifar10&#39;</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+<span class="n">acquisition_name</span> <span class="o">=</span> <span class="s1">&#39;spc&#39;</span> <span class="c1">#  [&#39;spc&#39;, &#39;cassi&#39;]</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-dataset">
+<h2>Visualize dataset<a class="headerlink" href="#visualize-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_grid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCT2D</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">image</span> <span class="o">-</span> <span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Optics forward model</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPC</span><span class="p">,</span> <span class="n">SD_CASSI</span><span class="p">,</span> <span class="n">DD_CASSI</span><span class="p">,</span> <span class="n">C_CASSI</span>
+
+<span class="n">img_size</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">acquisition_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">input_shape</span> <span class="o">=</span> <span class="n">img_size</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">n_measurements</span>  <span class="o">=</span> <span class="mi">25</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">n_measurements_sqrt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_measurements</span><span class="p">))</span>
+    <span class="n">acquisition_config</span><span class="p">[</span><span class="s1">&#39;n_measurements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_measurements</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;spc&#39;</span><span class="p">:</span> <span class="n">SPC</span><span class="p">,</span>
+    <span class="s1">&#39;sd_cassi&#39;</span><span class="p">:</span> <span class="n">SD_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;dd_cassi&#39;</span><span class="p">:</span> <span class="n">DD_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;c_cassi&#39;</span><span class="p">:</span> <span class="n">C_CASSI</span>
+<span class="p">}[</span><span class="n">acquisition_name</span><span class="p">]</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="o">**</span><span class="n">acquisition_config</span><span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="c1"># Reconstruct image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.pnp</span><span class="w"> </span><span class="kn">import</span> <span class="n">PnP_ADMM</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sparsity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.fidelity</span><span class="w"> </span><span class="kn">import</span> <span class="n">L2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCT2D</span>
+
+<span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_iters&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="s1">&#39;_lambda&#39;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
+    <span class="s1">&#39;rho&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+
+<span class="n">fidelity</span>  <span class="o">=</span> <span class="n">L2</span><span class="p">()</span>
+<span class="n">prior</span>     <span class="o">=</span> <span class="n">Sparsity</span><span class="p">(</span><span class="n">basis</span><span class="o">=</span><span class="s1">&#39;dct&#39;</span><span class="p">)</span>
+
+<span class="n">pnp</span> <span class="o">=</span> <span class="n">PnP_ADMM</span><span class="p">(</span><span class="n">acquisition_model</span><span class="p">,</span> <span class="n">fidelity</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_params</span><span class="p">)</span>
+
+<span class="n">x0</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">type_calculation</span><span class="o">=</span><span class="s2">&quot;backward&quot;</span><span class="p">)</span>
+<span class="n">x_hat</span> <span class="o">=</span> <span class="n">pnp</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">,</span>  <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">basis</span> <span class="o">=</span> <span class="n">DCT2D</span><span class="p">()</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_hat</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">x_hat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Reference&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Sparse Representation&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:])</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Measurement&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Reconstruction&#39;</span><span class="p">)</span>
+<span class="n">x_hat</span> <span class="o">-=</span> <span class="n">x_hat</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">x_hat</span> <span class="o">/=</span> <span class="n">x_hat</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="n">x_hat</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()),</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_pnp_001.png" srcset="../_images/sphx_glr_demo_pnp_001.png" alt="Reference, Sparse Representation, Measurement, Reconstruction" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Iter:  0 fidelity:  1823.8250732421875
+Iter:  1 fidelity:  0.45847102999687195
+Iter:  2 fidelity:  0.44958898425102234
+Iter:  3 fidelity:  0.4903907775878906
+Iter:  4 fidelity:  0.5036434531211853
+Iter:  5 fidelity:  0.46289652585983276
+Iter:  6 fidelity:  0.46167850494384766
+Iter:  7 fidelity:  0.4766285717487335
+Iter:  8 fidelity:  0.5017406344413757
+Iter:  9 fidelity:  0.5099577903747559
+Iter:  10 fidelity:  0.4726678729057312
+Iter:  11 fidelity:  0.45456114411354065
+Iter:  12 fidelity:  0.4924970865249634
+Iter:  13 fidelity:  0.4805953800678253
+Iter:  14 fidelity:  0.5070435404777527
+Iter:  15 fidelity:  0.49452561140060425
+Iter:  16 fidelity:  0.49283596873283386
+Iter:  17 fidelity:  0.4556082487106323
+Iter:  18 fidelity:  0.4565475285053253
+Iter:  19 fidelity:  0.4709772765636444
+Iter:  20 fidelity:  0.47070276737213135
+Iter:  21 fidelity:  0.4848296344280243
+Iter:  22 fidelity:  0.47601625323295593
+Iter:  23 fidelity:  0.48504260182380676
+Iter:  24 fidelity:  0.4547821283340454
+Iter:  25 fidelity:  0.47771814465522766
+Iter:  26 fidelity:  0.49328500032424927
+Iter:  27 fidelity:  0.46497905254364014
+Iter:  28 fidelity:  0.5056253671646118
+Iter:  29 fidelity:  0.4698447585105896
+Iter:  30 fidelity:  0.4777454435825348
+Iter:  31 fidelity:  0.47850847244262695
+Iter:  32 fidelity:  0.48482534289360046
+Iter:  33 fidelity:  0.463372141122818
+Iter:  34 fidelity:  0.48124295473098755
+Iter:  35 fidelity:  0.49649521708488464
+Iter:  36 fidelity:  0.49170276522636414
+Iter:  37 fidelity:  0.4784253239631653
+Iter:  38 fidelity:  0.49354681372642517
+Iter:  39 fidelity:  0.48022356629371643
+Iter:  40 fidelity:  0.4928903579711914
+Iter:  41 fidelity:  0.4767721891403198
+Iter:  42 fidelity:  0.4471803903579712
+Iter:  43 fidelity:  0.44240549206733704
+Iter:  44 fidelity:  0.46999695897102356
+Iter:  45 fidelity:  0.4670599699020386
+Iter:  46 fidelity:  0.48000529408454895
+Iter:  47 fidelity:  0.5143378973007202
+Iter:  48 fidelity:  0.4879104495048523
+Iter:  49 fidelity:  0.4662438929080963
+Iter:  50 fidelity:  0.4857798218727112
+Iter:  51 fidelity:  0.4780791997909546
+Iter:  52 fidelity:  0.4672298729419708
+Iter:  53 fidelity:  0.4526367783546448
+Iter:  54 fidelity:  0.469298392534256
+Iter:  55 fidelity:  0.4722084701061249
+Iter:  56 fidelity:  0.4786020815372467
+Iter:  57 fidelity:  0.476763516664505
+Iter:  58 fidelity:  0.4987906515598297
+Iter:  59 fidelity:  0.49083784222602844
+Iter:  60 fidelity:  0.48026806116104126
+Iter:  61 fidelity:  0.4669716954231262
+Iter:  62 fidelity:  0.4535066783428192
+Iter:  63 fidelity:  0.48329734802246094
+Iter:  64 fidelity:  0.4722241759300232
+Iter:  65 fidelity:  0.45725709199905396
+Iter:  66 fidelity:  0.500185489654541
+Iter:  67 fidelity:  0.4910682141780853
+Iter:  68 fidelity:  0.48815199732780457
+Iter:  69 fidelity:  0.48378047347068787
+Iter:  70 fidelity:  0.5000890493392944
+Iter:  71 fidelity:  0.4904384911060333
+Iter:  72 fidelity:  0.4777902066707611
+Iter:  73 fidelity:  0.47398048639297485
+Iter:  74 fidelity:  0.46570438146591187
+Iter:  75 fidelity:  0.4943172037601471
+Iter:  76 fidelity:  0.48548564314842224
+Iter:  77 fidelity:  0.47611844539642334
+Iter:  78 fidelity:  0.45608386397361755
+Iter:  79 fidelity:  0.47031277418136597
+Iter:  80 fidelity:  0.4956846833229065
+Iter:  81 fidelity:  0.5105018615722656
+Iter:  82 fidelity:  0.49623218178749084
+Iter:  83 fidelity:  0.483551949262619
+Iter:  84 fidelity:  0.49874788522720337
+Iter:  85 fidelity:  0.48844894766807556
+Iter:  86 fidelity:  0.497370183467865
+Iter:  87 fidelity:  0.4726472496986389
+Iter:  88 fidelity:  0.48355600237846375
+Iter:  89 fidelity:  0.47068318724632263
+Iter:  90 fidelity:  0.459929883480072
+Iter:  91 fidelity:  0.4760059714317322
+Iter:  92 fidelity:  0.47184836864471436
+Iter:  93 fidelity:  0.44122856855392456
+Iter:  94 fidelity:  0.4692312479019165
+Iter:  95 fidelity:  0.4644646644592285
+Iter:  96 fidelity:  0.4649282991886139
+Iter:  97 fidelity:  0.4865356981754303
+Iter:  98 fidelity:  0.46691417694091797
+Iter:  99 fidelity:  0.4747282564640045
+Iter:  100 fidelity:  0.47051581740379333
+Iter:  101 fidelity:  0.48752740025520325
+Iter:  102 fidelity:  0.4961963891983032
+Iter:  103 fidelity:  0.47290244698524475
+Iter:  104 fidelity:  0.47549647092819214
+Iter:  105 fidelity:  0.485628604888916
+Iter:  106 fidelity:  0.48715919256210327
+Iter:  107 fidelity:  0.47755470871925354
+Iter:  108 fidelity:  0.4773774743080139
+Iter:  109 fidelity:  0.45718932151794434
+Iter:  110 fidelity:  0.4800483286380768
+Iter:  111 fidelity:  0.4842332601547241
+Iter:  112 fidelity:  0.47745582461357117
+Iter:  113 fidelity:  0.4880981147289276
+Iter:  114 fidelity:  0.4857094883918762
+Iter:  115 fidelity:  0.4946031868457794
+Iter:  116 fidelity:  0.5000946521759033
+Iter:  117 fidelity:  0.4806794822216034
+Iter:  118 fidelity:  0.4912639260292053
+Iter:  119 fidelity:  0.5104355812072754
+Iter:  120 fidelity:  0.4718891978263855
+Iter:  121 fidelity:  0.464810848236084
+Iter:  122 fidelity:  0.4460732638835907
+Iter:  123 fidelity:  0.4495674967765808
+Iter:  124 fidelity:  0.4825018346309662
+Iter:  125 fidelity:  0.4683647155761719
+Iter:  126 fidelity:  0.4464244544506073
+Iter:  127 fidelity:  0.4625248908996582
+Iter:  128 fidelity:  0.47225552797317505
+Iter:  129 fidelity:  0.46243324875831604
+Iter:  130 fidelity:  0.4596928060054779
+Iter:  131 fidelity:  0.4643561542034149
+Iter:  132 fidelity:  0.4734286963939667
+Iter:  133 fidelity:  0.49313274025917053
+Iter:  134 fidelity:  0.4594385027885437
+Iter:  135 fidelity:  0.4899147152900696
+Iter:  136 fidelity:  0.4753158390522003
+Iter:  137 fidelity:  0.4694339334964752
+Iter:  138 fidelity:  0.4899340569972992
+Iter:  139 fidelity:  0.4980129599571228
+Iter:  140 fidelity:  0.4900995194911957
+Iter:  141 fidelity:  0.47961893677711487
+Iter:  142 fidelity:  0.4924887418746948
+Iter:  143 fidelity:  0.4853378236293793
+Iter:  144 fidelity:  0.5101111531257629
+Iter:  145 fidelity:  0.49907827377319336
+Iter:  146 fidelity:  0.4817403554916382
+Iter:  147 fidelity:  0.4812775254249573
+Iter:  148 fidelity:  0.5018429756164551
+Iter:  149 fidelity:  0.501549243927002
+Iter:  150 fidelity:  0.492750883102417
+Iter:  151 fidelity:  0.500935971736908
+Iter:  152 fidelity:  0.486393541097641
+Iter:  153 fidelity:  0.4763394296169281
+Iter:  154 fidelity:  0.49091339111328125
+Iter:  155 fidelity:  0.4723436236381531
+Iter:  156 fidelity:  0.486462265253067
+Iter:  157 fidelity:  0.48860785365104675
+Iter:  158 fidelity:  0.4643516540527344
+Iter:  159 fidelity:  0.45436805486679077
+Iter:  160 fidelity:  0.4563407003879547
+Iter:  161 fidelity:  0.45678722858428955
+Iter:  162 fidelity:  0.4561789929866791
+Iter:  163 fidelity:  0.48098769783973694
+Iter:  164 fidelity:  0.4956667423248291
+Iter:  165 fidelity:  0.45661309361457825
+Iter:  166 fidelity:  0.4494413435459137
+Iter:  167 fidelity:  0.4665078818798065
+Iter:  168 fidelity:  0.46128109097480774
+Iter:  169 fidelity:  0.45225024223327637
+Iter:  170 fidelity:  0.44372695684432983
+Iter:  171 fidelity:  0.4654732346534729
+Iter:  172 fidelity:  0.4590889513492584
+Iter:  173 fidelity:  0.4674101769924164
+Iter:  174 fidelity:  0.43849772214889526
+Iter:  175 fidelity:  0.46396586298942566
+Iter:  176 fidelity:  0.47848421335220337
+Iter:  177 fidelity:  0.4718315303325653
+Iter:  178 fidelity:  0.4963637888431549
+Iter:  179 fidelity:  0.48315590620040894
+Iter:  180 fidelity:  0.5001769065856934
+Iter:  181 fidelity:  0.4849590063095093
+Iter:  182 fidelity:  0.4832480847835541
+Iter:  183 fidelity:  0.462694376707077
+Iter:  184 fidelity:  0.4576461911201477
+Iter:  185 fidelity:  0.4593297243118286
+Iter:  186 fidelity:  0.46447476744651794
+Iter:  187 fidelity:  0.44857257604599
+Iter:  188 fidelity:  0.4642430543899536
+Iter:  189 fidelity:  0.47062957286834717
+Iter:  190 fidelity:  0.4609135687351227
+Iter:  191 fidelity:  0.42410239577293396
+Iter:  192 fidelity:  0.43785351514816284
+Iter:  193 fidelity:  0.4392968416213989
+Iter:  194 fidelity:  0.44521307945251465
+Iter:  195 fidelity:  0.4627082645893097
+Iter:  196 fidelity:  0.47079896926879883
+Iter:  197 fidelity:  0.4448702931404114
+Iter:  198 fidelity:  0.4503740966320038
+Iter:  199 fidelity:  0.45016589760780334
+torch.Size([1, 3, 32, 32])
+
+([], [])
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 8.020 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-pnp-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/7c81280bbdec74c21d85a347ab4ed1f7/demo_pnp.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">demo_pnp.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/81a0d2abd9e7468cf35f4a24b4f141a3/demo_pnp.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">demo_pnp.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/8ae9a8e9011af74e93cb5b1e044e79bd/demo_pnp.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">demo_pnp.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="demo_fista.html" class="btn btn-neutral float-left" title="Demo FISTA." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="demo_does.html" class="btn btn-neutral float-right" title="Demo DOEs." accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

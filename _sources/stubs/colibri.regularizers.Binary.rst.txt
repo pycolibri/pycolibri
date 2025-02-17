@@ -1,0 +1,15 @@
+﻿Binary
+======
+
+.. currentmodule:: colibri.regularizers
+
+.. autoclass:: Binary
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.regularizers.Binary:
+
+.. minigallery:: colibri.regularizers.Binary
+    :add-heading: Examples using ``Binary``:

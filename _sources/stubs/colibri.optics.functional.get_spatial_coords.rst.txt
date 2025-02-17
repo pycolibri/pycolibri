@@ -1,0 +1,9 @@
+﻿get\_spatial\_coords
+====================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: get_spatial_coords
+
+.. minigallery:: colibri.optics.functional.get_spatial_coords
+    :add-heading: Examples using ``get_spatial_coords``:

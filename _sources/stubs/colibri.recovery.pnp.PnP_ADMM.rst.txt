@@ -1,0 +1,15 @@
+﻿PnP\_ADMM
+=========
+
+.. currentmodule:: colibri.recovery.pnp
+
+.. autoclass:: PnP_ADMM
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.recovery.pnp.PnP_ADMM:
+
+.. minigallery:: colibri.recovery.pnp.PnP_ADMM
+    :add-heading: Examples using ``PnP_ADMM``:

@@ -1,0 +1,9 @@
+﻿add\_pad
+========
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: add_pad
+
+.. minigallery:: colibri.optics.functional.add_pad
+    :add-heading: Examples using ``add_pad``:

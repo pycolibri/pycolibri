@@ -1,0 +1,9 @@
+﻿ifft
+====
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: ifft
+
+.. minigallery:: colibri.optics.functional.ifft
+    :add-heading: Examples using ``ifft``:

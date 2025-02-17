@@ -1,0 +1,233 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colibri.recovery.pnp &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/colibri-logo.svg"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../../../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colibri.recovery.pnp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colibri.recovery.pnp</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">nn</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.solvers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SOLVERS</span><span class="p">,</span> <span class="n">get_solver</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.fidelity</span><span class="w"> </span><span class="kn">import</span> <span class="n">L2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sparsity</span>
+
+<div class="viewcode-block" id="PnP_ADMM">
+<a class="viewcode-back" href="../../../stubs/colibri.recovery.pnp.PnP_ADMM.html#colibri.recovery.pnp.PnP_ADMM">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PnP_ADMM</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plug-and-Play (PnP) algorithm with Alternating Direction Method of Multipliers (ADMM) formulation.</span>
+
+<span class="sd">    The PnP algorithm solves the optimization problem:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{equation}</span>
+<span class="sd">            \underset{\mathbf{x}}{\text{arg min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda \mathcal{R}(\mathbf{x})</span>
+<span class="sd">        \end{equation}</span>
+
+<span class="sd">    where :math:`\forwardLinear` is the forward model, :math:`\mathbf{y}` is the data to be reconstructed, :math:`\lambda` is the regularization parameter and :math:`\mathcal{R}` is the prior regularizer.</span>
+
+<span class="sd">    The PnP ADMM algorithm is an iterative algorithm that solves the optimization problem by performing a closed-form solution for the forward model and a proximal/denoising step for the prior term.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{align*}</span>
+<span class="sd">         \mathbf{x}_{k+1} &amp;= \underset{\textbf{x}}{\text{arg min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \frac{\rho}{2} || \mathbf{x} - \tilde{\mathbf{x}} ||^2 \\</span>
+<span class="sd">         \mathbf{v}_{k+1} &amp;= \text{prox}_{\mathcal{R}}( \tilde{\mathbf{v}}_k , \lambda) \\</span>
+<span class="sd">        \mathbf{u}_{k+1} &amp;=  \mathbf{u}_{k}  + \mathbf{x}_{k+1} - \mathbf{v}_{k+1}</span>
+<span class="sd">        \end{align*}</span>
+
+<span class="sd">    with :math:`\tilde{\mathbf{x}} = \mathbf{v}_{k} - \mathbf{u}_{k}` and :math:`\tilde{\mathbf{v}} = \mathbf{x}_{k+1} + \mathbf{u}_{k}`, and  :math:`\rho` is the regularization influence in the :math:`\mathbf{x}` update and :math:`\lambda` is the regularization parameter for the prior term.</span>
+
+<span class="sd">    Implementation based on the formulation of authors in https://doi.org/10.1109/TCI.2016.2629286</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">acquisition_model</span><span class="p">,</span> <span class="n">fidelity</span><span class="o">=</span><span class="n">L2</span><span class="p">(),</span> <span class="n">prior</span><span class="o">=</span><span class="n">Sparsity</span><span class="p">(</span><span class="s2">&quot;dct&quot;</span><span class="p">),</span> <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;close&quot;</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">_lambda</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            acquisition_model (nn.Module): The acquisition model of the imaging system. This is a function that models the process of data acquisition in the imaging system.</span>
+<span class="sd">            fidelity (nn.Module): The fidelity term in the optimization problem. This is a function that measures the discrepancy between the data and the model prediction.</span>
+<span class="sd">            prior (nn.Module): The prior term in the optimization problem. This is a function that encodes prior knowledge about the solution.</span>
+<span class="sd">            max_iters (int): The maximum number of iterations for the FISTA algorithm. Defaults to 20.</span>
+<span class="sd">            _lambda (float): The regularization parameter for the prior term. Defaults to 0.1.</span>
+<span class="sd">            rho (float): The penalty parameter for the ADMM formulation. Defaults to 0.1.</span>
+<span class="sd">            alpha (float): The step size for the gradient step. Defaults to 1e-3.</span>
+<span class="sd">            </span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">PnP_ADMM</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fidelity</span>         <span class="o">=</span> <span class="n">fidelity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_model</span> <span class="o">=</span> <span class="n">acquisition_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span>            <span class="o">=</span> <span class="n">prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solver</span>           <span class="o">=</span> <span class="n">solver</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span>        <span class="o">=</span> <span class="n">max_iters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span>          <span class="o">=</span> <span class="n">_lambda</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rho</span>              <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>            <span class="o">=</span> <span class="n">alpha</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PnP_ADMM.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.recovery.pnp.PnP_ADMM.html#colibri.recovery.pnp.PnP_ADMM.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Runs the FISTA algorithm to solve the optimization problem.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y (torch.Tensor): The measurement data to be reconstructed.</span>
+<span class="sd">            x0 (torch.Tensor, optional): The initial guess for the solution. Defaults to None.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: The reconstructed image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Initialize the solution</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;close&quot;</span><span class="p">:</span>
+            <span class="n">ClosedSolution</span> <span class="o">=</span> <span class="n">get_solver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">acquisition_model</span><span class="p">)</span>
+            <span class="n">x_solver</span> <span class="o">=</span> <span class="n">ClosedSolution</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">acquisition_model</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">GradientDescent</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">xt</span><span class="p">:</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fidelity</span><span class="o">.</span><span class="n">grad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span>  <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">xt</span><span class="p">)</span>
+            <span class="n">x_solver</span> <span class="o">=</span> <span class="n">GradientDescent</span>
+
+        <span class="k">if</span> <span class="n">x0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        
+        <span class="n">u_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+        <span class="n">v_t</span> <span class="o">=</span> <span class="n">x0</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">):</span>
+
+            <span class="c1"># x-subproblem update</span>
+            <span class="n">xtilde</span> <span class="o">=</span> <span class="n">v_t</span> <span class="o">-</span> <span class="n">u_t</span>
+            <span class="n">x_t</span>    <span class="o">=</span> <span class="n">x_solver</span><span class="p">(</span><span class="n">xtilde</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;close&quot;</span> <span class="k">else</span> <span class="n">x_solver</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="n">xtilde</span><span class="p">)</span>
+
+            <span class="c1"># v-subproblem update</span>
+            <span class="n">vtilde</span> <span class="o">=</span> <span class="n">x_t</span> <span class="o">+</span> <span class="n">u_t</span>
+            <span class="n">v_t</span>    <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">prox</span><span class="p">(</span><span class="n">vtilde</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambda</span><span class="p">)</span>
+
+            <span class="c1"># u-subproblem update</span>
+            <span class="n">u_t</span> <span class="o">=</span> <span class="n">u_t</span> <span class="o">+</span> <span class="n">x_t</span> <span class="o">-</span> <span class="n">v_t</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fidelity</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Iter: &quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;fidelity: &quot;</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">v_t</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

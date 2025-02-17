@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colibri.optics.doe &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/colibri-logo.svg"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../../../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colibri.optics.doe</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colibri.optics.doe</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">psf_single_doe_spectral</span><span class="p">,</span> <span class="n">convolutional_sensing</span><span class="p">,</span> <span class="n">wiener_filter</span><span class="p">,</span> <span class="n">ideal_panchromatic_sensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics.sota_does</span><span class="w"> </span><span class="kn">import</span> <span class="n">conventional_lens</span><span class="p">,</span> <span class="n">nbk7_refractive_index</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseOpticsLayer</span>
+
+<div class="viewcode-block" id="SingleDOESpectral">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.doe.SingleDOESpectral.html#colibri.optics.doe.SingleDOESpectral">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SingleDOESpectral</span><span class="p">(</span><span class="n">BaseOpticsLayer</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Single Diffractive Optical Element for Spectral Imaging </span>
+
+<span class="sd">    This optical system allow for the capture of spatio-spectral information through a wavelength dependent phase coding of light through a diffractive optical element. </span>
+<span class="sd">    </span>
+<span class="sd">    Mathematically, this system can be described as follows: </span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">    </span>
+<span class="sd">            \mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for SingleDOESpectral, :math:`\xset = \mathbb{R}^{L \times M \times N}` and :math:`\yset = \mathbb{R}^{M \times N}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the diffractive optical element, such as</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \begin{align*}</span>
+<span class="sd">        \forwardLinear_{\learnedOptics}: \mathbf{x} &amp;\mapsto \mathbf{y} \\</span>
+<span class="sd">                        \mathbf{y}_l &amp;=  \sum_{l=1}^{L} \psf(\learnedOptics)_l * \mathbf{x}_{, l}</span>
+<span class="sd">        \end{align*}</span>
+
+<span class="sd">    with :math:`\psf(\learnedOptics)_l` the optical-point spread function (PSF) of the diffractive optical element at wavelength :math:`\lambda_l`, calculated using  :func:`colibri.optics.functional.psf_single_doe_spectral`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="p">,</span> 
+                        <span class="n">height_map</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">aperture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">pixel_size</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+                        <span class="n">wavelengths</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">450</span><span class="p">,</span> <span class="mi">550</span><span class="p">,</span> <span class="mi">650</span><span class="p">])</span><span class="o">*</span><span class="mf">1e-9</span><span class="p">,</span> 
+                        <span class="n">source_distance</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> 
+                        <span class="n">sensor_distance</span> <span class="o">=</span> <span class="mf">50e-3</span><span class="p">,</span> 
+                        <span class="n">sensor_spectral_sensitivity</span><span class="o">=</span><span class="n">ideal_panchromatic_sensor</span><span class="p">,</span>
+                        <span class="n">doe_refractive_index</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">approximation</span> <span class="o">=</span> <span class="s2">&quot;fresnel&quot;</span><span class="p">,</span>
+                        <span class="n">domain</span> <span class="o">=</span> <span class="s2">&quot;fourier&quot;</span><span class="p">,</span>
+                        <span class="n">trainable</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the SingleDOESpectral layer.</span>
+
+
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_shape (tuple): The shape of the input spectral image in the format (L, M, N), where L is the number of spectral bands, M is the height, and N is the width.</span>
+<span class="sd">            height_map (torch.Tensor): The height map of the DOE (Diffractive Optical Element). If None, a default conventional lens will be generated.</span>
+<span class="sd">            aperture (float): The aperture of the DOE. If None, a circular aperture will be generated.</span>
+<span class="sd">            wavelengths (torch.Tensor): The list of wavelengths corresponding to the spectral bands, by default torch.tensor([450, 550, 650])*1e-9.</span>
+<span class="sd">            source_distance (float): The distance between the source and the DOE, by default is 3 meters.</span>
+<span class="sd">            sensor_distance (float): The distance between the DOE and the sensor, by default is 50e-3 meters.</span>
+<span class="sd">            pixel_size (float): The size of a pixel in the sensor.</span>
+<span class="sd">            sensor_spectral_sensitivity (torch.Tensor, optional): The spectral sensitivity of the sensor. Defaults to ideal_panchromatic_sensor.</span>
+<span class="sd">            doe_refractive_index (float, optional): The refractive index of the DOE. Defaults to None.</span>
+<span class="sd">            approximation (str, optional): The approximation used to calculate the PSF. It can be &quot;fresnel&quot;, &quot;angular_spectrum&quot; or &quot;fraunhofer&quot;. Defaults to &quot;fresnel&quot;.</span>
+<span class="sd">            domain (str, optional): The domain used to calculate the PSF. It can be &quot;fourier&quot; or &quot;spatial&quot;. Defaults to &quot;fourier&quot;.</span>
+<span class="sd">            trainable (bool, optional): Whether the height map of the DOE is trainable or not. Defaults to False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">trainable</span> <span class="o">=</span> <span class="n">trainable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aperture</span> <span class="o">=</span> <span class="n">aperture</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sensor_spectral_sensitivity</span> <span class="o">=</span> <span class="n">sensor_spectral_sensitivity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">source_distance</span> <span class="o">=</span> <span class="n">source_distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sensor_distance</span> <span class="o">=</span> <span class="n">sensor_distance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span> <span class="o">=</span> <span class="n">pixel_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">approximation</span> <span class="o">=</span> <span class="n">approximation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span> <span class="o">=</span> <span class="n">nbk7_refractive_index</span> <span class="k">if</span> <span class="n">doe_refractive_index</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">doe_refractive_index</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">input_shape</span>  <span class="c1"># Extract spectral image shape</span>
+
+        
+        <span class="k">if</span> <span class="n">height_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height_map</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">conventional_lens</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">focal</span><span class="o">=</span><span class="mf">50e-3</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">aperture</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">aperture</span> <span class="o">=</span> <span class="n">conventional_lens</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="n">focal</span><span class="o">=</span><span class="mf">50e-3</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1">#Add parameter CA in pytorch manner</span>
+        <span class="n">height_map</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">height_map</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trainable</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">SingleDOESpectral</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">learnable_optics</span><span class="o">=</span><span class="n">height_map</span><span class="p">,</span> <span class="n">sensing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">convolution</span><span class="p">,</span> <span class="n">backward</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deconvolution</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_psf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height_map</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">height_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">height_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learnable_optics</span>
+        <span class="k">return</span> <span class="n">psf_single_doe_spectral</span><span class="p">(</span><span class="n">height_map</span><span class="o">=</span><span class="n">height_map</span><span class="p">,</span> 
+                                        <span class="n">aperture</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">aperture</span><span class="p">,</span> 
+                                        <span class="n">wavelengths</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">,</span>
+                                        <span class="n">source_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source_distance</span><span class="p">,</span>
+                                        <span class="n">sensor_distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sensor_distance</span><span class="p">,</span>
+                                        <span class="n">pixel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pixel_size</span><span class="p">,</span>
+                                        <span class="n">refractive_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refractive_index</span><span class="p">,</span>
+                                        <span class="n">approximation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">approximation</span><span class="p">)</span>
+    
+    
+<div class="viewcode-block" id="SingleDOESpectral.convolution">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.doe.SingleDOESpectral.html#colibri.optics.doe.SingleDOESpectral.convolution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">height_map</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward operator of the SingleDOESpectral layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Input tensor with shape (B, L, M, N)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor with shape (B, 1, M, N) </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">psf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_psf</span><span class="p">(</span><span class="n">height_map</span><span class="p">)</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="n">convolutional_sensing</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sensor_spectral_sensitivity</span><span class="p">(</span><span class="n">field</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SingleDOESpectral.deconvolution">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.doe.SingleDOESpectral.html#colibri.optics.doe.SingleDOESpectral.deconvolution">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deconvolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">height_map</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Backward operator of the SingleDOESpectral layer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Input tensor with shape (B, 1, M, N)</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor with shape (B, L, M, N) </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">psf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_psf</span><span class="p">(</span><span class="n">height_map</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sensor_spectral_sensitivity</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wiener_filter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span></div>
+
+    
+
+<div class="viewcode-block" id="SingleDOESpectral.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.doe.SingleDOESpectral.html#colibri.optics.doe.SingleDOESpectral.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">type_calculation</span><span class="o">=</span><span class="s2">&quot;forward&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Performs the forward or backward operator according to the type_calculation</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Input tensor with shape (B, L, M, N)</span>
+<span class="sd">            type_calculation (str): String, it can be &quot;forward&quot;, &quot;backward&quot; or &quot;forward_backward&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor with shape (B, L, M, N) </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If type_calculation is not &quot;forward&quot;, &quot;backward&quot; or &quot;forward_backward&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SingleDOESpectral</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">type_calculation</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

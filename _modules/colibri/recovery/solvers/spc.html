@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colibri.recovery.solvers.spc &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../../../../_static/colibri-logo.svg"/>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../../../../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colibri.recovery.solvers.spc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colibri.recovery.solvers.spc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">forward_spc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Solver</span>
+
+
+<div class="viewcode-block" id="L2L2SolverSPC">
+<a class="viewcode-back" href="../../../../stubs/colibri.recovery.solvers.spc.L2L2SolverSPC.html#colibri.recovery.solvers.spc.L2L2SolverSPC">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">L2L2SolverSPC</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solver for the SPC acquisition model.</span>
+
+<span class="sd">        It describes the closed-form solution of the optimization problem.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            </span>
+<span class="sd">                \min_{\textbf{X}} \frac{1}{2}||\textbf{X} - \textbf{H}\textbf{X}||_2^2 + \rho||\textbf{X} - \tilde{\textbf{X}}||_2^2</span>
+
+<span class="sd">        where :math:`\textbf{X}` is the tensor to be recovered, :math:`\textbf{Y}` is the input tensor, </span>
+<span class="sd">        :math:`\textbf{H}` is the sensing matrix, and :math:`\rho` is the regularization parameter.</span>
+
+<span class="sd">        in the case of the SPC acquisition model, the :math:`\textbf{X}` is a matrix of size :math:`(M\times N, L)`,</span>
+<span class="sd">        where :math:`M` and :math:`N` are the height and width of the image, and :math:`L` is the number of channels.</span>
+
+<span class="sd">        In this sense, :math:`\textbf{X}` is the spatial vectorized form of the image. </span>
+<span class="sd">        (since the SPC its broadcasting the sensing matrix over the channels)</span>
+
+<span class="sd">        The solution of the optimization problem is given by:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">                </span>
+<span class="sd">                    \hat{\textbf{X}} = (\textbf{H}^\top\textbf{H} + \rho \textbf{I})^{-1}(\textbf{H}^\top \textbf{Y} + \rho \tilde{\textbf{X}})</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">acquisition_model</span><span class="p">:</span> <span class="n">SPC</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            y (torch.Tensor): Input tensor with shape (B, L, M, N)</span>
+<span class="sd">            acquisition_model (SPC): Acquisition model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">L2L2SolverSPC</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">acquisition_model</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hty</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">type_calculation</span><span class="o">=</span><span class="s2">&quot;backward&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span>   <span class="o">=</span> <span class="n">acquisition_model</span><span class="o">.</span><span class="n">learnable_optics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">HtH</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xtilde</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+
+        <span class="n">H_adjoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">HtH</span>  <span class="o">+</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">H_adjoint</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">H_adjoint</span><span class="p">)</span>
+
+        <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">xtilde</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">x_hat</span> <span class="o">=</span> <span class="n">forward_spc</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">Hty</span> <span class="o">+</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">xtilde</span><span class="p">,</span> <span class="n">H_adjoint</span><span class="p">)</span>
+        <span class="n">x_hat</span> <span class="o">=</span> <span class="n">x_hat</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">x_hat</span> <span class="o">=</span> <span class="n">x_hat</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_hat</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
