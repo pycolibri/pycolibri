@@ -1,10 +1,10 @@
 import torch
-from colibri.optics.functional import phase_retrieval_forward, phase_retrieval_backward
+from colibri.optics.functional import coded_phase_imaging_forward, coded_phase_imaging_backward
 from .utils import BaseOpticsLayer
 
-class CodedPhaseRetrieval(BaseOpticsLayer):
+class CodedPhaseImaging(BaseOpticsLayer):
     r"""
-    Coded Phase Retrieval 
+    Coded Phase Imaging 
 
     This optical system allow for the capture of a single intensity image of an object, and the subsequent reconstruction of the phase of the object. The system is composed of a phase mask that modulates the phase of the incoming light, and a sensor that captures the intensity of the light. The phase mask is designed to encode the phase information of the object in the intensity image. The phase of the object can be reconstructed from the intensity image using a phase retrieval algorithm.
     
@@ -14,7 +14,7 @@ class CodedPhaseRetrieval(BaseOpticsLayer):
     
             \mathbf{y} = \vert \forwardLinear_{\learnedOptics}(\mathbf{x}) \vert^2+ \noise
     
-    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for CodedPhaseRetrieval, :math:`\xset = \mathbb{C}^{M \times N}` and :math:`\yset = \mathbb{R}^{M \times N}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the optical system, which is defined as:
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for CodedPhaseImaging, :math:`\xset = \mathbb{C}^{M \times N}` and :math:`\yset = \mathbb{R}^{M \times N}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the optical system, which is defined as:
 
     .. math::
 
@@ -23,7 +23,7 @@ class CodedPhaseRetrieval(BaseOpticsLayer):
                         \mathbf{y} &= \mathbf{y} = \left| \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics) \right|^2 + \noise
         \end{align*}
 
-    with :math:`\learnedOptics(\learnedOptics) \in \mathbb{C}^{M \times N}` being the phase mask, :math:`\mathcal{P}_{(z, \lambda)}(\cdot)` the forward operator of the optical system, :math:`\odot` the element-wise product, and :math:`\noise` the sensor noise.
+    with :math:`\learnedOptics \in \mathbb{C}^{M \times N}` being the phase mask, :math:`\mathcal{P}_{(z, \lambda)}(\cdot)` the forward operator of the optical system, :math:`\odot` the element-wise product, and :math:`\noise` the sensor noise.
 
     """
     def __init__(self, 
@@ -36,7 +36,7 @@ class CodedPhaseRetrieval(BaseOpticsLayer):
                 trainable: bool = False,
                 ):
         r"""
-        Initializes the CodedPhaseRetrieval layer.
+        Initializes the CodedPhaseImaging layer.
 
         Args:
             input_shape (torch.Size): The shape of the input tensor.
@@ -57,25 +57,36 @@ class CodedPhaseRetrieval(BaseOpticsLayer):
         # Add parameter CA in pytorch manner
         phase_mask = torch.nn.Parameter(phase_mask, requires_grad=self.trainable)
 
-        super(CodedPhaseRetrieval, self).__init__(
+        super(CodedPhaseImaging, self).__init__(
                                             learnable_optics=phase_mask, 
-                                            sensing=lambda x, phase_mask: phase_retrieval_forward(x, phase_mask, pixel_size, wavelength, sensor_distance, approximation), 
-                                            backward=lambda y, phase_mask: phase_retrieval_backward(y, phase_mask, pixel_size, wavelength, -sensor_distance, approximation),
+                                            sensing=lambda x, phase_mask: coded_phase_imaging_forward(x, phase_mask, pixel_size, wavelength, sensor_distance, approximation), 
+                                            backward=lambda y, phase_mask: coded_phase_imaging_backward(y, phase_mask, pixel_size, wavelength, sensor_distance, approximation),
                                         )
 
+    def intensity(self, x):
+        r"""
+        Computes the intensity of the input tensor.
 
+        Args:
+            x (torch.Tensor): Input tensor with shape (B, M, N)
+        Returns:
+            torch.Tensor: Intensity of the input tensor with shape (B, M, N)
+        """
+        return torch.abs(x)**2
 
-    def forward(self, x, type_calculation="forward"):
+    def forward(self, x, type_calculation="forward", intensity=False):
         r"""
         Performs the forward or backward operator according to the type_calculation
 
         Args:
-            x (torch.Tensor): Input tensor with shape (B, L, M, N)
+            x (torch.Tensor): Input tensor with shape (B, M, N)
             type_calculation (str): String, it can be "forward", "backward" or "forward_backward"
         Returns:
-            torch.Tensor: Output tensor with shape (B, L, M, N) 
+            torch.Tensor: Output tensor with shape (B, M, N) 
         Raises:
             ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
-
-        return super(CodedPhaseRetrieval, self).forward(x, type_calculation)
+        y = super(CodedPhaseImaging, self).forward(x, type_calculation)
+        if intensity:
+            y = self.intensity(y)
+        return y

@@ -824,11 +824,13 @@ def ideal_panchromatic_sensor(image: torch.Tensor) -> torch.Tensor:
     return torch.sum(image, dim=1, keepdim=True)/image.shape[1]
 
 
-def phase_retrieval_forward(field: torch.Tensor, phase_mask: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
+def coded_phase_imaging_forward(field: torch.Tensor, phase_mask: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
     r"""
     Forward model for phase retrieval using a single distance and wavelength.
+
     .. math::
-        \mathbf{y} = \left| \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics) \right|^2
+        \mathbf{y} = \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics)
+
     Args:
         image (torch.Tensor): Image tensor to simulate the sensing (B, 1, M, N).
         distance (float): Distance in meters.
@@ -838,14 +840,16 @@ def phase_retrieval_forward(field: torch.Tensor, phase_mask: torch.Tensor, dista
         torch.Tensor: Phase retrieval measurement (B, 1, M, N).
 
     """
-    return torch.abs(scalar_diffraction_propagation(field * phase_mask, distance, pixel_size, wavelength, approximation))**2
+    return scalar_diffraction_propagation(field * phase_mask, distance, pixel_size, wavelength, approximation)
 
 
-def phase_retrieval_backward(field: torch.Tensor, phase_mask: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
+def coded_phase_imaging_backward(field: torch.Tensor, phase_mask: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
     r"""
     Backward model for phase retrieval using a single distance and wavelength.
+
     .. math::
         \mathbf{x} = \mathcal{P}_{(-z, \lambda)}(\mathbf{x}) \odot \bar{\learnedOptics}
+
     Args:
         y (torch.Tensor): Measurement tensor (B, 1, M, N).
         distance (float): Distance in meters.
@@ -855,4 +859,4 @@ def phase_retrieval_backward(field: torch.Tensor, phase_mask: torch.Tensor, dist
         torch.Tensor: Reconstructed image tensor (B, 1, M, N).
 
     """
-    return scalar_diffraction_propagation(field, distance, pixel_size, wavelength, approximation)*torch.conj(phase_mask)
+    return scalar_diffraction_propagation(field, -distance, pixel_size, wavelength, approximation)*torch.conj(phase_mask)
