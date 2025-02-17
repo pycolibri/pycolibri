@@ -17,7 +17,7 @@ class CaveDataset():
     """
 
     def __init__(self, path: str, download: bool = True,
-                 url: str = 'https://www.cs.columbia.edu/CAVE/databases/multispectral/zip/complete_ms_data.zip'):
+                 url: str = 'https://cave.cs.columbia.edu/old/databases/multispectral/zip/complete_ms_data.zip'):
         self.url = url
         self.tmp_name = 'cave_dataset'
         self.path = os.path.join(path, self.tmp_name)
