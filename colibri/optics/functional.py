@@ -824,7 +824,14 @@ def ideal_panchromatic_sensor(image: torch.Tensor) -> torch.Tensor:
     return torch.sum(image, dim=1, keepdim=True)/image.shape[1]
 
 
-def coded_phase_imaging_forward(field: torch.Tensor, phase_mask: torch.Tensor, distance: float, pixel_size: float, wavelength: list, approximation: str):
+def coded_phase_imaging_forward(
+        field: torch.Tensor, 
+        phase_mask: torch.Tensor, 
+        distance: float, 
+        pixel_size: float, 
+        wavelength: list, 
+        approximation: str
+    ) -> torch.Tensor:
     r"""
 
     Forward model for phase retrieval using a single distance and wavelength.

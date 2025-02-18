@@ -70,7 +70,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
                                             backward=lambda y, phase_mask: coded_phase_imaging_backward(y, phase_mask, pixel_size, wavelength, sensor_distance, approximation),
                                         )
 
-    def intensity(self, x):
+    def intensity(self, x: torch.Tensor)->torch.Tensor:
         r"""
         Computes the intensity of the input tensor.
 
@@ -81,7 +81,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
         """
         return torch.abs(x)**2
 
-    def forward(self, x, type_calculation="forward", intensity=False):
+    def forward(self, x: torch.Tensor, type_calculation: str, intensity: bool = True)->torch.Tensor:
         r"""
         Performs the forward or backward operator according to the type_calculation
 
@@ -98,54 +98,3 @@ class CodedPhaseImaging(BaseOpticsLayer):
             y = self.intensity(y)
         return y
 
-
-class FilteredSpectralInitialization(torch.nn.Module):
-    r"""
-    Filtered Spectral Initialization
-
-    This layer implements the Filtered Spectral Initialization method for estimating the optical field from coded measurements of a Coded Phase Imaging System.
-    
-    Mathematically, this initialization can be described as follows: 
-
-    .... TBD ....
-
-    """
-    def __init__(self, max_iterations:int , p:float, input_shape:tuple):
-        super(FilteredSpectralInitialization, self).__init__()
-        self.iter = max_iterations
-        self.p = p 
-        self.shape = input_shape 
-
-        self.M = torch.tensor(self.shape[-2] * self.shape[-1], dtype=torch.float32)
-        self.R = torch.ceil(self.M / self.p).to(torch.float32)
-        
-
-    def get_ytr(self, y): #Y0
-        S = y.shape
-        ytr_f = torch.zeros_like(y)  
-        y_flat = y.view(S[0], -1)
-        B = torch.argsort(y_flat, dim=1, descending=True)
-        top_R_indices = B[:, :int(self.R)]
-        ytr_flat = torch.zeros_like(y_flat)
-        batch_indices = torch.arange(S[0]).unsqueeze(1).to(y.device)
-        ytr_flat[batch_indices, top_R_indices] = 1
-        ytr_f = ytr_flat.view(S)
-        return ytr_f
-
-        
-    def forward(self, inputs, masks):
-        Z0 = torch.randn(1, 1, self.shape[-2], self.shape[-1], dtype=torch.float32)
-        Z0 = Z0 / torch.norm(Z0, p='fro')
-        Y = inputs.float()
-        normest = torch.sqrt(torch.sum(Y) / Y.numel())
-        Z = self.Z0.to(inputs.device)
-        Ytr = self.get_ytr(Y).to(torch.complex64).to(inputs.device)
-        div = self.M * self.R
-        for _ in range(self.iter):
-            Z = torch.div(backward_propagator(Ytr * forward_propagator(Z, masks), masks), div)
-            Z = Z / torch.norm(Z, p='fro')
-            Z = Z.unsqueeze(1)
-        Z = Z * normest.to(torch.complex64)
-        Z = torch.abs(Z)
-        return Z
-    
