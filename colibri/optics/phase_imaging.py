@@ -61,6 +61,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
 
         if phase_mask is None:
             phase_mask = torch.randn(self.M, self.N, requires_grad=trainable)  # Random initialization
+            phase_mask = torch.exp(1j * phase_mask)
         # Add parameter CA in pytorch manner
         phase_mask = torch.nn.Parameter(phase_mask, requires_grad=self.trainable)
 
@@ -81,7 +82,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
         """
         return torch.abs(x)**2
 
-    def forward(self, x: torch.Tensor, type_calculation: str, intensity: bool = True)->torch.Tensor:
+    def forward(self, x: torch.Tensor, type_calculation: str, intensity: bool = False)->torch.Tensor:
         r"""
         Performs the forward or backward operator according to the type_calculation
 

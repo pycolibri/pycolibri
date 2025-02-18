@@ -48,7 +48,11 @@ class FilteredSpectralInitialization(torch.nn.Module):
         self.filter = self.filter.to(dtype=dtype, device=device)
 
     def apply_filter(self, data: torch.Tensor, kernel: torch.Tensor)->torch.Tensor:
-        return torch.nn.functional.conv2d(data, kernel, padding=kernel.size(-1) // 2)
+        data_real, data_imag = data.real, data.imag
+        data_real = torch.nn.functional.conv2d(data_real, kernel, padding=kernel.size(-1) // 2)
+        data_imag = torch.nn.functional.conv2d(data_imag, kernel, padding=kernel.size(-1) // 2)
+        return data_real + 1j * data_imag
+        return data_imag#
 
     def gaussian_kernel(self, size: int, sigma: float)->torch.Tensor:
         x = torch.arange(-size // 2 + 1.0, size // 2 + 1.0)
@@ -71,16 +75,32 @@ class FilteredSpectralInitialization(torch.nn.Module):
 
         
     def forward(self, inputs: torch.Tensor, optical_layer: torch.nn.Module)->torch.Tensor:
-        z0 = torch.randn(1, 1, self.shape[-2], self.shape[-1], dtype=torch.float32).to(inputs.device)
+        z0 = torch.randn_like(inputs)
         z0 = z0 / torch.norm(z0, p='fro')
-        norm_estimation = torch.norm(inputs, p=1, dim=(2,3)) / inputs.numel()**0.5
+        norm_estimation = torch.norm(inputs, p=1, dim=(-2,-1)) / inputs.numel()**0.5
         Ytr = self.get_ytr(inputs).to(torch.complex64).to(inputs.device)
         div = self.M * self.R
+        import matplotlib.pyplot as plt
+        fig, ax = plt.subplots(1, 2)
+        ax[0].imshow(torch.abs(inputs[0]).cpu().detach().numpy())
+        ax[0].set_title("Input")
+        ax[1].imshow(torch.abs(Ytr[0]).cpu().detach().numpy())
+        ax[1].set_title("Ytr")
+        plt.show()
+
+        
         for _ in range(self.iter):
-            y_hat = optical_layer(z0, "forward")
-            z0 = torch.div(optical_layer(Ytr * y_hat, "backward"), div)
-            Z = self.apply_filter(Z, self.filter)
-            z0 = z0 / torch.norm(z0, p='fro', dim=(2, 3))
+            y_hat = optical_layer(z0, "forward", intensity=False)
+            z0 = torch.div(optical_layer(Ytr * y_hat, "backward", intensity=False), div)
+            z0 = self.apply_filter(z0, self.filter)
+            z0 = z0 / torch.norm(z0, p='fro', dim=(-2, -1))
+            fig, ax = plt.subplots(1, 2)
+            ax[0].imshow(torch.abs(z0[0]).cpu().detach().numpy())
+            ax[0].set_title("Reconstruction")
+            ax[1].imshow(torch.angle(z0[0]).cpu().detach().numpy())
+            ax[1].set_title("Phase")
+            plt.show()
+
         z0 = z0 * norm_estimation.to(torch.complex64)
         return z0
     
