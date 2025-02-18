@@ -121,7 +121,7 @@ def test_doe_forward(doe_config):
 def coded_phase_imaging_config():
     phase_mask_size=(100, 100)
     img_size=(32, 100, 100)
-    type_wave_propagation = "angular_spectrum" 
+    type_wave_propagation = "fresnel" 
     wavelengths = 550*1e-9
     pixel_size = 100e-6
     distance = 50e-3

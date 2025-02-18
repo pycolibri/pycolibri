@@ -82,7 +82,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
         """
         return torch.abs(x)**2
 
-    def forward(self, x: torch.Tensor, type_calculation: str, intensity: bool = False)->torch.Tensor:
+    def forward(self, x: torch.Tensor, type_calculation: str = "forward", intensity: bool = False)->torch.Tensor:
         r"""
         Performs the forward or backward operator according to the type_calculation
 

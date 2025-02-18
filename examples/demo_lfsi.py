@@ -1,5 +1,5 @@
 r"""
-Demo LFSI.
+Demo Filtered Spectral Initialization
 ===================================================
 
 """
@@ -62,7 +62,7 @@ sample = torch.exp(1j * 2*torch.pi * sample)
 sample = torch.nn.functional.pad(sample, (32, 32, 32, 32), mode='constant', value=0)
 # %%
 # Optics forward model
-
+# -----------------------------------------------
 from colibri.optics import CodedPhaseImaging
 from colibri.optics.functional import coded_phase_imaging_forward, coded_phase_imaging_backward
 
@@ -90,8 +90,10 @@ acquisition_model = CodedPhaseImaging(
 
 y = acquisition_model(sample, type_calculation="forward", intensity=True)
 
+# %%
+# Estimate phase 
+# -----------------------------------------------
 
-# Reconstruct image
 from colibri.recovery import FilteredSpectralInitialization
 
 
