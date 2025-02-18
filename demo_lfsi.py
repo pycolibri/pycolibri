@@ -96,9 +96,8 @@ from colibri.recovery import FilteredSpectralInitialization
 
 
 lfsi_algorithm = FilteredSpectralInitialization(
-                    input_shape=y.shape,
                     max_iterations=15,
-                    p=4,
+                    p=0.9,
                     k_size=5,
                     sigma=1.0,
                     train_filter=False,
@@ -127,7 +126,7 @@ axs[1].imshow(y, cmap="gray")
 axs[1].set_xticks([])
 axs[1].set_yticks([])
 
-axs[2].set_title("Reconstruction")
+axs[2].set_title("Estimation")
 axs[2].imshow(x_hat, cmap="gray")
 axs[2].set_xticks([])
 axs[2].set_yticks([])
