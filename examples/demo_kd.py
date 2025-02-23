@@ -118,13 +118,15 @@ n_epochs = 60
 steps_per_epoch = None
 frequency = 1
 
-train_teacher = True
-train_baseline = True
+train_teacher = False
+train_baseline = False
+
+acquisition_model_teacher = SPC(
+    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
+)
+
 
 if train_teacher:
-    acquisition_model_teacher = SPC(
-        input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
-    )
     recovery_model_teacher = build_network(Unet, **network_config)
     teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
     optimizer_teacher = torch.optim.Adam(teacher.parameters(), lr=5e-4)
@@ -149,6 +151,11 @@ if train_teacher:
 
     results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
     torch.save(teacher.state_dict(), "teacher.pth")
+
+elif not train_teacher:
+    recovery_model_teacher = build_network(Unet_KD, **network_config)
+    teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+    teacher.load_state_dict(torch.load("teacher.pth"))
 
 if train_baseline:
 
