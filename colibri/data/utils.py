@@ -5,14 +5,14 @@ from PIL import Image
 
 import torchvision
 import torch
+
 # Builtin datasets
 
 BUILTIN_DATASETS = {
-
-    'mnist': torchvision.datasets.MNIST,
-    'fashion_mnist': torchvision.datasets.FashionMNIST,
-    'cifar10': torchvision.datasets.CIFAR10,
-    'cifar100': torchvision.datasets.CIFAR100
+    "mnist": torchvision.datasets.MNIST,
+    "fashion_mnist": torchvision.datasets.FashionMNIST,
+    "cifar10": torchvision.datasets.CIFAR10,
+    "cifar100": torchvision.datasets.CIFAR100,
 }
 
 
@@ -46,23 +46,29 @@ def load_builtin_dataset(name: str, path: str, **kwargs):
 
     Raises:
         KeyError: If the specified dataset name is not found.
-        
+
     """
 
-    train = kwargs['train'] if 'train' in kwargs else False
-    download = kwargs['download'] if 'download' in kwargs else True
+    train = kwargs["train"] if "train" in kwargs else False
+    download = kwargs["download"] if "download" in kwargs else True
 
     builtin_dataset = BUILTIN_DATASETS[name](root=path, train=train, download=download)
     dataset = dict(input=builtin_dataset.data, output=builtin_dataset.targets)
 
     # transform
 
-    dataset['input'] = (dataset['input'] / 255.).astype(np.float32)
-    if dataset['input'].ndim != 4:
-        dataset['input'] = dataset['input'].unsqueeze(1)
-    dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
+    if dataset["input"].ndim != 4:
+        dataset["input"] = dataset["input"].unsqueeze(1)
 
-    dataset['input'] = torch.from_numpy(dataset['input'])
-    dataset['output'] = torch.tensor(dataset['output'])
+    dataset["input"] = dataset["input"] / 255.0
+    if isinstance(dataset["input"], np.ndarray):
+        dataset["input"] = dataset["input"].astype(np.float32)
+        dataset["input"] = np.transpose(dataset["input"], (0, 3, 2, 1))
+
+        dataset["input"] = torch.from_numpy(dataset["input"])
+        dataset["output"] = torch.tensor(dataset["output"])
+
+    else:
+        dataset["input"] = dataset["input"].permute(0, 1, 3, 2)
+
     return dataset
-

@@ -32,7 +32,7 @@ else:
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = "cifar10"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+name = "fashion_mnist"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = "."
 batch_size = 64
 acquisition_name = "spc"  # ['spc', 'cassi', 'doe']
@@ -119,8 +119,8 @@ n_epochs = 60
 steps_per_epoch = None
 frequency = 1
 
-train_teacher = False
-train_baseline = False
+train_teacher = True
+train_baseline = True
 
 acquisition_model_teacher = SPC(
     input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
@@ -153,6 +153,14 @@ if train_teacher:
 
     results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
     torch.save(teacher.state_dict(), "teacher.pth")
+
+    del teacher
+
+    recovery_model_teacher = build_network(Unet_KD, **network_config)
+    teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+    teacher = teacher.to(device)
+    teacher.load_state_dict(torch.load("teacher.pth"))
+
 
 elif not train_teacher:
     recovery_model_teacher = build_network(Unet_KD, **network_config)
