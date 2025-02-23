@@ -50,7 +50,7 @@ class Binary(nn.Module):
         Returns:
             torch.Tensor: Binary regularization term.
         """
-        regularization = self.parameter * (torch.sum(torch.mul(torch.square(x - self.min_v), torch.square(x - self.max_v))))
+        regularization = self.parameter * (torch.mean(torch.mul(torch.square(x - self.min_v), torch.square(x - self.max_v))))
         return regularization
 
 class Transmittance(nn.Module):
