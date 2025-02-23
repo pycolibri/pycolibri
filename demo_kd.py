@@ -75,9 +75,7 @@ img_size = sample.shape[1:]
 n_measurements = 256
 n_measurements_sqrt = int(math.sqrt(n_measurements))
 
-acquisition_model_teacher = SPC(
-    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
-)
+
 acquisition_model_student = SPC(
     input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
 )
@@ -109,44 +107,87 @@ network_config = dict(
     reduce_spatial=True,  # Only for Autoencoder
 )
 
-recovery_model_teacher = build_network(Unet_KD, **network_config)
 recovery_model_student = build_network(Unet_KD, **network_config)
 
-teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
 student = E2E(acquisition_model_student, recovery_model_student)
 
-# optimizer_teacher = torch.optim.Adam(teacher.parameters(), lr=5e-4)
 optimizer_student = torch.optim.Adam(student.parameters(), lr=5e-4)
 
 losses = {"MSE": torch.nn.MSELoss()}
 metrics = {"PSNR": psnr, "SSIM": ssim}
-losses_weights = [1.0, 1.0]
+losses_weights = [1.0]
 
-n_epochs = 50
-steps_per_epoch = 1
+n_epochs = 60
+steps_per_epoch = None
 frequency = 1
 
-# train_schedule = Training(
-#     model=teacher,
-#     train_loader=dataset_loader,
-#     optimizer=optimizer_teacher,
-#     loss_func=losses,
-#     losses_weights=losses_weights,
-#     metrics=metrics,
-#     regularizers=None,
-#     regularization_weights=None,
-#     schedulers=[],
-#     callbacks=[],
-#     device=device,
-#     regularizers_optics_ce=None,
-#     regularization_optics_weights_ce=None,
-#     regularizers_optics_mo=None,
-#     regularization_optics_weights_mo=None,
-# )
+train_teacher = True
+train_baseline = True
 
-# results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
+if train_teacher:
+    acquisition_model_teacher = SPC(
+        input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
+    )
+    recovery_model_teacher = build_network(Unet_KD, **network_config)
+    teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+    optimizer_teacher = torch.optim.Adam(teacher.parameters(), lr=5e-4)
 
-# torch.save(teacher.state_dict(), "teacher.pth")
+    train_schedule = Training(
+        model=teacher,
+        train_loader=dataset_loader,
+        optimizer=optimizer_teacher,
+        loss_func=losses,
+        losses_weights=losses_weights,
+        metrics=metrics,
+        regularizers=None,
+        regularization_weights=None,
+        schedulers=[],
+        callbacks=[],
+        device=device,
+        regularizers_optics_ce=None,
+        regularization_optics_weights_ce=None,
+        regularizers_optics_mo=None,
+        regularization_optics_weights_mo=None,
+    )
+
+    results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
+    torch.save(teacher.state_dict(), "teacher.pth")
+
+if train_baseline:
+
+    acquisition_model_baseline = SPC(
+        input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
+    )
+
+    recovery_model_baseline = build_network(Unet, **network_config)
+
+    baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
+
+    optimizer_baseline = torch.optim.Adam(baseline.parameters(), lr=5e-4)
+
+    train_schedule_baseline = Training(
+        model=baseline,
+        train_loader=dataset_loader,
+        optimizer=optimizer_baseline,
+        loss_func=losses,
+        losses_weights=losses_weights,
+        metrics=metrics,
+        regularizers=None,
+        regularization_weights=None,
+        schedulers=[],
+        callbacks=[],
+        device=device,
+        regularizers_optics_ce=None,
+        regularization_optics_weights_ce=None,
+        regularizers_optics_mo=None,
+        regularization_optics_weights_mo=None,
+    )
+
+    results_baseline = train_schedule_baseline.fit(
+        n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
+    )
+    torch.save(baseline.state_dict(), "baseline.pth")
+
 
 train_schedule_kd = TrainingKD(
     student_model=student,
@@ -176,4 +217,6 @@ train_schedule_kd = TrainingKD(
     device=device,
 )
 
-results_kd = train_schedule_kd.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
+results_kd = train_schedule_kd.fit(
+    n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
+)
