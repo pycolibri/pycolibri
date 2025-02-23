@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
 
-manual_device = "cpu"
+manual_device = False  # "cpu"
 # Check GPU support
 print("GPU support: ", torch.cuda.is_available())
 
@@ -107,6 +107,7 @@ network_config = dict(
 recovery_model_student = build_network(Unet_KD, **network_config)
 
 student = E2E(acquisition_model_student, recovery_model_student)
+student = student.to(device)
 
 optimizer_student = torch.optim.Adam(student.parameters(), lr=5e-4)
 
@@ -129,6 +130,7 @@ acquisition_model_teacher = SPC(
 if train_teacher:
     recovery_model_teacher = build_network(Unet, **network_config)
     teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+    teacher = teacher.to(device)
     optimizer_teacher = torch.optim.Adam(teacher.parameters(), lr=5e-4)
 
     train_schedule = Training(
@@ -155,6 +157,7 @@ if train_teacher:
 elif not train_teacher:
     recovery_model_teacher = build_network(Unet_KD, **network_config)
     teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+    teacher = teacher.to(device)
     teacher.load_state_dict(torch.load("teacher.pth"))
 
 if train_baseline:
@@ -166,6 +169,7 @@ if train_baseline:
     recovery_model_baseline = build_network(Unet, **network_config)
 
     baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
+    baseline = baseline.to(device)
 
     optimizer_baseline = torch.optim.Adam(baseline.parameters(), lr=5e-4)
 
@@ -200,13 +204,13 @@ train_schedule_kd = TrainingKD(
     train_loader=dataset_loader,
     optimizer=optimizer_student,
     loss_func={"MSE": torch.nn.MSELoss()},
-    losses_weights=losses_weights,
+    losses_weights=[0.1],
     kd_config={
-        "enc_weight": 0.1,
+        "enc_weight": 0.8,
         "dec_weight": 0.1,
         "loss_dec_type": "MSE",
         "loss_enc_type": "GRAMM",
-        "layer_idxs": [0, 1, 2, 3],
+        "layer_idxs": [3, 4],
         "att_config": None,
     },
     metrics=metrics,
