@@ -38,7 +38,7 @@ batch_size = 64
 acquisition_name = "spc"  # ['spc', 'cassi', 'doe']
 
 
-dataset = CustomDataset(name, path)
+dataset = CustomDataset(name, path, train=True)
 
 
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
