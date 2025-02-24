@@ -19,15 +19,15 @@ class L2L2SolverModulo(Solver):
 
         .. math::
                 
-                    \min_{\textbf{x}} \frac{1}{2}|| \mathcal{M}_{t}( \Delta \textbf{y} ) -  \Delta \textbf{x}  ||_2^2 + \rho||\textbf{x} - \tilde{\textbf{x}}||_2^2
+                    \min_{\mathbf{x}} \frac{1}{2}|| \mathcal{M}_{t}( \Delta \mathbf{y} ) -  \Delta \mathbf{x}  ||_2^2 + \rho||\mathbf{x} - \tilde{\mathbf{x}}||_2^2
     
-        where :math:`\textbf{x}` is the tensor to be recovered, :math:`\textbf{y}` is the input tensor, and :math:`\mathcal{M}_{t}` is the modulo operator with threshold :math:`t`.
+        where :math:`\mathbf{x}` is the tensor to be recovered, :math:`\mathbf{y}` is the input tensor, and :math:`\mathcal{M}_{t}` is the modulo operator with threshold :math:`t`.
 
         The solution of the optimization problem is given by:
         
         .. math::        
-                \hat{\textbf{x}}_{mn+n} = \mathcal{D}^{-1} \Bigg(                  
-                \frac{ \mathcal{D}(  \Delta^{\top} \mathcal{M}_{t}(\Delta \textbf{y} ) + (\rho/2)\tilde{\textbf{x}} )_{mn+n} }
+                \hat{\mathbf{x}}_{mn+n} = \mathcal{D}^{-1} \Bigg(                  
+                \frac{ \mathcal{D}(  \Delta^{\top} \mathcal{M}_{t}(\Delta \mathbf{y} ) + (\rho/2)\tilde{\mathbf{x}} )_{mn+n} }
                 { 2(2 + \rho/4 - \cos(\pi m /M)  - \cos(\pi n /N) ) }  \Bigg) 
 
         where :math:`\mathcal{D}` is the 2D Discrete Cosine Transform, :math:`\Delta` is the discrete gradient operator. When the parameter :math:`\rho` is set to zero, the problem can be interpreted as the discretization of the Poisson's equation with Neumann boundary conditions.

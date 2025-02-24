@@ -831,14 +831,14 @@ def modulo(x, t=1.0):
     Modulo operation.
 
     .. math::
-        x = x - t \lfloor \frac{x}{t} \rfloor
+        \mathbf{x} = \mathbf{x} - t \Big\lfloor \frac{\mathbf{x}}{t} \Big\rfloor
 
     Args:
-        x (torch.Tensor): Input tensor.
+        x (torch.Tensor): Input tensor with any shape (dim1, dim2, ..., dimN).
         t (float): Modulo value.
 
     Returns:
-        torch.Tensor: Modulo operation result.
+        torch.Tensor: Modulo operation result with the same shape as input (dim1, dim2, ..., dimN).
 
     """
     return x - t * torch.floor(x / t)

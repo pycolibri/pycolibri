@@ -35,11 +35,11 @@ class Modulo(BaseOpticsLayer):
         Forward pass of the modulo operator
 
         Args:
-            x (torch.Tensor): Input tensor
+            x (torch.Tensor): Input tensor with shape (B, L, M, N)
             type_calculation (str): Type of calculation to perform. Default: "forward"
 
         Returns:
-            torch.Tensor: Output tensor
+            torch.Tensor: Output tensor with shape (B, L, M, N)
         """
         if type_calculation == "backward":
             raise ValueError("The modulo operator does not have a backward pass")
