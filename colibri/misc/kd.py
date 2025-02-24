@@ -38,11 +38,17 @@ class KD(nn.Module):
 
         x_hat_student, feats_student = self.student(x)
 
-        loss_fb = self.loss_dec(feats_teacher, feats_student) * self.kd_config["enc_weight"]
+        loss_dec = self.loss_dec(feats_teacher, feats_student) * self.kd_config["dec_weight"]
 
-        loss_rb = self.loss_enc(self.teacher.optical_layer.learnable_optics, self.student.optical_layer.learnable_optics) * self.kd_config["dec_weight"]
+        loss_enc = (
+            self.loss_enc(
+                self.teacher.optical_layer.learnable_optics,
+                self.student.optical_layer.learnable_optics,
+            )
+            * self.kd_config["enc_weight"]
+        )
 
-        return x_hat_student, loss_fb, loss_rb
+        return x_hat_student, loss_dec, loss_enc
 
 
 class KD_dec_loss(nn.Module):
@@ -148,9 +154,9 @@ class KD_enc_loss(nn.Module):
             gram_student = torch.matmul(cas_student.T, cas_student)
             gram_teacher = torch.matmul(cas_teacher.T, cas_teacher)
 
-            loss = torch.mean((gram_teacher - gram_student) ** 2)
+            loss = nn.MSELoss()(gram_student, gram_teacher)
 
             return loss
-        
+
         else:
             raise ValueError("Loss type not supported. Please choose between GRAMM.")

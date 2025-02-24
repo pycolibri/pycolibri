@@ -56,7 +56,7 @@ class TrainingKD:
 
         else:
             raise ValueError("Teacher model weights not found.")
-        
+
         self.kd_model = KD(teacher_model, student_model, kd_config)
 
         for param in self.kd_model.teacher.parameters():
@@ -105,7 +105,7 @@ class TrainingKD:
             outputs_gt = outputs_gt.to(self.device)
 
             # Zero your gradients for every batch!
-            self.optimizer.zero_grad(set_to_none=True)
+            self.optimizer.zero_grad()
 
             # Make inference
             outputs_pred, loss_fb, loss_rb = self.kd_model(inputs)
@@ -118,7 +118,7 @@ class TrainingKD:
                 loss_values[key] = res
                 final_loss += loss_values[key]
 
-            final_loss += loss_fb + loss_rb
+            final_loss = final_loss + loss_fb + loss_rb
             txt_losses = ""
             txt_reg_ce = ""
             txt_reg_mo = ""

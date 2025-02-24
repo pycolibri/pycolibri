@@ -32,7 +32,7 @@ else:
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = "fashion_mnist"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+name = "cifar10"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = "."
 batch_size = 64
 acquisition_name = "spc"  # ['spc', 'cassi', 'doe']
@@ -52,7 +52,7 @@ sample = next(iter(dataset_loader))["input"]
 img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
-plt.imshow(img.permute(1, 2, 0))
+plt.imshow(img.permute(2, 1, 0))
 plt.title(f"{name} dataset")
 plt.axis("off")
 plt.show()
@@ -101,7 +101,8 @@ from colibri.metrics import psnr, ssim
 network_config = dict(
     in_channels=sample.shape[1],
     out_channels=sample.shape[1],
-    reduce_spatial=True,  # Only for Autoencoder
+    features=[64, 128, 256, 512],
+    last_activation="relu",
 )
 
 recovery_model_student = build_network(Unet_KD, **network_config)
@@ -115,7 +116,7 @@ losses = {"MSE": torch.nn.MSELoss()}
 metrics = {"PSNR": psnr, "SSIM": ssim}
 losses_weights = [1.0]
 
-n_epochs = 60
+n_epochs = 20
 steps_per_epoch = None
 frequency = 1
 
@@ -218,7 +219,7 @@ train_schedule_kd = TrainingKD(
         "dec_weight": 0.1,
         "loss_dec_type": "MSE",
         "loss_enc_type": "GRAMM",
-        "layer_idxs": [3, 4],
+        "layer_idxs": [4],
         "att_config": None,
     },
     metrics=metrics,
