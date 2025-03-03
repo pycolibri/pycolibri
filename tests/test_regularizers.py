@@ -34,7 +34,7 @@ def test_regularizer(reg_name, imsize):
     
     reg = choose_regularizer(reg_name)
     if reg_name=="binary":
-        x1 = torch.randint(0, 2, imsize)
+        x1 = torch.randint(0, 2, imsize).float()
         x2 = torch.rand(imsize)
         cond = reg(x1)<reg(x2)
     elif reg_name=="transmittance":
