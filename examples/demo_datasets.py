@@ -26,10 +26,10 @@ from colibri.data.datasets import CustomDataset
 name = 'fashion_mnist'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = 'data'
 batch_size = 128
+builtin_train = True
+builtin_download = True
 
-
-dataset = CustomDataset(name, path)
-
+dataset = CustomDataset(name, path, builtin_train, builtin_download)
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 # %%
