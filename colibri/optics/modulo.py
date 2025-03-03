@@ -19,7 +19,7 @@ class Modulo(BaseOpticsLayer):
         .. math::
                 \mathbf{y} = \mathcal{M}_t(\mathbf{x}) = \text{mod}(\mathbf{x}, t)
         
-        where :math:`\mathbf{x}\in\xset` is the input tensor, :math:`\mathbf{y}\in\yset` is the output tensor, and :math:`t` is the threshold value.
+        where :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` is the acquired signal, and :math:`t` is the threshold value.
 
     """
 
