@@ -98,7 +98,7 @@ from colibri.recovery import FilteredSpectralInitialization
 
 
 lfsi_algorithm = FilteredSpectralInitialization(
-                    max_iterations=15,
+                    max_iters=15,
                     p=0.9,
                     k_size=5,
                     sigma=1.0,

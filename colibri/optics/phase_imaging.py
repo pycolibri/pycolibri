@@ -39,7 +39,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
         Initializes the CodedPhaseImaging layer.
 
         Args:
-            input_shape (torch.Size): The shape of the input tensor.
+            input_shape (torch.Size): The spatial shape of the input tensor, (M, N) used to define the phase mask shape.
             phase_mask (torch.Tensor, optional): The phase mask tensor. Defaults to None.
             pixel_size (float, optional): The size of each pixel in meters. Defaults to 1e-6.
             wavelength (torch.Tensor, optional): The wavelength of the light in meters. Defaults to torch.tensor([550])*1e-9.

@@ -11,7 +11,7 @@ class FilteredSpectralInitialization(torch.nn.Module):
     """
     def __init__(
             self, 
-            max_iterations:int , 
+            max_iters:int , 
             filter: torch.Tensor = None,
             p: float = 0.6,
             k_size: int = 5, 
@@ -25,13 +25,20 @@ class FilteredSpectralInitialization(torch.nn.Module):
         Initializes the Filtered Spectral Initialization layer.
 
         Args:
-            max_iterations (int): The maximum number of iterations.
-            p (float): The percentage of the top values to keep.
-            input_shape (tuple): The shape of the input tensor.
+            max_iters (int): The maximum number of iterations.
+            filter (torch.Tensor, optional): The filter tensor. If None, a Gaussian kernel will be used. Default is None.
+            p (float, optional): The percentage of the top values to keep. Default is 0.6.
+            k_size (int, optional): The size of the Gaussian kernel. Default is 5.
+            sigma (float, optional): The standard deviation of the Gaussian kernel. Default is 1.0.
+            train_filter (bool, optional): If True, the filter will be trainable. Default is False.
+            dtype (torch.dtype, optional): The data type of the filter tensor. Default is torch.float32.
+            device (torch.device, optional): The device on which the filter tensor will be allocated. Default is CPU.
 
+            Returns:
+            None
         """
         super(FilteredSpectralInitialization, self).__init__()
-        self.iter = max_iterations
+        self.iter = max_iters
         self.p = p 
 
 
