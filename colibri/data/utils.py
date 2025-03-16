@@ -62,7 +62,7 @@ def load_builtin_dataset(name: str, path: str, **kwargs):
         dataset['input'] = dataset['input'].unsqueeze(1)
     dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
 
-    dataset['input'] = torch.from_numpy(dataset['input'])
-    dataset['output'] = torch.tensor(dataset['output'])
+    dataset['input'] = torch.from_numpy(dataset['input']).float()
+    dataset['output'] = torch.tensor(dataset['output']).float()
     return dataset
 

@@ -50,7 +50,7 @@ sample_index = 1
 dataset = CustomDataset('cave', path='data')
 sample = dataset[sample_index]
 x = sample['output'].numpy()
-x = torch.from_numpy(resize(x[::int(x.shape[0] / L) + 1], [L, M, N]))[None, ...]
+x = torch.from_numpy(resize(x[::int(x.shape[0] / L) + 1], [L, M, N]))[None, ...].float()
 
 plt.figure()
 plt.imshow(x[0, 0])

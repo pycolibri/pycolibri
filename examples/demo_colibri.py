@@ -53,7 +53,7 @@ from colibri.data.datasets import CustomDataset
 name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = '.'
 batch_size = 128
-acquisition_name = 'dd_cassi'  # ['spc', 'cassi', 'doe']
+acquisition_name = 'c_cassi'  # ['spc', 'cassi', 'doe']
 
 
 dataset = CustomDataset(name, path)
