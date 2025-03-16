@@ -30,6 +30,7 @@ Spectral Imaging systems
     colibri.optics.cassi.SD_CASSI
     colibri.optics.cassi.DD_CASSI
     colibri.optics.cassi.C_CASSI
+    colibri.optics.tensor_cassi.TensorCASSI
     colibri.optics.spc.SPC
     colibri.optics.doe.SingleDOESpectral
 
