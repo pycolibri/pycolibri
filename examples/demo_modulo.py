@@ -45,13 +45,25 @@ from colibri.optics import Modulo
 from colibri.recovery.solvers import L2L2SolverModulo
 import torchvision.transforms as transforms
 
+np2tensor = lambda x: torch.tensor(x).permute(2, 0, 1).unsqueeze(0).float()
+
+def channel_norm(x):
+    """ Normalize the input tensor to have values between 0 and 1
+    Args:
+        x (torch.Tensor): Input tensor with shape (B, C, H, W)
+    """
+    x -= x.min(dim=2, keepdim=True)[0].min(dim=3, keepdim=True)[0]
+    x /= x.max(dim=2, keepdim=True)[0].max(dim=3, keepdim=True)[0]
+    return x
+
+
 url = "https://optipng.sourceforge.net/pngtech/corpus/kodak/kodim23.png"
 response = requests.get(url)
 img = Image.open(BytesIO(response.content))
 img = np.array(img) / (255 + 1e-3)
-img = torch.tensor(img).permute(2, 0, 1).unsqueeze(0).float()
-img -= img.min(dim=2, keepdim=True)[0].min(dim=3, keepdim=True)[0]
-img /= img.max(dim=2, keepdim=True)[0].max(dim=3, keepdim=True)[0]
+img = np2tensor(img)
+# Guarantee that the image has values between 0 and 1 by channel
+img = channel_norm(img)
 
 img_size = 512
 saturation_factor = 1.5
@@ -73,8 +85,9 @@ xtilde    = None # initial guess
 rho       = 0.0  # regularization parameter
 
 recons_img  = recons_fn.solve(xtilde, rho)
-recons_img -= recons_img.min(dim=2, keepdim=True)[0].min(dim=3, keepdim=True)[0]
-recons_img /= recons_img.max(dim=2, keepdim=True)[0].max(dim=3, keepdim=True)[0]
+# Since the DCT solver returns a tensor with 0 mean
+# we need to normalize the image to have values between 0 and 1
+recons_img  = channel_norm(recons_img)
 
 
 fig, ax = plt.subplots(1, 3, figsize=(10, 10))
