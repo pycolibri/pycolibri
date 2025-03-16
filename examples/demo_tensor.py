@@ -3,7 +3,7 @@ Demo Tensor.
 ===================================================
 
 This is a pytorch implementation of paper "Fast matrix inversion in compressive spectral imaging based on a tensorial representation"
-https://www.spiedigitallibrary.org/journals/journal-of-electronic-imaging/volume-33/issue-1/013034/Fast-matrix-inversion-in-compressive-spectral-imaging-based-on-a/10.1117/1.JEI.33.1.013034.short#_=_
+https://doi.org/10.1117/1.JEI.33.1.013034
 """
 
 # %%
@@ -64,7 +64,7 @@ plt.show()
 tensor_cassi = TensorCASSI((L, M, N), mode="base", trainable=False)
 
 # %%
-# Sensing and computation of P and Q
+# Sensing and computation of :math:`P` and :math:`Q`
 # -----------------------------------------------
 
 y = tensor_cassi(x)
@@ -85,7 +85,7 @@ plt.title('$Q_{11}$')
 plt.show()
 
 # %%
-# We now check HH*y or Pb
+# We now check :math:`HH^*` or :math:`Pb`
 # -----------------------------------------------
 
 HHstarb1 = tensor_cassi(tensor_cassi(y, type_calculation='backward'))
@@ -100,7 +100,7 @@ error = torch.norm(HHstarb1 - HHstarb2).item()
 print('$HH*$ error:', error)
 
 # %%
-# We now check H*Hb or Qd
+# We now check :math:`H^*H` or :math:`Qd`
 # -----------------------------------------------
 
 HstarHd1 = tensor_cassi(tensor_cassi(x), type_calculation='backward')
@@ -115,9 +115,9 @@ error = torch.norm(HstarHd1 - HstarHd2).item()
 print('$H*H$ error:', error)
 
 # %%
-# We now check (rhoI + HH*)^{-1} or (rhoI + P)^{-1}
-# InvertedMeasurement: (rhoI + HH*)^{-1}(rhoI + HH*)y = y
+# We now check :math:`(\rho I + HH^*)^{-1} or (\rho I + P)^{-1}`
 # -----------------------------------------------
+# InvertedMeasurement: :math:`(\rho I + HH^*)^{-1}(\rho I + HH*)y = y`
 
 rho = 1
 [Pinv, rhoIP] = tensor_cassi.ComputePinv(rho)
@@ -132,9 +132,9 @@ error = torch.norm(y - InvertedMeasurement).item()
 print(f'Inversion error: {error}')
 
 # %%
-# We now check (rhoI + H*H)^{-1} or (rhoI + Q)^{-1}
-# InvertedMeasurement: (rhoI + HH*)^{-1}(rhoI + HH*)y = y
+# We now check :math:`(\rho I + H^*H)^{-1}` or :math:`(\rho I + Q)^{-1}`
 # -----------------------------------------------
+# InvertedMeasurement: :math:`(\rho I + HH^*)^{-1}(\rho I + HH^*)y = y`
 
 rho = 1
 [Qinv, rhoIQ] = tensor_cassi.ComputeQinv(rho)
