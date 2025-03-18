@@ -151,11 +151,15 @@ class KD_enc_loss(nn.Module):
     def forward(self, cas_teacher, cas_student):
 
         if self.loss_type == "GRAMM":
-            gram_student = torch.matmul(cas_student.T, cas_student)
-            gram_teacher = torch.matmul(cas_teacher.T, cas_teacher)
 
-            loss = nn.MSELoss()(gram_student, gram_teacher)
+            _, _, M, N = cas_student.shape
 
+            ca_s = cas_student.view(-1, M * N)
+            ca_t = cas_teacher.view(-1, M * N)
+
+            gram_s = torch.matmul(ca_s.T, ca_s)
+            gram_t = torch.matmul(ca_t.T, ca_t)
+            loss = nn.MSELoss()(gram_s, gram_t)
             return loss
 
         else:

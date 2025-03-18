@@ -2,6 +2,33 @@ import torch
 import numpy as np
 
 
+class BinarizeSTE(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, input_tensor):
+        """
+        Forward pass: Apply hard thresholding to binarize the input.
+        Args:
+            input_tensor (torch.Tensor): Input tensor with values in [0, 1].
+        Returns:
+            torch.Tensor: Binarized tensor (0 or 1).
+        """
+        ctx.save_for_backward(input_tensor)  # Save input for backward computation
+        return (input_tensor >= 0.5).float()
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        """
+        Backward pass: Approximate the gradient using the sigmoid derivative.
+        Args:
+            grad_output (torch.Tensor): Gradient of the loss with respect to the output.
+        Returns:
+            torch.Tensor: Gradient of the loss with respect to the input.
+        """
+        (input_tensor,) = ctx.saved_tensors
+        sigmoid_grad = input_tensor * (1 - input_tensor)  # Derivative of sigmoid
+        return grad_output * sigmoid_grad
+
+
 class BinaryQuantize(torch.autograd.Function):
     r"""
     Binary Quantization Function.
@@ -142,7 +169,7 @@ def backward_dd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     return torch.multiply(y, ca)
 
 
-def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
+def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor, binary: bool = False) -> torch.Tensor:
     r"""
     Forward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)
 
@@ -154,6 +181,7 @@ def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     Returns:
         torch.Tensor: Measurement with shape (B, 1, M, N + L - 1)
     """
+    ca = ca if not binary else BinarizeSTE.apply(ca)
     y1 = torch.multiply(x, ca)  # Multiplication of the scene by the coded aperture
     _, M, N, L = y1.shape  # Extract spectral image shape
     # shift and sum
@@ -161,7 +189,7 @@ def forward_sd_cassi(x: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     return y2.sum(dim=1, keepdim=True)
 
 
-def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
+def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor, binary: bool = False) -> torch.Tensor:
     r"""
 
     Backward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)
@@ -178,6 +206,7 @@ def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     L = N - M + 1  # Number of shifts
     y = torch.tile(y, [1, L, 1, 1])
     y = prism_operator(y, shift_sign=-1)
+    ca = ca if not binary else BinarizeSTE.apply(ca)
     return torch.multiply(y, ca)
 
 

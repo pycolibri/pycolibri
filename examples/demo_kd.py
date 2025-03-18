@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
+from colibri.optics.functional import BinarizeSTE
 
 manual_device = False  # "cpu"
 # Check GPU support
@@ -35,7 +36,7 @@ from colibri.data.datasets import CustomDataset
 name = "cifar10"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = "."
 batch_size = 64
-acquisition_name = "spc"  # ['spc', 'cassi', 'doe']
+acquisition_name = "cassi"  # ['spc', 'cassi', 'doe']
 
 
 dataset = CustomDataset(name, path, train=True)
@@ -65,7 +66,7 @@ plt.show()
 
 
 import math
-from colibri.optics import SPC
+from colibri.optics import SD_CASSI
 
 img_size = sample.shape[1:]
 
@@ -73,14 +74,9 @@ n_measurements = 256
 n_measurements_sqrt = int(math.sqrt(n_measurements))
 
 
-acquisition_model_student = SPC(
-    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
-)
+acquisition_model_student = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
 
 y = acquisition_model_student(sample)
-
-if acquisition_name == "spc":
-    y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
@@ -101,7 +97,7 @@ from colibri.metrics import psnr, ssim
 network_config = dict(
     in_channels=sample.shape[1],
     out_channels=sample.shape[1],
-    features=[64, 128, 256, 512],
+    features=[16, 32, 64, 128],
     last_activation="relu",
 )
 
@@ -110,29 +106,27 @@ recovery_model_student = build_network(Unet_KD, **network_config)
 student = E2E(acquisition_model_student, recovery_model_student)
 student = student.to(device)
 
-optimizer_student = torch.optim.Adam(student.parameters(), lr=5e-4)
+optimizer_student = torch.optim.AdamW(student.parameters(), lr=5e-4)
 
 losses = {"MSE": torch.nn.MSELoss()}
 metrics = {"PSNR": psnr, "SSIM": ssim}
 losses_weights = [1.0]
 
-n_epochs = 20
+n_epochs = 100
 steps_per_epoch = None
 frequency = 1
 
-train_teacher = True
-train_baseline = True
+train_teacher = False
+train_baseline = False
 
-acquisition_model_teacher = SPC(
-    input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=False
-)
+acquisition_model_teacher = SD_CASSI(input_shape=img_size, trainable=True, binary=False)
 
 
 if train_teacher:
     recovery_model_teacher = build_network(Unet, **network_config)
     teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
     teacher = teacher.to(device)
-    optimizer_teacher = torch.optim.Adam(teacher.parameters(), lr=5e-4)
+    optimizer_teacher = torch.optim.AdamW(teacher.parameters(), lr=5e-4)
 
     train_schedule = Training(
         model=teacher,
@@ -171,16 +165,14 @@ elif not train_teacher:
 
 if train_baseline:
 
-    acquisition_model_baseline = SPC(
-        input_shape=img_size, n_measurements=n_measurements, trainable=True, binary=True
-    )
+    acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
 
     recovery_model_baseline = build_network(Unet, **network_config)
 
     baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
     baseline = baseline.to(device)
 
-    optimizer_baseline = torch.optim.Adam(baseline.parameters(), lr=5e-4)
+    optimizer_baseline = torch.optim.AdamW(baseline.parameters(), lr=5e-4)
 
     train_schedule_baseline = Training(
         model=baseline,
@@ -205,6 +197,15 @@ if train_baseline:
     )
     torch.save(baseline.state_dict(), "baseline.pth")
 
+elif not train_baseline:
+    acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
+
+    recovery_model_baseline = build_network(Unet, **network_config)
+
+    baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
+    baseline = baseline.to(device)
+    baseline.load_state_dict(torch.load("baseline.pth"))
+
 
 train_schedule_kd = TrainingKD(
     student_model=student,
@@ -215,8 +216,8 @@ train_schedule_kd = TrainingKD(
     loss_func={"MSE": torch.nn.MSELoss()},
     losses_weights=[0.1],
     kd_config={
-        "enc_weight": 0.8,
-        "dec_weight": 0.1,
+        "enc_weight": 0.9,
+        "dec_weight": 0.0,
         "loss_dec_type": "MSE",
         "loss_enc_type": "GRAMM",
         "layer_idxs": [4],
@@ -237,3 +238,27 @@ train_schedule_kd = TrainingKD(
 results_kd = train_schedule_kd.fit(
     n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
 )
+
+plt.figure(figsize=(10, 5))
+plt.subplot(1, 3, 1)
+plt.imshow(
+    acquisition_model_teacher.learnable_optics.cpu().detach().numpy().squeeze(),
+    cmap="gray",
+)
+plt.title("Teacher CA")
+
+plt.subplot(1, 3, 2)
+plt.imshow(
+    BinarizeSTE.apply(acquisition_model_student.learnable_optics.cpu().detach()).numpy().squeeze(),
+    cmap="gray",
+)
+plt.title("Student CA")
+
+plt.subplot(1, 3, 3)
+plt.imshow(
+    BinarizeSTE.apply(acquisition_model_baseline.learnable_optics.cpu().detach()).numpy().squeeze(),
+    cmap="gray",
+)
+plt.title("Baseline CA")
+
+plt.show()
