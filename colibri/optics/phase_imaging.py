@@ -14,7 +14,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
     
             \mathbf{y} = \vert \forwardLinear_{\learnedOptics}(\mathbf{x}) \vert^2+ \noise
     
-    where :math:`\noise` is the sensor noise, :math:`\mathbf{x}\in\xset` is the input optical field, :math:`\mathbf{y}\in\yset` are the acquired signal, for CodedPhaseImaging, :math:`\xset = \mathbb{C}^{M \times N}` and :math:`\yset = \mathbb{R}^{M \times N}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the optical system, which is defined as:
+    where :math:`\noise` is the sensor noise, :math:`\mathbf{x} \in \xset` is the input optical field, :math:`\mathbf{y} \in \yset` are the acquired signal, for CodedPhaseImaging, :math:`\xset \in \mathbb{C}^{M \times N}` and :math:`\yset \in \mathbb{R}^{M \times N}`, and :math:`\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset` is the forward operator of the optical system, which is defined as:
 
     .. math::
 
