@@ -1,7 +1,7 @@
 import torch
 from colibri.optics.functional import coded_phase_imaging_forward, coded_phase_imaging_backward
 from .utils import BaseOpticsLayer
-
+from typing import Literal
 class CodedPhaseImaging(BaseOpticsLayer):
     r"""
     Coded Phase Imaging 
@@ -20,10 +20,10 @@ class CodedPhaseImaging(BaseOpticsLayer):
 
         \begin{align*}
         \forwardLinear_{\learnedOptics}: \mathbf{x} &\mapsto \mathbf{y} \\
-                        \mathbf{y} &= \mathbf{y} = \left| \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics) \right|^2 + \noise
+                        \mathbf{y} &= \left| \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics) \right|^2 + \noise
         \end{align*}
 
-    with :math:`\learnedOptics \in \mathbb{C}^{M \times N}` being the phase mask, :math:`\mathcal{P}_{(z, \lambda)}(\cdot)` the forward operator of the optical system, :math:`\odot` the element-wise product, and :math:`\noise` the sensor noise.
+    with :math:`\learnedOptics \in \mathbb{C}^{M \times N}` being the phase mask, :math:`\mathcal{P}_{(z, \lambda)}(\cdot)` the forward operator of the optical system for a given wavelength :math:`\lambda` and propagation distance :math:`z`,, :math:`\odot` the element-wise product, and :math:`\noise` the sensor noise.
 
     """
     def __init__(self, 
@@ -32,7 +32,7 @@ class CodedPhaseImaging(BaseOpticsLayer):
                 pixel_size: float = 1e-6,
                 wavelength: torch.Tensor = torch.tensor([550])*1e-9, 
                 sensor_distance: float = 50e-3, 
-                approximation: str = "fresnel",
+                approximation: Literal["fresnel", "angular_spectrum", "fraunhofer"] = "fresnel",
                 trainable: bool = False,
                 ):
         r"""

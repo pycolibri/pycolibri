@@ -1,12 +1,12 @@
 import torch
 
-class FilteredSpectralInitialization(torch.nn.Module):
+class LFSI(torch.nn.Module):
     r"""
-    Filtered Spectral Initialization
+    Learned Filtered Spectral Initialization (LFSI).
 
-    This layer implements the Filtered Spectral Initialization method for estimating the optical field from coded measurements of a Coded Phase Imaging System.
+    This layer implements the Learned Filtered Spectral Initialization method for estimating the optical field from coded measurements of a Coded Phase Imaging System.
     
-    For more information refer to: Learning spectral initialization for phase retrieval via deep neural networks https://doi.org/10.1364/AO.445085
+    This algorithm approximates an initial guess of the optical field :math:`\mathbf{x}^{(0)}` by computing a filtered version of the leading eigenvector of the sensing matrix taking into account the measurements. For more information refer to: Learning spectral initialization for phase retrieval via deep neural networks https://doi.org/10.1364/AO.445085
         
     """
     def __init__(
@@ -37,7 +37,7 @@ class FilteredSpectralInitialization(torch.nn.Module):
             Returns:
             None
         """
-        super(FilteredSpectralInitialization, self).__init__()
+        super(LFSI, self).__init__()
         self.iter = max_iters
         self.p = p 
 

@@ -94,10 +94,10 @@ y = acquisition_model(sample, type_calculation="forward", intensity=True)
 # Estimate phase 
 # -----------------------------------------------
 
-from colibri.recovery import FilteredSpectralInitialization
+from colibri.recovery import LFSI
 
 
-lfsi_algorithm = FilteredSpectralInitialization(
+lfsi_algorithm = LFSI(
                     max_iters=15,
                     p=0.9,
                     k_size=5,
