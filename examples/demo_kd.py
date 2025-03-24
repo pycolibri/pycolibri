@@ -3,6 +3,14 @@ Demo Knowledge distillation.
 ===================================================
 
 In this example we show how to use a simple pipeline of knowledge distillation learning with the SD-CASSi system.
+
+.. note::
+    For more information check the following sections:
+    
+    * For 'E2E' details check :func:`colibri.misc.e2e.E2E`.
+    * For 'KD' details check :func:`colibri.misc.kd.KD`.
+    * For 'loss_dec_type' details check :func:`colibri.misc.kd.KD_enc_loss`.
+    * For 'loss_enc_type' details check :func:`colibri.misc.kd.KD_dec_loss`.
 """
 
 # %%
