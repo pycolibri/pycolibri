@@ -33,3 +33,4 @@ Knowledge Distillation models
 
     colibri.misc.kd.KD
     colibri.misc.kd.KD_enc_loss
+    colibri.misc.kd.KD_dec_loss

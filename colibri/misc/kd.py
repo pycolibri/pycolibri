@@ -14,10 +14,8 @@ class KD(nn.Module):
         r"""
         Knowledge Distillation (KD) framework for computational imaging system design.
 
-        This module distills knowledge from a pretrained end-to-end (E2E) teacher model to a
-        constrained student model, improving both encoder design and reconstruction performance.
-        The teacher system is a less-constrained computational imaging system than the student, achieving high-recovy performance, while the
-        student is physically constrained system designed for real-world acquisition.
+        This module distills knowledge from a pretrained less-constrained end-to-end (E2E) teacher model to a
+        more constrained student model, improving both encoder design and reconstruction performance of the student.
 
         The optimization follows:
 
@@ -28,7 +26,7 @@ class KD(nn.Module):
 
 
         - :math:`\mathcal{L}_{\text{DEC}}` aligns feature representations in the decoder.
-        - :math:`\mathcal{L}_{\text{ENC}}` aligns the structure of the student's encoder with the teacher's encder.
+        - :math:`\mathcal{L}_{\text{ENC}}` aligns the structure of the student's encoder with the teacher's encoder.
 
         The student is guided by the teacher's encoder :math:`\learnedOptics_t^*` and decoder :math:`\theta_t^*` parameters,
         which are frozen during the training of the student.
@@ -37,12 +35,17 @@ class KD(nn.Module):
             e2e_teacher (nn.Module): Pretrained E2E teacher model.
             e2e_student (nn.Module): E2E student model to be trained.
             kd_config (dict): Configuration dictionary containing:
+
                 - "loss_dec_type" (str): Type of decoder loss function.
                 - "loss_enc_type" (str): Type of encoder loss function.
                 - "layer_idxs" (list): Indices of layers used for decoder loss computation.
-                - "att_config" (dict, optional): Additional attention-based configurations.
                 - "dec_weight" (float): Weight for decoder loss in KD.
                 - "enc_weight" (float): Weight for encoder loss in KD.
+
+
+        .. note::
+            * For 'loss_dec_type' details check :func:`colibri.misc.kd.KD_enc_loss`.
+            * For 'loss_enc_type' details check :func:`colibri.misc.kd.KD_dec_loss`.
         """
 
         super(KD, self).__init__()
@@ -56,9 +59,7 @@ class KD(nn.Module):
         self.loss_enc = KD_enc_loss(loss_rb_type)
 
     def forward(self, x):
-        r"""
-        Forward pass of the KD model.
-        """
+
 
         with torch.no_grad():
             x_hat_teacher, feats_teacher = self.teacher(x)
@@ -81,8 +82,37 @@ class KD(nn.Module):
 class KD_dec_loss(nn.Module):
     def __init__(self, loss_type: str, layer_idxs: list):
         r"""
-        KD feature based loss function.
+        Knowledge Distillation (KD) feature-based loss function for decoder alignment.
+
+        This loss function enforces similarity between the intermediate feature representations
+        of the student and teacher decoders, ensuring that the student learns an optimal
+        feature space guided by the less constrained teacher model.
+
+        The decoder loss function is defined as:
+
+        .. math::
+            \mathcal{L}_{\text{dec}} = \frac{1}{|\mathcal{I}|}
+            \sum_{i \in \mathcal{I}} \| F_s^{(i)} - F_t^{(i)} \|_p^p
+
+        where:
+
+        - :math:`\mathcal{I}` is the set of selected layer indices for feature matching.
+        - :math:`F_s^{(i)}` and :math:`F_t^{(i)}` are the feature maps at layer :math:`i` for the student and teacher, respectively.
+        - :math:`p = 2` for Mean Squared Error (MSE) loss and :math:`p = 1` for L1 loss.
+
+
+        Args:
+            loss_type (str): Type of loss function. Options are:
+
+                - "MSE" (Mean Squared Error)
+                - "L1" (L1 norm)
+
+            layer_idxs (list): List of indices of layers used for feature alignment.
+
+        Raises:
+            ValueError: If an unsupported loss type is provided.
         """
+
         super(KD_dec_loss, self).__init__()
         self.loss_type = loss_type
         self.layer_idxs = layer_idxs
@@ -101,14 +131,8 @@ class KD_dec_loss(nn.Module):
                 loss += torch.mean(torch.abs(feats_teacher[i] - feats_student[i]))
             return loss / len(self.layer_idxs)
 
-        elif self.loss_type == "COS":
-            loss = 0
-            for i in self.layer_idxs:
-                loss = loss + 1 - F.cosine_similarity(feats_teacher[i], feats_student[i])
-            return loss / len(self.layer_idxs)
-
         else:
-            raise ValueError("Loss type not supported. Please choose between L1, MSE, and COS.")
+            raise ValueError("Loss type not supported. Please choose between L1 and MSE")
 
 
 class KD_enc_loss(nn.Module):

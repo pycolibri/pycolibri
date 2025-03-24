@@ -81,7 +81,7 @@ y = acquisition_model_student(sample)
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
-plt.imshow(img.permute(1, 2, 0))
+plt.imshow(img.permute(2, 1, 0))
 plt.axis("off")
 plt.title(f"{acquisition_name.upper()} measurements")
 plt.show()
@@ -123,6 +123,7 @@ acquisition_model_teacher = SD_CASSI(input_shape=img_size, trainable=True, binar
 
 
 if train_teacher:
+    print("Training teacher model")
     recovery_model_teacher = build_network(Unet, **network_config)
     teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
     teacher = teacher.to(device)
@@ -158,13 +159,14 @@ if train_teacher:
 
 
 elif not train_teacher:
+    print("Loading teacher model")
     recovery_model_teacher = build_network(Unet_KD, **network_config)
     teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
     teacher = teacher.to(device)
     teacher.load_state_dict(torch.load("teacher.pth"))
 
 if train_baseline:
-
+    print("Training baseline model")
     acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
 
     recovery_model_baseline = build_network(Unet, **network_config)
@@ -198,6 +200,7 @@ if train_baseline:
     torch.save(baseline.state_dict(), "baseline.pth")
 
 elif not train_baseline:
+    print("Loading baseline model")
     acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
 
     recovery_model_baseline = build_network(Unet, **network_config)
@@ -206,7 +209,7 @@ elif not train_baseline:
     baseline = baseline.to(device)
     baseline.load_state_dict(torch.load("baseline.pth"))
 
-
+print("Training student model")
 train_schedule_kd = TrainingKD(
     student_model=student,
     teacher_model=teacher,
