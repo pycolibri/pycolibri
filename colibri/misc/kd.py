@@ -12,11 +12,39 @@ class KD(nn.Module):
         kd_config: dict,
     ):
         r"""
-        Knowledge distillation (KD) for computational imaging system design.
+        Knowledge Distillation (KD) framework for computational imaging system design.
 
-        Knowledge distillation module receives a pretrained end-to-end (e2e) teacher model and a e2e student model that is going to be trained.
+        This module distills knowledge from a pretrained end-to-end (E2E) teacher model to a
+        constrained student model, improving both encoder design and reconstruction performance.
+        The teacher system is a less-constrained computational imaging system than the student, achieving high-recovy performance, while the
+        student is physically constrained system designed for real-world acquisition.
 
+        The optimization follows:
+
+        .. math::
+            \{ \theta_s^*, \learnedOptics_s^* \} = \arg \min_{\learnedOptics_s, \theta_s} \sum_{p=1}^P \lambda_1 \| \mathcal{N}_{\theta_s} (\mathbf{H_{\learnedOptics_s}^\top H_{\learnedOptics_s} \mathbf{x}_p}) - \mathbf{x}_p \|_2^2 + \lambda_2 \mathcal{L}_{\text{DEC}} + \lambda_3 \mathcal{L}_{\text{ENC}}
+
+        where:
+
+
+        - :math:`\mathcal{L}_{\text{DEC}}` aligns feature representations in the decoder.
+        - :math:`\mathcal{L}_{\text{ENC}}` aligns the structure of the student's encoder with the teacher's encder.
+
+        The student is guided by the teacher's encoder :math:`\learnedOptics_t^*` and decoder :math:`\theta_t^*` parameters,
+        which are frozen during the training of the student.
+
+        Args:
+            e2e_teacher (nn.Module): Pretrained E2E teacher model.
+            e2e_student (nn.Module): E2E student model to be trained.
+            kd_config (dict): Configuration dictionary containing:
+                - "loss_dec_type" (str): Type of decoder loss function.
+                - "loss_enc_type" (str): Type of encoder loss function.
+                - "layer_idxs" (list): Indices of layers used for decoder loss computation.
+                - "att_config" (dict, optional): Additional attention-based configurations.
+                - "dec_weight" (float): Weight for decoder loss in KD.
+                - "enc_weight" (float): Weight for encoder loss in KD.
         """
+
         super(KD, self).__init__()
         self.teacher = e2e_teacher
         self.student = e2e_student
@@ -24,8 +52,7 @@ class KD(nn.Module):
         loss_fb_type = kd_config["loss_dec_type"]
         loss_rb_type = kd_config["loss_enc_type"]
         layer_idxs = kd_config["layer_idxs"]
-        att_config = kd_config["att_config"]
-        self.loss_dec = KD_dec_loss(loss_fb_type, layer_idxs, att_config)
+        self.loss_dec = KD_dec_loss(loss_fb_type, layer_idxs)
         self.loss_enc = KD_enc_loss(loss_rb_type)
 
     def forward(self, x):
@@ -52,14 +79,13 @@ class KD(nn.Module):
 
 
 class KD_dec_loss(nn.Module):
-    def __init__(self, loss_type: str, layer_idxs: list, att_config: dict = None):
+    def __init__(self, loss_type: str, layer_idxs: list):
         r"""
         KD feature based loss function.
         """
         super(KD_dec_loss, self).__init__()
         self.loss_type = loss_type
         self.layer_idxs = layer_idxs
-        self.att_config = att_config
 
     def forward(self, feats_teacher, feats_student):
 
@@ -81,76 +107,46 @@ class KD_dec_loss(nn.Module):
                 loss = loss + 1 - F.cosine_similarity(feats_teacher[i], feats_student[i])
             return loss / len(self.layer_idxs)
 
-        elif self.loss_type == "ATT" and self.att_config:
-            param = self.att_config["param"]
-            exp = self.att_config["exp"]
-            norm = self.att_config["norm"]
-
-            loss = 0
-            for i in self.layer_idxs:
-                attention_map_teacher = self.get_attention(feats_teacher[i], param, exp, norm)
-                attention_map_student = self.get_attention(feats_student[i], param, exp, norm)
-
-                loss += torch.mean((attention_map_teacher - attention_map_student) ** 2)
-
-            return loss / len(self.layer_idxs)
-
         else:
-            raise ValueError("Loss type not supported. Please choose between L1, MSE, COS and ATT.")
-
-    def get_attention(feature_set, param=0, exp=4, norm="l2"):
-        # Adapted from:
-        # Paying More Attention to Attention: Improving the Performance of Convolutional Neural Networks via Attention Transfer https://arxiv.org/abs/1612.03928
-        # https://github.com/DataDistillation/DataDAM/blob/main/utils.py
-        if param == 0:
-            attention_map = torch.sum(torch.abs(feature_set), dim=1)
-
-        elif param == 1:
-            attention_map = torch.sum(torch.abs(feature_set) ** exp, dim=1)
-
-        elif param == 2:
-            attention_map = torch.max(torch.abs(feature_set) ** exp, dim=1)
-
-        if norm == "l2":
-
-            vectorized_attention_map = attention_map.view(feature_set.size(0), -1)
-            normalized_attention_maps = F.normalize(vectorized_attention_map, p=2.0)
-
-        elif norm == "fro":
-
-            un_vectorized_attention_map = attention_map
-
-            fro_norm = torch.sum(torch.sum(torch.abs(attention_map) ** 2, dim=1), dim=1)
-
-            normalized_attention_maps = un_vectorized_attention_map / fro_norm.unsqueeze(
-                dim=-1
-            ).unsqueeze(dim=-1)
-
-        elif norm == "l1":
-
-            vectorized_attention_map = attention_map.view(feature_set.size(0), -1)
-            normalized_attention_maps = F.normalize(vectorized_attention_map, p=1.0)
-
-        elif norm == "none":
-            normalized_attention_maps = attention_map
-
-        elif norm == "none-vectorized":
-            normalized_attention_maps = attention_map.view(feature_set.size(0), -1)
-
-        return normalized_attention_maps
+            raise ValueError("Loss type not supported. Please choose between L1, MSE, and COS.")
 
 
 class KD_enc_loss(nn.Module):
     def __init__(self, loss_type: str):
         r"""
-        KD response based loss function.
+        Knowledge Distillation loss function for aligning the optical encoding parameters
+        in the single disperser coded aperture snapshot spectral imager (SD-CASSI) system.
+
+        This loss function ensures that the student’s optical encoding parameters
+        :math:`\learnedOptics_s` approximate those of the teacher :math:`\learnedOptics_t^*` by minimizing
+        the discrepancy between their Gram matrices.
+
+        The encoder loss function is defined as:
+
+        .. math::
+            \mathcal{L}_{\text{enc}} =  \left\| \mathbf{W}_s^\top \mathbf{W}_s - {\learnedOptics_t^*}^\top \learnedOptics_t^* \right\|_F^2
+
+        where:
+
+        - :math:`\mathbf{W}_s` represents the student’s coded aperture parameters (before binarization).
+        - :math:`\learnedOptics_t^*` represents the teacher’s optimal coded aperture.
+
+
+        This loss function encourages structural similarity between the optical encoders of the teacher
+        and student by aligning their Gram matrices.
+
+        Args:
+            loss_type (str): Type of loss function. Currently supports "GRAMM_SD_CASSI" (Gram matrix-based loss).
+
+        Raises:
+            ValueError: If an unsupported loss type is provided.
         """
         super(KD_enc_loss, self).__init__()
         self.loss_type = loss_type
 
     def forward(self, cas_teacher, cas_student):
 
-        if self.loss_type == "GRAMM":
+        if self.loss_type == "GRAMM_SD_CASSI":
 
             _, _, M, N = cas_student.shape
 
@@ -163,4 +159,4 @@ class KD_enc_loss(nn.Module):
             return loss
 
         else:
-            raise ValueError("Loss type not supported. Please choose between GRAMM.")
+            raise ValueError("Loss type not supported. Please choose between GRAMM_SD_CASSI.")

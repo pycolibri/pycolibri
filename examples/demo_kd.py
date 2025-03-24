@@ -97,7 +97,7 @@ from colibri.metrics import psnr, ssim
 network_config = dict(
     in_channels=sample.shape[1],
     out_channels=sample.shape[1],
-    features=[16, 32, 64, 128],
+    features=[4, 8, 16, 32],
     last_activation="relu",
 )
 
@@ -116,8 +116,8 @@ n_epochs = 100
 steps_per_epoch = None
 frequency = 1
 
-train_teacher = False
-train_baseline = False
+train_teacher = True
+train_baseline = True
 
 acquisition_model_teacher = SD_CASSI(input_shape=img_size, trainable=True, binary=False)
 
@@ -219,9 +219,8 @@ train_schedule_kd = TrainingKD(
         "enc_weight": 0.9,
         "dec_weight": 0.0,
         "loss_dec_type": "MSE",
-        "loss_enc_type": "GRAMM",
+        "loss_enc_type": "GRAMM_SD_CASSI",
         "layer_idxs": [4],
-        "att_config": None,
     },
     metrics=metrics,
     regularizers=None,

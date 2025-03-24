@@ -20,3 +20,16 @@ End-to-End models
     :nosignatures:
 
     colibri.misc.e2e.E2E
+
+
+Knowledge Distillation models
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.misc.kd.KD
+    colibri.misc.kd.KD_enc_loss
