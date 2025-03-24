@@ -1,8 +1,8 @@
 r"""
-Demo Colibri.
+Demo Knowledge distillation.
 ===================================================
 
-In this example we show how to use a simple pipeline of knowledge distillation learning with the SPC system as teacher and.
+In this example we show how to use a simple pipeline of knowledge distillation learning with the SD-CASSi system.
 """
 
 # %%
@@ -59,11 +59,9 @@ plt.axis("off")
 plt.show()
 
 # %%
-# Optics forward model
+# Build computational imaging systems (optics + recovery)
 # -----------------------------------------------
-# Define the forward operators :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}`, in this case, the CASSI and SPC forward models.
-# Each optics model can comptute the forward and backward operators i.e., :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}` and :math:`\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}`.
-
+# We build the computational imaging system for the teacher, student and baseline models. The teacher model uses a real-valued acquisition model and is trained in an end-to-end manner. The student model uses a binary acquisition model and is trained with knowledge distillation. The baseline model uses the same acquisition model as the student, but is trained without knowledge distillation.
 
 import math
 from colibri.optics import SD_CASSI
@@ -101,16 +99,35 @@ network_config = dict(
     last_activation="relu",
 )
 
+# Student model
 recovery_model_student = build_network(Unet_KD, **network_config)
-
 student = E2E(acquisition_model_student, recovery_model_student)
 student = student.to(device)
-
 optimizer_student = torch.optim.AdamW(student.parameters(), lr=5e-4)
+
+# Teacher model
+acquisition_model_teacher = SD_CASSI(input_shape=img_size, trainable=True, binary=False)
+recovery_model_teacher = build_network(Unet, **network_config)
+teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
+teacher = teacher.to(device)
+
+
+# Baseline model
+acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
+recovery_model_baseline = build_network(Unet, **network_config)
+baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
+baseline = baseline.to(device)
+
+
+# %%
+# Training configuration
+# -----------------------------------------------
+# We train the teacher model in an end-to-end manner, the student model with knowledge distillation, and the baseline model without knowledge distillation.
 
 losses = {"MSE": torch.nn.MSELoss()}
 metrics = {"PSNR": psnr, "SSIM": ssim}
 losses_weights = [1.0]
+
 
 n_epochs = 100
 steps_per_epoch = None
@@ -119,16 +136,10 @@ frequency = 1
 train_teacher = True
 train_baseline = True
 
-acquisition_model_teacher = SD_CASSI(input_shape=img_size, trainable=True, binary=False)
-
 
 if train_teacher:
     print("Training teacher model")
-    recovery_model_teacher = build_network(Unet, **network_config)
-    teacher = E2E(acquisition_model_teacher, recovery_model_teacher)
-    teacher = teacher.to(device)
     optimizer_teacher = torch.optim.AdamW(teacher.parameters(), lr=5e-4)
-
     train_schedule = Training(
         model=teacher,
         train_loader=dataset_loader,
@@ -158,6 +169,7 @@ if train_teacher:
     teacher.load_state_dict(torch.load("teacher.pth"))
 
 
+
 elif not train_teacher:
     print("Loading teacher model")
     recovery_model_teacher = build_network(Unet_KD, **network_config)
@@ -167,15 +179,7 @@ elif not train_teacher:
 
 if train_baseline:
     print("Training baseline model")
-    acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
-
-    recovery_model_baseline = build_network(Unet, **network_config)
-
-    baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
-    baseline = baseline.to(device)
-
     optimizer_baseline = torch.optim.AdamW(baseline.parameters(), lr=5e-4)
-
     train_schedule_baseline = Training(
         model=baseline,
         train_loader=dataset_loader,
@@ -201,12 +205,6 @@ if train_baseline:
 
 elif not train_baseline:
     print("Loading baseline model")
-    acquisition_model_baseline = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
-
-    recovery_model_baseline = build_network(Unet, **network_config)
-
-    baseline = E2E(acquisition_model_baseline, recovery_model_baseline)
-    baseline = baseline.to(device)
     baseline.load_state_dict(torch.load("baseline.pth"))
 
 print("Training student model")
@@ -240,6 +238,11 @@ train_schedule_kd = TrainingKD(
 results_kd = train_schedule_kd.fit(
     n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
 )
+
+# %%
+# Plot results
+# -----------------------------------------------
+# We plot the results of the optimized optical elements for the teacher, student and baseline models.
 
 plt.figure(figsize=(10, 5))
 plt.subplot(1, 3, 1)
