@@ -58,6 +58,15 @@ class KD(nn.Module):
         self.loss_dec = KD_dec_loss(loss_fb_type, layer_idxs)
         self.loss_enc = KD_enc_loss(loss_rb_type)
 
+        valid_dec_loss_types = ["MSE", "L1"]
+        valid_enc_loss_types = ["GRAMM_SD_CASSI"]
+
+        if loss_fb_type not in valid_dec_loss_types:
+            raise ValueError(f"Invalid loss_dec_type: {loss_fb_type}. Choose from {valid_dec_loss_types}")
+
+        if loss_rb_type not in valid_enc_loss_types:
+            raise ValueError(f"Invalid loss_enc_type: {loss_rb_type}. Choose from {valid_enc_loss_types}")
+
     def forward(self, x):
 
 

@@ -6,7 +6,7 @@ In this example we show how to use a simple pipeline of knowledge distillation l
 
 .. note::
     For more information check the following sections:
-    
+
     * For 'E2E' details check :func:`colibri.misc.e2e.E2E`.
     * For 'KD' details check :func:`colibri.misc.kd.KD`.
     * For 'loss_dec_type' details check :func:`colibri.misc.kd.KD_enc_loss`.
@@ -241,6 +241,10 @@ train_schedule_kd = TrainingKD(
     schedulers=[],
     callbacks=[],
     device=device,
+)
+
+results_kd = train_schedule_kd.fit(
+    n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
 )
 
 # %%
