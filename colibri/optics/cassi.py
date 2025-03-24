@@ -1,8 +1,15 @@
 import torch
-from colibri.optics.functional import forward_color_cassi, backward_color_cassi, forward_dd_cassi, backward_dd_cassi, forward_sd_cassi, backward_sd_cassi
+from colibri.optics.functional import (
+    forward_color_cassi,
+    backward_color_cassi,
+    forward_dd_cassi,
+    backward_dd_cassi,
+    forward_sd_cassi,
+    backward_sd_cassi,
+)
 from .utils import BaseOpticsLayer
 
-    
+
 class SD_CASSI(BaseOpticsLayer):
     r"""
     Single Disperser Coded Aperture Snapshot Spectral Imager (SD-CASSI)
@@ -37,24 +44,28 @@ class SD_CASSI(BaseOpticsLayer):
             trainable (bool): Boolean, if True the coded aperture is trainable
             initial_ca (torch.Tensor): Initial coded aperture with shape (1, 1, M, N)
         """
-        
+
         self.trainable = trainable
         self.initial_ca = initial_ca
-
+        self.binary = kwargs["binary"]
 
         self.L, self.M, self.N = input_shape  # Extract spectral image shape
 
         shape = (1, 1, self.M, self.N)
         if self.initial_ca is None:
-            initializer = torch.randn(shape, requires_grad=self.trainable) 
+            initializer = torch.rand(*shape, requires_grad=self.trainable)
         else:
-            assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
+            assert (
+                self.initial_ca.shape == shape
+            ), f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
             initializer = torch.from_numpy(self.initial_ca).float()
 
-        #Add parameter CA in pytorch manner
+        # Add parameter CA in pytorch manner
         ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
 
-        super(SD_CASSI, self).__init__(learnable_optics=ca, sensing=forward_sd_cassi, backward=backward_sd_cassi)
+        super(SD_CASSI, self).__init__(
+            learnable_optics=ca, sensing=forward_sd_cassi, backward=backward_sd_cassi
+        )
 
     def forward(self, x, type_calculation="forward"):
         r"""
@@ -69,7 +80,8 @@ class SD_CASSI(BaseOpticsLayer):
             ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
         """
 
-        return super(SD_CASSI, self).forward(x, type_calculation)
+        return super(SD_CASSI, self).forward(x, type_calculation, binary=self.binary)
+
 
 class DD_CASSI(BaseOpticsLayer):
     r"""
@@ -107,7 +119,6 @@ class DD_CASSI(BaseOpticsLayer):
         self.trainable = trainable
         self.initial_ca = initial_ca
 
-
         self.L, self.M, self.N = input_shape  # Extract spectral image shape
 
         shape = (1, 1, self.M, self.N + self.L - 1)
@@ -115,13 +126,16 @@ class DD_CASSI(BaseOpticsLayer):
         if self.initial_ca is None:
             initializer = torch.randn(shape, requires_grad=self.trainable)
         else:
-            assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
+            assert (
+                self.initial_ca.shape == shape
+            ), f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
             initializer = torch.from_numpy(self.initial_ca).float()
 
-        #Add parameter CA in pytorch manner
+        # Add parameter CA in pytorch manner
         ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
-        super(DD_CASSI, self).__init__(learnable_optics=ca, sensing=forward_dd_cassi, backward=backward_dd_cassi)
-
+        super(DD_CASSI, self).__init__(
+            learnable_optics=ca, sensing=forward_dd_cassi, backward=backward_dd_cassi
+        )
 
     def forward(self, x, type_calculation="forward"):
         r"""
@@ -177,7 +191,6 @@ class C_CASSI(BaseOpticsLayer):
         self.trainable = trainable
         self.initial_ca = initial_ca
 
-
         self.L, self.M, self.N = input_shape  # Extract spectral image shape
 
         shape = (1, self.L, self.M, self.N)
@@ -185,12 +198,16 @@ class C_CASSI(BaseOpticsLayer):
         if self.initial_ca is None:
             initializer = torch.randn(shape, requires_grad=self.trainable)
         else:
-            assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
+            assert (
+                self.initial_ca.shape == shape
+            ), f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
             initializer = torch.from_numpy(self.initial_ca).float()
 
-        #Add parameter CA in pytorch manner
+        # Add parameter CA in pytorch manner
         ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
-        super(C_CASSI, self).__init__(learnable_optics=ca, sensing=forward_color_cassi, backward=backward_color_cassi)
+        super(C_CASSI, self).__init__(
+            learnable_optics=ca, sensing=forward_color_cassi, backward=backward_color_cassi
+        )
 
     def forward(self, x, type_calculation="forward"):
         r"""
@@ -206,5 +223,3 @@ class C_CASSI(BaseOpticsLayer):
         """
 
         return super(C_CASSI, self).forward(x, type_calculation)
-
-        

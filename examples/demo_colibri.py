@@ -50,10 +50,10 @@ else:
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
-path = '.'
+name = "cifar10"  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+path = "."
 batch_size = 128
-acquisition_name = 'c_cassi'  # ['spc', 'cassi', 'doe']
+acquisition_name = "c_cassi"  # ['spc', 'cassi', 'doe']
 
 
 dataset = CustomDataset(name, path)
@@ -66,19 +66,19 @@ dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_w
 # -----------------------------------------------
 from torchvision.utils import make_grid
 
-sample = next(iter(dataset_loader))['input']
+sample = next(iter(dataset_loader))["input"]
 img = make_grid(sample[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
-plt.title('CIFAR10 dataset')
-plt.axis('off')
+plt.title("CIFAR10 dataset")
+plt.axis("off")
 plt.show()
 
 # %%
 # Optics forward model
 # -----------------------------------------------
-# Define the forward operators :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}`, in this case, the CASSI and SPC forward models.  
+# Define the forward operators :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}`, in this case, the CASSI and SPC forward models.
 # Each optics model can comptute the forward and backward operators i.e., :math:`\mathbf{y} = \mathbf{H}_\phi \mathbf{x}` and :math:`\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}`.
 
 
@@ -92,63 +92,73 @@ acquisition_config = dict(
     input_shape=img_size,
 )
 
-if acquisition_name == 'spc':
-    n_measurements  = 256 
-    n_measurements_sqrt = int(math.sqrt(n_measurements))    
-    acquisition_config['n_measurements'] = n_measurements
+if acquisition_name == "spc":
+    n_measurements = 256
+    n_measurements_sqrt = int(math.sqrt(n_measurements))
+    acquisition_config["n_measurements"] = n_measurements
 
-elif acquisition_name == 'doe':
-    wavelengths = torch.Tensor([450, 550, 650])*1e-9
+elif acquisition_name == "doe":
+    wavelengths = torch.Tensor([450, 550, 650]) * 1e-9
     doe_size = [100, 100]
     radius_doe = 0.5e-3
     source_distance = 1  # meters
     sensor_distance = 50e-3
     pixel_size = (2 * radius_doe) / min(doe_size)
-    height_map, aperture = spiral_doe(M=doe_size[0], N=doe_size[1],
-                                      number_spirals=3, radius=radius_doe,
-                                      focal=50e-3, start_w=450e-9, end_w=650e-9)
+    height_map, aperture = spiral_doe(
+        M=doe_size[0],
+        N=doe_size[1],
+        number_spirals=3,
+        radius=radius_doe,
+        focal=50e-3,
+        start_w=450e-9,
+        end_w=650e-9,
+    )
     refractive_index = spiral_refractive_index
 
-    acquisition_config.update({"height_map": height_map,
-                               "aperture": aperture,
-                               "wavelengths": wavelengths,
-                               "source_distance": source_distance,
-                               "sensor_distance": sensor_distance,
-                               "sensor_spectral_sensitivity": lambda x: x,
-                               "pixel_size": pixel_size,
-                               "doe_refractive_index": refractive_index,
-                               "trainable": True})
+    acquisition_config.update(
+        {
+            "height_map": height_map,
+            "aperture": aperture,
+            "wavelengths": wavelengths,
+            "source_distance": source_distance,
+            "sensor_distance": sensor_distance,
+            "sensor_spectral_sensitivity": lambda x: x,
+            "pixel_size": pixel_size,
+            "doe_refractive_index": refractive_index,
+            "trainable": True,
+        }
+    )
 
 acquisition_model = {
-    'spc': SPC,
-    'sd_cassi': SD_CASSI,
-    'dd_cassi': DD_CASSI,
-    'c_cassi': C_CASSI,
-    'doe': SingleDOESpectral,
+    "spc": SPC,
+    "sd_cassi": SD_CASSI,
+    "dd_cassi": DD_CASSI,
+    "c_cassi": C_CASSI,
+    "doe": SingleDOESpectral,
 }[acquisition_name]
 
 acquisition_model = acquisition_model(**acquisition_config)
 
 y = acquisition_model(sample)
 
-if acquisition_name == 'spc':
+if acquisition_name == "spc":
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 img = make_grid(y[:32], nrow=8, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 plt.figure(figsize=(10, 10))
 plt.imshow(img.permute(1, 2, 0))
-plt.axis('off')
-plt.title(f'{acquisition_name.upper()} measurements')
+plt.axis("off")
+plt.title(f"{acquisition_name.upper()} measurements")
 plt.show()
 
 # %%
 # Reconstruction model
 # -----------------------------------------------
-# Define the recovery model :math:`\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})`, in this case, a simple U-Net model. 
+# Define the recovery model :math:`\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})`, in this case, a simple U-Net model.
 # You can add you custom model by using the :meth: `build_network` function.
 # Additionally we define the end-to-end model that combines the forward and recovery models.
-# Define the loss function :math:`\mathcal{L}`, and the regularizers :math:`\mathcal{R}` for the forward and recovery models. 
+# Define the loss function :math:`\mathcal{L}`, and the regularizers :math:`\mathcal{R}` for the forward and recovery models.
 
 
 from colibri.models import build_network, Unet, Autoencoder
@@ -166,7 +176,7 @@ from colibri.regularizers import (
 network_config = dict(
     in_channels=sample.shape[1],
     out_channels=sample.shape[1],
-    reduce_spatial=True  # Only for Autoencoder
+    reduce_spatial=True,  # Only for Autoencoder
 )
 
 recovery_model = build_network(Unet, **network_config)
@@ -211,9 +221,7 @@ train_schedule = Training(
     regularization_optics_weights_mo=regularizers_optics_mo_weights,
 )
 
-results = train_schedule.fit(
-    n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency
-)
+results = train_schedule.fit(n_epochs=n_epochs, steps_per_epoch=steps_per_epoch, freq=frequency)
 
 # %%
 # Visualize results
@@ -223,9 +231,9 @@ results = train_schedule.fit(
 x_est = model(sample.to(device)).cpu()
 y = acquisition_model(sample.to(device)).cpu()
 
-normalize = lambda x: (x - torch.min(x)) / (torch.max(x) - torch.min(x)) 
+normalize = lambda x: (x - torch.min(x)) / (torch.max(x) - torch.min(x))
 
-if acquisition_name == 'spc':
+if acquisition_name == "spc":
     y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
 
 img = make_grid(sample[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
@@ -233,9 +241,9 @@ img_est = make_grid(x_est[:16], nrow=4, padding=1, normalize=True, scale_each=Fa
 img_y = make_grid(y[:16], nrow=4, padding=1, normalize=True, scale_each=False, pad_value=0)
 
 imgs_dict = {
-    "CIFAR10 dataset": img, 
+    "CIFAR10 dataset": img,
     f"{acquisition_name.upper()} measurements": img_y,
-    "Recons CIFAR10": img_est
+    "Recons CIFAR10": img_est,
 }
 
 plt.figure(figsize=(14, 2.7))
@@ -244,19 +252,19 @@ for i, (title, img) in enumerate(imgs_dict.items()):
     plt.subplot(1, 4, i + 1)
     plt.imshow(img.permute(1, 2, 0))
     plt.title(title)
-    plt.axis('off')
+    plt.axis("off")
 
 ca = normalize(acquisition_model.learnable_optics.cpu().detach())
 ca = ca.numpy().squeeze()
 
-if acquisition_name == 'spc':
+if acquisition_name == "spc":
     ca = ca = ca.reshape(n_measurements, 32, 32, 1)[0]
-elif acquisition_name == 'c_cassi':
+elif acquisition_name == "c_cassi":
     ca = ca.transpose(1, 2, 0)
 plt.subplot(1, 4, 4)
-plt.imshow(ca, cmap='gray')
-plt.axis('off')
-plt.title('Learned CA')
+plt.imshow(ca, cmap="gray")
+plt.axis("off")
+plt.title("Learned CA")
 plt.colorbar()
 
 plt.show()

@@ -1,4 +1,4 @@
-""" Utilities for building layers. """
+"""Utilities for building layers."""
 
 # import tensorflow as tf
 # import tensorflow.keras.layers as layers
@@ -9,6 +9,7 @@ import torch.nn as nn
 
 class Activation(nn.Module):
     """Activation Layer"""
+
     def __init__(self, activation="relu"):
         super(Activation, self).__init__()
         """ Activation Layer
@@ -28,10 +29,10 @@ class Activation(nn.Module):
     def get_activation(self, name):
         """
         Get activation function by name.
-        
+
         Args:
             name (str): Name of the activation function.
-        
+
         Returns:
             nn.Module: Activation function
         """
@@ -48,24 +49,25 @@ class Activation(nn.Module):
             return activations[name]
         else:
             raise ValueError(f"Unknown activation function: {name}")
-        
+
     def forward(self, x):
         """
         Computes the activation function.
-        
-        Args: 
+
+        Args:
             x (torch.Tensor): Input tensor.
-        
+
         Returns:
             torch.Tensor: Output tensor.
         """
         return self.act_fn(x)
 
+
 class convBlock(nn.Module):
     """Convolutional Block
 
     default configuration: (Conv2D => Batchnorm => ReLU) * 2
-    
+
     """
 
     def __init__(
@@ -91,7 +93,7 @@ class convBlock(nn.Module):
         super(convBlock, self).__init__()
 
         self.layers = nn.ModuleList()
-        
+
         pad_size = kernel_size // 2
 
         conv_kwargs = dict(
@@ -118,7 +120,7 @@ class convBlock(nn.Module):
         Args:
 
             x (torch.Tensor): Input tensor
-        
+
         Returns:
             torch.Tensor: Output tensor
         """
@@ -134,7 +136,7 @@ class convBlock(nn.Module):
             c (str): mode of the layer
             params (dict): parameters for the layer
             factor (int): factor for upsampling/downsampling
-        
+
         Returns:
             nn.Module: Layer
         """
@@ -161,12 +163,11 @@ class downBlock(nn.Module):
     """Spatial downsampling and then convBlock"""
 
     def __init__(self, in_channels, out_channels):
-
         """
         Args:
             in_channels (int): number of input channels
             out_channels (int): number of output channels
-        
+
         Returns:
             nn.Module: DownBlock model
         """
@@ -185,7 +186,7 @@ class upBlock(nn.Module):
         """
         Args:
             in_channels (int): number of input channels
-        
+
         """
         super(upBlock, self).__init__()
 
@@ -202,10 +203,10 @@ class upBlock(nn.Module):
         """
         Forward pass of the upBlock.
 
-        Args:   
+        Args:
             x1 (torch.Tensor): Input tensor
             x2 (torch.Tensor): Input tensor
-        
+
         Returns:
             torch.Tensor: Output tensor
         """
@@ -214,9 +215,7 @@ class upBlock(nn.Module):
         diffY = x2.shape[-2] - x1.shape[-2]
         diffX = x2.shape[-1] - x1.shape[-1]
 
-        x1 = nn.functional.pad(
-            x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2)
-        )
+        x1 = nn.functional.pad(x1, (diffX // 2, diffX - diffX // 2, diffY // 2, diffY - diffY // 2))
 
         return self.conv_block(torch.cat([x2, x1], dim=1))
 
@@ -224,19 +223,19 @@ class upBlock(nn.Module):
 class upBlockNoSkip(nn.Module):
     """Spatial upsampling and then convBlock"""
 
-    def __init__(self, in_channels,out_channels):
+    def __init__(self, in_channels, out_channels):
         """
         Args:
             in_channels (int): number of input channels
             out_channels (int): number of output channels
-        
+
         """
         super(upBlockNoSkip, self).__init__()
 
         self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
 
         self.conv_block = nn.Sequential(
-            convBlock(in_channels,out_channels ), convBlock(out_channels, out_channels)
+            convBlock(in_channels, out_channels), convBlock(out_channels, out_channels)
         )
 
     def forward(self, x1):
@@ -276,7 +275,7 @@ class outBlock(nn.Module):
 
         Args:
             x (torch.Tensor): Input tensor
-        
+
         Returns:
             torch.Tensor: Output tensor
         """

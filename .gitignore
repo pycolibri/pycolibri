@@ -10,7 +10,10 @@ docs/source/gen_modules
 
 # Datasets folders
 cifar10
-
+# Weights
+teacher.pth
+baseline.pth
+student.pth
 # Distribution / packaging
 .Python
 build/

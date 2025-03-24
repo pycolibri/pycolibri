@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 
 
+
 class Binary(nn.Module):
     r"""
     Binary Regularization for Coded Aperture Design.
