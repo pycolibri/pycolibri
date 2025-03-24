@@ -59,18 +59,14 @@ plt.axis("off")
 plt.show()
 
 # %%
-# Build computational imaging systems (optics + recovery)
+# Computational imaging systems configuration
 # -----------------------------------------------
-# We build the computational imaging system for the teacher, student and baseline models. The teacher model uses a real-valued acquisition model and is trained in an end-to-end manner. The student model uses a binary acquisition model and is trained with knowledge distillation. The baseline model uses the same acquisition model as the student, but is trained without knowledge distillation.
+# Configuration of the computational imaging system for the teacher, student and baseline models.
 
 import math
 from colibri.optics import SD_CASSI
 
 img_size = sample.shape[1:]
-
-n_measurements = 256
-n_measurements_sqrt = int(math.sqrt(n_measurements))
-
 
 acquisition_model_student = SD_CASSI(input_shape=img_size, trainable=True, binary=True)
 
