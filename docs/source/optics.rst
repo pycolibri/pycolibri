@@ -33,6 +33,7 @@ Spectral Imaging systems
     colibri.optics.tensor_cassi.TensorCASSI
     colibri.optics.spc.SPC
     colibri.optics.doe.SingleDOESpectral
+    colibri.optics.modulo.Modulo
 
 
 Functional operators of the optical systems
@@ -57,6 +58,7 @@ Functional operators of the optical systems
     colibri.optics.functional.signal_conv
     colibri.optics.functional.wiener_filter     
     colibri.optics.functional.gaussian_noise  
+    colibri.optics.functional.modulo
 
 Functional operators of optical elements
 -------------------------------------------

@@ -871,4 +871,24 @@ def ideal_panchromatic_sensor(image: torch.Tensor) -> torch.Tensor:
         torch.Tensor: Simulated sensor output as measurement (B, 1, M, N).
 
     """
-    return torch.sum(image, dim=1, keepdim=True) / image.shape[1]
+    return torch.sum(image, dim=1, keepdim=True)/image.shape[1]
+
+
+
+
+def modulo(x, t=1.0):
+    r"""
+    Modulo operation.
+
+    .. math::
+        \mathbf{x} = \mathbf{x} - t \Big\lfloor \frac{\mathbf{x}}{t} \Big\rfloor
+
+    Args:
+        x (torch.Tensor): Input tensor with any shape (dim1, dim2, ..., dimN).
+        t (float): Modulo value.
+
+    Returns:
+        torch.Tensor: Modulo operation result with the same shape as input (dim1, dim2, ..., dimN).
+
+    """
+    return x - t * torch.floor(x / t)

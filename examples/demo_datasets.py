@@ -87,8 +87,8 @@ spec_image = data['output']
 plt.figure(figsize=(8, 8))
 
 for i in range(3):
-    coord1 = [randint(0, M), randint(0, N)]
-    coord2 = [randint(0, M), randint(0, N)]
+    coord1 = [randint(0, M-1), randint(0, N-1)]
+    coord2 = [randint(0, M-1), randint(0, N-1)]
 
     plt.subplot(3, 3, (3 * i) + 1)
     plt.imshow(normalize(rgb_image[i].permute(1, 2, 0).cpu().numpy()))
