@@ -166,7 +166,7 @@ def forward_tensor_cassi(x, ca):
 
     y_noshift = x[:, :, None] * ca
     for k in range(L):
-        y[..., k:N + k] += + y_noshift[:, k]
+        y[..., k:N + k] += y_noshift[:, k]
 
     return y
 
@@ -184,7 +184,7 @@ def backward_tensor_cassi(y, ca):
 
     y1 = torch.zeros(y.shape[0], L, M, N).to(y.device)
     for k in range(L):
-        y1[:, k] += torch.sum(y[..., k:N + k] * ca, dim=1)
+        y1[:, k] = torch.sum(y[..., k:N + k] * ca, dim=1)
 
     return y1
 

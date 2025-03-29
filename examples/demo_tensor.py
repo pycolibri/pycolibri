@@ -12,10 +12,11 @@ https://doi.org/10.1117/1.JEI.33.1.013034
 import os
 import sys
 
+sys.path.append(os.getcwd())
+
 from colibri.data.datasets import CustomDataset
 from colibri.optics.tensor_cassi import TensorCASSI
 
-sys.path.append(os.getcwd())
 print("Current Working Directory ", os.getcwd())
 
 # Libraries
@@ -65,7 +66,7 @@ tensor_cassi = TensorCASSI((L, M, N), mode="base", trainable=False)
 
 # %%
 # Sensing and computation of :math:`P` and :math:`Q`
-# -----------------------------------------------
+# -----------------------------------------------------
 
 y = tensor_cassi(x)
 P = tensor_cassi.P
@@ -116,7 +117,7 @@ print('$H*H$ error:', error)
 
 # %%
 # We now check :math:`(\rho I + HH^*)^{-1} or (\rho I + P)^{-1}`
-# -----------------------------------------------
+# ------------------------------------------------------------------
 # InvertedMeasurement: :math:`(\rho I + HH^*)^{-1}(\rho I + HH*)y = y`
 
 rho = 1
@@ -133,7 +134,7 @@ print(f'Inversion error: {error}')
 
 # %%
 # We now check :math:`(\rho I + H^*H)^{-1}` or :math:`(\rho I + Q)^{-1}`
-# -----------------------------------------------
+# --------------------------------------------------------------------------
 # InvertedMeasurement: :math:`(\rho I + HH^*)^{-1}(\rho I + HH^*)y = y`
 
 rho = 1
