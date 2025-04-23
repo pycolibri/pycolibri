@@ -1,72 +1,68 @@
-# This is a pytorch implementation of paper "Fast matrix inversion in compressive spectral imaging based on a tensorial representation"
-# https://doi.org/10.1117/1.JEI.33.1.013034
-
 import torch
-from colibri.optics.functional import forward_tensor_cassi, backward_tensor_cassi
+
+from colibri.optics import SPC, SD_CASSI
+from colibri.optics.functional import forward_spc
+from .core import Solver
 
 
-class TensorCASSI(torch.nn.Module):
+class L2L2SolverSDCASSI(Solver):
+    r"""
+        Solver for the SPC acquisition model.
+
+        This module provides a closed-form solution to the following optimization problem:
+
+        .. math::
+
+            \min_{\textbf{X}} \|\textbf{Y} - \textbf{H}\textbf{X}\|_2^2 + \rho\|\textbf{X} - \tilde{\textbf{X}}\|_2^2
+
+        where:
+            - :math:`\textbf{X}` is the signal (tensor) to be recovered,
+            - :math:`\textbf{Y}` is the observed measurement tensor,
+            - :math:`\textbf{H}` is the sensing matrix,
+            - :math:`\rho` is the regularization parameter.
+
+        In the context of the SD-CASSI (Spatial-Domain Coded Aperture Snapshot Spectral Imaging) acquisition model,
+        :math:`\textbf{X}` is a 3D tensor of shape :math:`(L, M, N)`, where:
+            - :math:`L` is the number of spectral channels,
+            - :math:`M` and :math:`N` are the spatial dimensions (height and width).
+
+        Here, :math:`\textbf{X}` is vectorized along the spatial dimensions, assuming that the sensing matrix
+        :math:`\textbf{H}` is broadcasted across the spectral channels.
+
+        The closed-form solution to the optimization problem is:
+
+        .. math::
+            \hat{\textbf{X}} = (\textbf{H}^\top\textbf{H} + \rho \textbf{I})^{-1} \textbf{H}^\top \textbf{Y}
+
+        This implementation follows the fast and efficient computational strategy described in:
+
+        *Fast matrix inversion in compressive spectral imaging based on a tensorial representation*,
+        Journal of Electronic Imaging, 33(1), 013034.
+        https://doi.org/10.1117/1.JEI.33.1.013034
+
+        Please cite this publication if you use this code in your research.
     """
-    Layer that performs the forward and backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763
-    """
 
-    def __init__(self, input_shape, mode="base", trainable=False, initial_ca=None, **kwargs):
-        """
+    def __init__(self, y, acquisition_model: SD_CASSI):
+        r"""
         Args:
-            input_shape (tuple): Tuple, shape of the input image (L, M, N).
-            mode (str): String, mode of the coded aperture, it can be "base"
-            trainable (bool): Boolean, if True the coded aperture is trainable
-            initial_ca (torch.Tensor): Initial coded aperture with shape (1, M, N, 1)
+            y (torch.Tensor): Input tensor with shape (B, K, M, N + L - 1)
+            acquisition_model (SD_CASSI): Acquisition model
         """
-        super(TensorCASSI, self).__init__()
-        self.trainable = trainable
-        self.initial_ca = initial_ca
 
-        if mode == "base":
-            self.sensing = forward_tensor_cassi
-            self.backward = backward_tensor_cassi
+        super(L2L2SolverSDCASSI, self).__init__(y, acquisition_model)
 
-        self.mode = mode
+        self.acquisition_model = acquisition_model
+        self.ca = acquisition_model.learnable_optics[0]
+        self.Hty = acquisition_model(y, type_calculation="backward")
+        self.P = self.computeP(acquisition_model.L)
+        self.Q = self.computeQ(acquisition_model.L)
 
-        self.L, self.M, self.N = input_shape  # Extract spectral image shape
-
-        if self.mode == 'base':
-            shape = (1, self.M, self.N)
-        else:
-            raise ValueError(f"the mode {self.mode} is not valid")
-
-        if self.initial_ca is None:
-            initializer = torch.round(torch.rand(shape, requires_grad=self.trainable))
-        else:
-            assert self.initial_ca.shape == shape, f"the start CA shape should be {shape} but is {self.initial_ca.shape}"
-            initializer = torch.from_numpy(self.initial_ca).float()
-
-        # Add parameter CA in pytorch manner
-        self.ca = torch.nn.Parameter(initializer, requires_grad=self.trainable)
-        self.P = self.computeP(self.L)
-        self.Q = self.computeQ(self.L)
-
-    def forward(self, x, type_calculation="forward"):
-        """
-        Call method of the layer, it performs the forward or backward operator according to the type_calculation
-        Args:
-            x (torch.Tensor): Input tensor with shape (1, M, N, L)
-            type_calculation (str): String, it can be "forward", "backward" or "forward_backward"
-        Returns:
-            torch.Tensor: Output tensor with shape (1, M, N + L - 1, 1) if type_calculation is "forward", (1, M, N, L) if type_calculation is "backward, or (1, M, N, L) if type_calculation is "forward_backward
-        Raises:
-            ValueError: If type_calculation is not "forward", "backward" or "forward_backward"
-        """
-        if type_calculation == "forward":
-            return self.sensing(x, self.ca)
-
-        elif type_calculation == "backward":
-            return self.backward(x, self.ca)
-        elif type_calculation == "forward_backward":
-            return self.backward(self.sensing(x, self.ca), self.ca)
-
-        else:
-            raise ValueError("type_calculation must be forward, backward or forward_backward")
+    def solve(self, xtilde, rho):
+        X = rho * xtilde + self.Hty
+        [Pinv, _] = self.ComputePinv(rho)
+        return (1 / rho) * (X - self.acquisition_model(self.IMVM(self.acquisition_model(X), Pinv),
+                                                       type_calculation='backward'))
 
     def computeP(self, L):
         """
@@ -227,31 +223,3 @@ class TensorCASSI(torch.nn.Module):
                     T[t, s1, :, s - t: N] -= R[t, s, :, s - t: N] * T[s, s1, :, : N + t - s]
 
         return T, A
-
-    def weights_reg(self, reg):
-        """
-        Regularization of the coded aperture.
-
-        Args:
-            reg (function): Regularization function.
-        
-        Returns:
-            torch.Tensor: Regularization value.
-        """
-        reg_value = reg(self.ca)
-        return reg_value
-
-    def output_reg(self, reg, x):
-        """
-        Regularization of the measurements.
-
-        Args:
-            reg (function): Regularization function.
-            x (torch.Tensor): Input image tensor of size (b, c, h, w).
-
-        Returns:
-            torch.Tensor: Regularization value.
-        """
-        y = self.sensing(x, self.ca)
-        reg_value = reg(y)
-        return reg_value

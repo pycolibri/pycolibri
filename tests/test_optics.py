@@ -1,6 +1,5 @@
 import pytest
 
-from colibri.optics.tensor_cassi import TensorCASSI
 from .utils import include_colibri
 
 include_colibri()
@@ -58,64 +57,6 @@ def test_cassi(mode, imsize):
     assert measurement.shape == out_shape
     assert backward.shape == cube.shape
     assert forward_backward.shape == cube.shape
-
-
-@pytest.fixture
-def tensor_cassi_config():
-    M = 32
-    N = M
-    L = 4
-    S = 2
-    return M, N, L, S
-
-
-def test_tensor_cassi(tensor_cassi_config):
-    M, N, L, S = tensor_cassi_config
-    x = torch.randn(1, L, M, N)
-    tensor_cassi = TensorCASSI((L, M, N), mode="base", trainable=False)
-    y = tensor_cassi(x)
-    P = tensor_cassi.P
-    Q = tensor_cassi.Q
-
-    assert y.shape == (1, 1, M, N + L - 1)
-    assert P.shape == (1, 1, M, N + L - 1)
-    assert Q.shape == (L, L, M, N)
-
-    HHstarb1 = tensor_cassi(tensor_cassi(y, type_calculation='backward'))
-    HHstarb2 = tensor_cassi.IMVM(y)
-
-    assert HHstarb1.shape == (1, 1, M, N + L - 1)
-    assert HHstarb2.shape == (1, 1, M, N + L - 1)
-    assert torch.allclose(HHstarb1, HHstarb2)
-
-    HstarHd1 = tensor_cassi(tensor_cassi(x), type_calculation='backward')
-    HstarHd2 = tensor_cassi.IMVMS(x)
-
-    assert HstarHd1.shape == (1, L, M, N)
-    assert HstarHd2.shape == (1, L, M, N)
-    assert torch.allclose(HstarHd1, HstarHd2)
-
-    rho = 1
-    [Pinv, _] = tensor_cassi.ComputePinv(rho)
-    InvertedMeasurement = tensor_cassi.IMVM(rho * y + HHstarb1, P=Pinv).float()
-
-    assert InvertedMeasurement.shape == (1, 1, M, N + L - 1)
-    assert torch.allclose(InvertedMeasurement, y)
-
-    [Qinv, _] = tensor_cassi.ComputeQinv(rho)
-    InvertedImage = tensor_cassi.IMVMS(rho * x + HstarHd1, Q=Qinv).float()
-
-    assert InvertedImage.shape == (1, L, M, N)
-    assert torch.allclose(InvertedImage, x, atol=1e-4, rtol=1e-4)
-
-    X = tensor_cassi(y, type_calculation='backward')
-    invHtH1 = X - tensor_cassi(tensor_cassi.IMVM(tensor_cassi(X), P=Pinv), type_calculation='backward')
-    invHtH2 = tensor_cassi.IMVMS(X, Q=Qinv)
-
-    assert invHtH1.shape == (1, L, M, N)
-    assert invHtH2.shape == (1, L, M, N)
-    assert torch.allclose(invHtH1, invHtH2)
-
 
 @pytest.fixture
 def spc_config():

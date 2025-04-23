@@ -151,44 +151,6 @@ def backward_sd_cassi(y: torch.Tensor, ca: torch.Tensor) -> torch.Tensor:
     return torch.multiply(y, ca)
 
 
-def forward_tensor_cassi(x, ca):
-    """
-    Forward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Fast matrix inversion in compressive spectral imaging based on a tensorial representation: https://doi.org/10.1117/1.JEI.33.1.013034
-    Args:
-        x (torch.Tensor): Spectral image with shape (1, L, M, N)
-        ca (torch.Tensor): Coded aperture with shape (1, M, N)
-    Returns:
-        torch.Tensor: Measurement with shape (1, 1, M, N + L - 1)
-    """
-    [b, L, M, N] = x.shape
-    S = ca.shape[0]
-    y = torch.zeros(b, S, M, N + L - 1).to(x.device)
-
-    y_noshift = x[:, :, None] * ca
-    for k in range(L):
-        y[..., k:N + k] += y_noshift[:, k]
-
-    return y
-
-def backward_tensor_cassi(y, ca):
-    """
-    Backward operator of coded aperture snapshot spectral imager (CASSI), more information refer to: Fast matrix inversion in compressive spectral imaging based on a tensorial representation: https://doi.org/10.1117/1.JEI.33.1.013034
-    Args:
-        y (torch.Tensor): Measurement with shape (1, 1, M, N + L - 1)
-        ca (torch.Tensor): Coded aperture with shape (1, M, N)
-    Returns:
-        torch.Tensor: Spectral image with shape (1, L, M, N)
-    """
-    [_, M, N] = ca.shape
-    L = y.shape[-1] - N + 1
-
-    y1 = torch.zeros(y.shape[0], L, M, N).to(y.device)
-    for k in range(L):
-        y1[:, k] = torch.sum(y[..., k:N + k] * ca, dim=1)
-
-    return y1
-
-
 def forward_spc(x: torch.Tensor, H: torch.Tensor) -> torch.Tensor:
     r"""
 
