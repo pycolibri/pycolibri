@@ -29,10 +29,13 @@ class CaveDataset():
         Downloads the dataset from the specified URL and extracts it to the specified path.
         """
 
+    
         zip_path = self.path + ".zip"
+        
         if not os.path.exists(self.path):
             r = requests.get(self.url, allow_redirects=True)
-            open(zip_path, 'wb').write(r.content)
+            with open(zip_path, 'wb') as zip_file:
+                zip_file.write(r.content)
 
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(self.path)
