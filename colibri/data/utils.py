@@ -33,12 +33,14 @@ def update_builtin_path(name: str, path: str):
     return path
 
 
-def load_builtin_dataset(name: str, path: str, **kwargs):
+def load_builtin_dataset(name: str, path: str, train: bool, download: bool):
     r"""
     Load a built-in dataset.
     Args:
         name (str): The name of the dataset.
         path (str): The path to save the dataset.
+        train (bool): Whether to load the training or test set.
+        download (bool): Whether to download the dataset if it is
         **kwargs: Additional keyword arguments to pass to the pytorch dataset loader.
 
     Returns:
@@ -48,21 +50,24 @@ def load_builtin_dataset(name: str, path: str, **kwargs):
         KeyError: If the specified dataset name is not found.
         
     """
-
-    train = kwargs['train'] if 'train' in kwargs else False
-    download = kwargs['download'] if 'download' in kwargs else True
-
     builtin_dataset = BUILTIN_DATASETS[name](root=path, train=train, download=download)
     dataset = dict(input=builtin_dataset.data, output=builtin_dataset.targets)
 
     # transform
 
-    dataset['input'] = (dataset['input'] / 255.).astype(np.float32)
     if dataset['input'].ndim != 4:
         dataset['input'] = dataset['input'].unsqueeze(1)
-    dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
 
-    dataset['input'] = torch.from_numpy(dataset['input'])
-    dataset['output'] = torch.tensor(dataset['output'])
+    dataset['input'] = dataset['input'] / 255.
+    if isinstance(dataset['input'], np.ndarray):
+        dataset['input'] = dataset['input'].astype(np.float32)
+        dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
+
+        dataset['input'] = torch.from_numpy(dataset['input'])
+        dataset['output'] = torch.tensor(dataset['output'])
+
+    else:
+        dataset['input'] = dataset['input'].permute(0, 1, 3, 2)
+
     return dataset
 
