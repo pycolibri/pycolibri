@@ -89,8 +89,8 @@ plt.suptitle(f'CAVE dataset Samples - spectral range: [{spec_image.min():.2f}, {
              f'RGB range: [{rgb_image.min():.2f}, {rgb_image.max():.2f}]')
 
 for i in range(3):
-    coord1 = [randint(0, M), randint(0, N)]
-    coord2 = [randint(0, M), randint(0, N)]
+    coord1 = [randint(0, M-1), randint(0, N-1)]
+    coord2 = [randint(0, M-1), randint(0, N-1)]
 
     plt.subplot(3, 3, (3 * i) + 1)
     plt.imshow(normalize(rgb_image[i].permute(1, 2, 0).cpu().numpy()))

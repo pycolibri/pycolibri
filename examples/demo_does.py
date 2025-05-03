@@ -67,11 +67,6 @@ batch_size = 16
 
 
 dataset = CustomDataset(name, path)
-
-
-dataset = CustomDataset(name, path)
-
-
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 

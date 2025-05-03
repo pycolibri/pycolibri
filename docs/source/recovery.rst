@@ -32,6 +32,8 @@ List of Solvers
 
     colibri.recovery.solvers.core.L2L2Solver
     colibri.recovery.solvers.spc.L2L2SolverSPC
+    colibri.recovery.solvers.modulo.L2L2SolverModulo
+
 
 
 Fidelity Terms
