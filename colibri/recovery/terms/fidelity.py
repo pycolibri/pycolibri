@@ -30,7 +30,6 @@ class L2(torch.nn.Module):
         r = H(x) - y
         r = r.reshape(r.shape[0],-1)
         return 1/2*torch.norm(r,p=2,dim=1)**2
-        # return 1/2*torch.norm( H(x) - y,p=2,)**2
     
     def grad(self, x, y, H=None, transform=None):
         r'''
