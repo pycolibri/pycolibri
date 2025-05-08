@@ -14,8 +14,6 @@ class LearnedPrior(Prior):
     Args:
 
         model (nn.Sequential): The neural network acting as the prior.
-    
-    
         
     """
 
