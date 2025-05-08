@@ -3,6 +3,8 @@ import torch
 
 
 
+
+
 class L2(torch.nn.Module):
     r"""
         L2 fidelity
@@ -25,8 +27,10 @@ class L2(torch.nn.Module):
         Returns:
             torch.Tensor: The L2 fidelity term.
         """
-
-        return 1/2*torch.norm( H(x) - y,p=2)**2
+        r = H(x) - y
+        r = r.reshape(r.shape[0],-1)
+        return 1/2*torch.norm(r,p=2,dim=1)**2
+        # return 1/2*torch.norm( H(x) - y,p=2,)**2
     
     def grad(self, x, y, H=None, transform=None):
         r'''
@@ -44,8 +48,9 @@ class L2(torch.nn.Module):
             torch.Tensor: Gradient of the L1 fidelity term. 
         '''
         x = x.requires_grad_()
-        return torch.autograd.grad(self.forward(x,y, H), x, create_graph=True)[0]
-
+        norm = self.forward(x,y,H)
+ 
+        return torch.autograd.grad(norm, x, create_graph=True, grad_outputs=torch.ones_like(norm))[0]
 
 
 class L1(torch.nn.Module):
@@ -58,27 +63,28 @@ class L1(torch.nn.Module):
     def __init__(self):
         super(L2, self).__init__()
 
-    def forward(self, x, y, H):
-        r""" Computes the L1 fidelity term.
+    def forward(self, x, y, H=None):
+        r""" Computes the L2 fidelity term.
 
         Args:
             x (torch.Tensor): The image to be reconstructed.
             y (torch.Tensor): The measurement data to be reconstructed.
-            H (function): The forward model.
+            H (function, optional): The forward model. Defaults to None.
 
         Returns:
-            torch.Tensor: The L1 fidelity term.
+            torch.Tensor: The L2 fidelity term.
         """
-        
-        return torch.norm( H(x) - y,p=1)
+        r = H(x) - y
+        r = r.reshape(r.shape[0],-1)
+        return 1/2*torch.norm(r,p=1,dim=1)**2
+        # return 1/2*torch.norm( H(x) - y,p=2,)**2
     
-    def grad(self, x, y, H):
+    def grad(self, x, y, H=None, transform=None):
         r'''
-        Compute the gradient of the L1 fidelity term.
+        Compute the gradient of the L2 fidelity term.
 
         .. math::
-            \nabla f(\mathbf{x}) = \nabla \frac{1}{2}||\forwardLinear(\mathbf{x}) - \mathbf{y}||_1
-            
+            \nabla f(\mathbf{x}) = \nabla \frac{1}{2}||\forwardLinear(\mathbf{x}) - \mathbf{y}||^2_2
 
         Args:
             x (torch.Tensor): Input tensor.
@@ -89,11 +95,6 @@ class L1(torch.nn.Module):
             torch.Tensor: Gradient of the L1 fidelity term. 
         '''
         x = x.requires_grad_()
-
-        return torch.autograd.grad(self.forward(x,y, H), x, create_graph=True)[0]
-    
-
-
-        
-
-
+        norm = self.forward(x,y,H)
+ 
+        return torch.autograd.grad(norm, x, create_graph=True, grad_outputs=torch.ones_like(norm))[0]
