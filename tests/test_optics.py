@@ -8,6 +8,7 @@ import numpy as np
 from colibri.optics.cassi import SD_CASSI, DD_CASSI, C_CASSI
 from colibri.optics.spc import SPC
 from colibri.optics.doe import SingleDOESpectral
+from colibri.optics.modulo import Modulo
 from colibri.optics.sota_does import conventional_lens, nbk7_refractive_index
 from colibri.optics.phase_imaging import CodedPhaseImaging
 
@@ -148,5 +149,20 @@ def test_coded_phase_imaging(coded_phase_imaging_config):
     assert intensity.shape == img_size, "Intensity shape is incorrect"
     assert output.shape == img_size, "Output shape is incorrect"
     assert backward.shape == img_size, "Deconvolution shape is incorrect"
+    
+
+
+def modulo_config():
+    img_size = [1, 3, 32, 32]
+    return img_size
+
+def test_modulo_forward(modulo_config):
+    img_size = modulo_config
+    modulo = Modulo()
+    x = torch.randn(img_size)
+    y = modulo(x)
+    assert list(y.shape) == img_size, "Modulo forward shape is incorrect"
+    assert torch.all(y >= 0), "Modulo forward output is negative"
+    assert torch.all(y <= 1), "Modulo forward output is greater than 1"
     
 

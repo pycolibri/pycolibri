@@ -869,3 +869,22 @@ def coded_phase_imaging_backward(field: torch.Tensor, phase_mask: torch.Tensor, 
 
     """
     return scalar_diffraction_propagation(field, -distance, pixel_size, wavelength, approximation)*torch.conj(phase_mask)
+
+
+def modulo(x, t=1.0):
+    r"""
+    Modulo operation.
+
+    .. math::
+        \mathbf{x} = \mathbf{x} - t \Big\lfloor \frac{\mathbf{x}}{t} \Big\rfloor
+
+    Args:
+        x (torch.Tensor): Input tensor with any shape (dim1, dim2, ..., dimN).
+        t (float): Modulo value.
+
+    Returns:
+        torch.Tensor: Modulo operation result with the same shape as input (dim1, dim2, ..., dimN).
+
+    """
+    return x - t * torch.floor(x / t)
+
