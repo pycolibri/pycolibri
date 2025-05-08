@@ -151,7 +151,7 @@ def test_coded_phase_imaging(coded_phase_imaging_config):
     assert backward.shape == img_size, "Deconvolution shape is incorrect"
     
 
-
+@pytest.fixture
 def modulo_config():
     img_size = [1, 3, 32, 32]
     return img_size
