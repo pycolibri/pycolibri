@@ -61,7 +61,7 @@ class L1(torch.nn.Module):
             f(\mathbf{x}) = ||\forwardLinear(\mathbf{x}) - \mathbf{y}||_1
     """
     def __init__(self):
-        super(L2, self).__init__()
+        super(L1, self).__init__()
 
     def forward(self, x, y, H=None):
         r""" Computes the L2 fidelity term.
