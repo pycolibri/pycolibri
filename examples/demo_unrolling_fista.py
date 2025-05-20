@@ -118,6 +118,8 @@ models = nn.Sequential(*[SparseProximalMapping(**prior_args) for _ in range(algo
 print('number of parameters in models ->', sum(p.numel() for p in models.parameters() if p.requires_grad))
 fista_unrolling = UnrollingFISTA(acquisition_model, fidelity, **algo_params, models=models).to(device)
 
+# [TODO] Create fista_unrolling.load_state_dict(torch.load("fista_unrolling.pth"))
+
 # number of parameters in the model
 num_params = sum(p.numel() for p in fista_unrolling.parameters() if p.requires_grad)
 print(f"Number of parameters in the model: {num_params}")
@@ -127,30 +129,20 @@ print(f"Number of parameters in the model: {num_params}")
 # Training for only one epoch and 100 minibatches
 from colibri.metrics import psnr, ssim, mse, mae
 
-epochs = 1
+epochs = 100
 optimizer = torch.optim.Adam(fista_unrolling.parameters(), lr=5e-4)
 criterion = torch.nn.MSELoss()
+input = next(iter(dataset_loader))["input"].to(device)
+y = acquisition_model(input, type_calculation="forward")
+x0 = acquisition_model.forward(y, type_calculation="backward")
+output = fista_unrolling(y, x0=x0)
 
-for epoch in range(epochs):
-    for i, data in enumerate(dataset_loader):
-        input = data['input'].to(device)
-        y = acquisition_model(input, type_calculation="forward")
-        x0 = acquisition_model.forward(y, type_calculation="backward")
 
-        output = fista_unrolling(y, x0=x0)
-        optimizer.zero_grad()
-        # output = fista_unrolling(input)
-        loss = criterion(output, input)
-        loss.backward()
-        optimizer.step()
-        psnr_value = psnr(output, input)
-        ssim_value = ssim(output, input)
+psnr_value = psnr(output, input)
+ssim_value = ssim(output, input)
 
-        
-        print(f"Epoch [{epoch + 1}/{epochs}], Step [{i + 1}/{len(dataset_loader)}], Loss: {loss.item():.4f}, PSNR: {psnr_value:.4f}, SSIM: {ssim_value:.4f}")
-        
-        if i > 1:
-            break
+
+print(f"PSNR: {psnr_value:.4f}, SSIM: {ssim_value:.4f}")
 
 
 
