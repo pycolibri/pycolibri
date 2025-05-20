@@ -32,7 +32,16 @@ Spectral Imaging systems
     colibri.optics.cassi.C_CASSI
     colibri.optics.spc.SPC
     colibri.optics.doe.SingleDOESpectral
+    colibri.optics.modulo.Modulo
 
+Phase Imaging systems
+------------------------------
+.. autosummary::
+    :toctree: stubs
+    :template: class_template.rst
+    :nosignatures:
+
+    colibri.optics.phase_imaging.CodedPhaseImaging
 
 Functional operators of the optical systems
 ---------------------------------------------
@@ -42,6 +51,8 @@ Functional operators of the optical systems
     :template: methods_template.rst
     :nosignatures:
 
+    colibri.optics.functional.coded_phase_imaging_forward
+    colibri.optics.functional.coded_phase_imaging_backward
     colibri.optics.functional.forward_color_cassi
     colibri.optics.functional.backward_color_cassi
     colibri.optics.functional.forward_dd_cassi
@@ -56,6 +67,7 @@ Functional operators of the optical systems
     colibri.optics.functional.signal_conv
     colibri.optics.functional.wiener_filter     
     colibri.optics.functional.gaussian_noise  
+    colibri.optics.functional.modulo
 
 Functional operators of optical elements
 -------------------------------------------
