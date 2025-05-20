@@ -149,7 +149,7 @@ for epoch in range(epochs):
         
         print(f"Epoch [{epoch + 1}/{epochs}], Step [{i + 1}/{len(dataset_loader)}], Loss: {loss.item():.4f}, PSNR: {psnr_value:.4f}, SSIM: {ssim_value:.4f}")
         
-        if i > 100:
+        if i > 1:
             break
 
 
