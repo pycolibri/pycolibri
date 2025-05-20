@@ -4,10 +4,11 @@ import numpy as np
 from PIL import Image
 
 import torchvision
-
+import torch
 # Builtin datasets
 
 BUILTIN_DATASETS = {
+
     'mnist': torchvision.datasets.MNIST,
     'fashion_mnist': torchvision.datasets.FashionMNIST,
     'cifar10': torchvision.datasets.CIFAR10,
@@ -15,14 +16,39 @@ BUILTIN_DATASETS = {
 }
 
 
-def update_builtin_path(name, path):
+def update_builtin_path(name: str, path: str):
+    r"""
+    Update the built-in path by creating a new directory with the given name
+    inside the specified path.
+    Args:
+        name (str): The name of the directory to be created.
+        path (str): The path where the new directory will be created.
+    Returns:
+        str: The path of the newly created directory.
+    """
+
     path = os.path.join(path, name)
     os.makedirs(path, exist_ok=True)
 
     return path
 
 
-def load_builtin_dataset(name, path, **kwargs):
+def load_builtin_dataset(name: str, path: str, **kwargs):
+    r"""
+    Load a built-in dataset.
+    Args:
+        name (str): The name of the dataset.
+        path (str): The path to save the dataset.
+        **kwargs: Additional keyword arguments to pass to the pytorch dataset loader.
+
+    Returns:
+        dict: A dictionary containing the input and output data of the dataset.
+
+    Raises:
+        KeyError: If the specified dataset name is not found.
+        
+    """
+
     train = kwargs['train'] if 'train' in kwargs else False
     download = kwargs['download'] if 'download' in kwargs else True
 
@@ -34,47 +60,9 @@ def load_builtin_dataset(name, path, **kwargs):
     dataset['input'] = (dataset['input'] / 255.).astype(np.float32)
     if dataset['input'].ndim != 4:
         dataset['input'] = dataset['input'].unsqueeze(1)
+    dataset['input'] = np.transpose(dataset['input'], (0, 3, 2, 1))
 
+    dataset['input'] = torch.from_numpy(dataset['input'])
+    dataset['output'] = torch.tensor(dataset['output'])
     return dataset
 
-
-# Custom datasets
-
-def get_cave_filenames(path):
-    return [os.path.join(path, name, name) for name in os.listdir(path) if os.path.isdir(os.path.join(path, name))]
-
-
-def get_arad_filenames(path):
-    pass
-
-
-CUSTOM_DATASETS = {
-    'cave': get_cave_filenames,
-    'arad': get_arad_filenames
-}
-
-
-def get_filenames(name, path):
-    return CUSTOM_DATASETS[name](path)
-
-
-def load_arad_sample(filename, preprocessing, **kwargs):
-    return Image.open(filename)
-
-
-def load_cave_sample(filename):
-    name = os.path.basename(filename).replace('_ms', '')
-
-    spectral_image = []
-    for i in range(1, 32):
-        spectral_band_filename = os.path.join(filename, f'{name}_ms_{i:02d}.png')
-        spectral_band = np.array(Image.open(spectral_band_filename))
-        spectral_band = spectral_band / (2 ** 16 - 1) if isinstance(spectral_band[0, 0], np.uint16) else spectral_band
-        spectral_band = spectral_band / (2 ** 8 - 1) if isinstance(spectral_band[0, 0], np.uint8) else spectral_band
-        spectral_image.append(spectral_band.astype(np.float32))
-    spectral_image = np.stack(spectral_image, axis=-1)
-
-    rgb_image = np.array(Image.open(os.path.join(filename, f'{name}_RGB.bmp'))) / 255.
-    rgb_image = rgb_image.astype(np.float32)
-
-    return dict(input=rgb_image, output=spectral_image)

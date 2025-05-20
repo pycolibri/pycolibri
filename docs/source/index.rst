@@ -1,5 +1,5 @@
 Computational Optical Learning Library (Colibri) Documentation
-==================
+===================================================================
 
 |Test Status| |Docs Status| |Python 3.8+| |colab|
 
@@ -66,7 +66,7 @@ Check out the demo list in the `examples <https://pycolibri.github.io/pycolibri/
 * `Demo Datasets <https://pycolibri.github.io/pycolibri/auto_examples/demo_datasets.html#sphx-glr-auto-examples-demo-datasets-py>`_
 
 🧰 Available Modules
-------------------
+--------------------------
 
 📷 **Optical Systems**
 
@@ -126,6 +126,13 @@ Check out the demo list in the `examples <https://pycolibri.github.io/pycolibri/
    - `End-to-end framework <https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E>`_ 
 
 
+🫂 Contributors
+------------------
+
+.. raw:: html
+    :file: contributors.html
+
+
 💡 Contributing
 ------------------
 
@@ -161,6 +168,7 @@ Information about contributing to Colibri can be found in the `CONTRIBUTING.md <
    regularizers
    recovery
    contributing
+   auto_examples/index
 
 .. |Test Status| image:: https://github.com/pycolibri/pycolibri/actions/workflows/test.yml/badge.svg
    :target: https://github.com/pycolibri/pycolibri/actions/workflows/test.yml

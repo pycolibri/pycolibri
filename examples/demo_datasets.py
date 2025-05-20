@@ -22,14 +22,13 @@ print("Current Working Directory ", os.getcwd())
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
+
 name = 'cifar10'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
 path = 'data'
 batch_size = 128
 
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path,
-                        builtin_dict=builtin_dict,
-                        transform_dict=None)
+
+dataset = CustomDataset(name, path)
 
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
@@ -48,12 +47,13 @@ plt.suptitle(f'{name.upper()} dataset Samples')
 
 for i in range(9):
     plt.subplot(3, 3, i + 1)
-    plt.imshow(image[i].permute(1, 2, 0).cpu().numpy())
+    plt.imshow(image[i].permute(2, 1, 0).cpu().numpy())
     plt.title(f'Label: {label[i]}')
     plt.axis('off')
 
 plt.tight_layout()
 plt.show()
+
 
 # %%
 # Cave dataset
@@ -67,28 +67,7 @@ import requests
 import zipfile
 import os
 
-
-url = 'https://www.cs.columbia.edu/CAVE/databases/multispectral/zip/complete_ms_data.zip'
-
-r = requests.get(url, allow_redirects=True)
-open('data/complete_ms_data.zip', 'wb').write(r.content)
-
-with zipfile.ZipFile('data/complete_ms_data.zip', 'r') as zip_ref:
-    zip_ref.extractall('data/complete_ms_data')
-
-os.remove('data/complete_ms_data.zip')
-
-# %%
-# Load cave dataset
-# -----------------------------------------------
-
-name = 'cave'
-path = 'data/complete_ms_data'  # path to the cave dataset
-batch_size = 8
-
-dataset = CustomDataset(name, path,
-                        builtin_dict=None,
-                        transform_dict=None)
+dataset = CustomDataset("cave", path)
 
 dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
