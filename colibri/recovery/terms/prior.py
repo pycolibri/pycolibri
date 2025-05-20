@@ -41,6 +41,36 @@ class Prior(torch.nn.Module):
         """
         pass
 
+
+class LearnedPrior(Prior):
+    r"""
+    Learned prior for image reconstruction in unrolling methods.
+    
+    .. math::
+        \boldsymbol{f}^{(k+1)} = S_{\theta^k}(\boldsymbol{f}^{(k)})
+
+    Args:
+
+        model (nn.Sequential): The neural network acting as the prior.
+        
+    """
+
+    def __init__(self, models=None):
+        super(LearnedPrior, self).__init__()
+
+        self.count = 0
+        self.models = models
+        
+    def prox(self, x,*args ,**kwargs):
+
+        x = self.models[self.count](x)
+        
+        self.count += 1
+
+        return x
+    def reset(self):
+        self.count = 0
+
 class Sparsity(Prior):
     r"""
         Sparsity prior 

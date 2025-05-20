@@ -21,6 +21,7 @@ List of Algorithms
     colibri.recovery.fista.Fista
     colibri.recovery.pnp.PnP_ADMM
     colibri.recovery.lfsi.LFSI
+
     
 
 List of Solvers
@@ -64,6 +65,7 @@ The module contains differents prior terms :math:`g(\mathbf{x})` that can be use
     :nosignatures:
 
     colibri.recovery.terms.prior.Sparsity
+    colibri.recovery.terms.prior.LearnedPrior
     
 Transormation
 --------------------

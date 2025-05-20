@@ -9,8 +9,9 @@ docs/source/gen_modules
 *.so
 
 # Datasets folders
-cifar10
-
+cifar10/
+data/
+fashion_mnist/
 # Distribution / packaging
 .Python
 build/

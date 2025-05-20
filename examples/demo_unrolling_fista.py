@@ -1,8 +1,15 @@
 r"""
-Demo FISTA.
+Demo Unrolling FISTA.
 ===================================================
+In this example, we show how to train an Unrolling FISTA network following:
 
+.. math::
+
+    \arg\min_{\theta} \sum_{p=1}^P \left\| \mathcal{N}_{\theta^K} \left( \mathcal{N}_{\theta^{K-1}} \left( \cdots \mathcal{N}_{\theta^1} \left( \forwardLinear_\learnedOptics(\mathbf{x}_p) \right) \right) \right) \right\|_2
+
+where :math:`\mathcal{N}_{\theta^k}, k = 1,\dots K` are the stages of the unrolling network.
 """
+
 
 # %%
 # Select Working Directory and Device
@@ -74,7 +81,7 @@ acquisition_config = dict(
 )
 
 if acquisition_name == "spc":
-    n_measurements = 25**2
+    n_measurements = 10**2
     n_measurements_sqrt = int(math.sqrt(n_measurements))
     acquisition_config["n_measurements"] = n_measurements
 
@@ -87,18 +94,15 @@ acquisition_model = acquisition_model(**acquisition_config).to(device)
 y = acquisition_model(sample)
 
 # Reconstruct image
-import colibri
 from colibri import models
-from colibri import recovery
 
-
-from colibri.recovery.fista import Fista
-from colibri.recovery.terms.prior import Sparsity
 from colibri.recovery.terms.fidelity import L2
-from colibri.models.learned_proximals import LearnedPrior
 from colibri.models.unrolling import UnrollingFISTA
-from colibri.models.autoencoder import Autoencoder
+from colibri.models.learned_proximals import SparseProximalMapping
 import torch.nn as nn
+
+# %%
+# FISTA Unrolling algorithm with K stages using SparseProximalMapping prior 
 
 
 algo_params = {
@@ -108,8 +112,8 @@ algo_params = {
 }
 
 fidelity = L2()
-prior_args ={'in_channels': 3, 'out_channels': 3, 'feautures': [32,64,128,256]}
-models = nn.Sequential(*[Autoencoder(**prior_args) for _ in range(algo_params["max_iters"])])
+prior_args ={'autoencoder_args': {'in_channels': 1, 'out_channels': 1, 'feautures': [32,64,128,256]},'beta': 1e-3}
+models = nn.Sequential(*[SparseProximalMapping(**prior_args) for _ in range(algo_params["max_iters"])])
 
 print('number of parameters in models ->', sum(p.numel() for p in models.parameters() if p.requires_grad))
 fista_unrolling = UnrollingFISTA(acquisition_model, fidelity, **algo_params, models=models).to(device)
@@ -120,10 +124,10 @@ print(f"Number of parameters in the model: {num_params}")
 
 
 # %%
-from tqdm import tqdm
+# Training for only one epoch and 100 minibatches
 from colibri.metrics import psnr, ssim, mse, mae
 
-epochs = 100
+epochs = 1
 optimizer = torch.optim.Adam(fista_unrolling.parameters(), lr=5e-4)
 criterion = torch.nn.MSELoss()
 
@@ -142,40 +146,59 @@ for epoch in range(epochs):
         psnr_value = psnr(output, input)
         ssim_value = ssim(output, input)
 
-        if i % 10 == 0:
-            print(
-                f"Epoch [{epoch + 1}/{epochs}], Step [{i + 1}/{len(dataset_loader)}], Loss: {loss.item():.4f}, PSNR: {psnr_value:.4f}, SSIM: {ssim_value:.4f}"
-            )
         
+        print(f"Epoch [{epoch + 1}/{epochs}], Step [{i + 1}/{len(dataset_loader)}], Loss: {loss.item():.4f}, PSNR: {psnr_value:.4f}, SSIM: {ssim_value:.4f}")
+        
+        if i > 100:
+            break
 
 
 
 
-
-
-
-
-
+def normalize(image):
+    return (image - image.min()) / (image.max() - image.min())
 
 
 
 # %%
 # Visualize reconstruction
 # -----------------------------------------------
-plt.figure(figsize=(10, 10))
-plt.imshow(output.squeeze().detach().cpu().permute(1, 2, 0))
-plt.axis('off')
-plt.title('Reconstructed image')
+
+input = input.cpu().detach()
+x0 = x0.cpu().detach()
+y = y.cpu().detach()
+output = output.cpu().detach()
+plt.figure(figsize=(10,10))
+
+plt.subplot(1,4,1)
+plt.title('Reference')
+plt.imshow(normalize(input[0,:,:].permute(1, 2, 0)), cmap='gray')
+plt.xticks([])
+plt.yticks([])
+
+plt.subplot(1,4,2)
+plt.title('Intilization')
+plt.imshow(normalize(abs(x0[0,:,:]).permute(1, 2, 0)), cmap='gray')
+plt.xticks([])
+plt.yticks([])
+
+
+if acquisition_name == 'spc':
+    y = y.reshape(y.shape[0], -1, n_measurements_sqrt, n_measurements_sqrt)
+
+
+plt.subplot(1,4,3)
+plt.title('Measurement')
+plt.imshow(normalize(y[0,:,:].permute(1, 2, 0)), cmap='gray')
+plt.xticks([])
+plt.yticks([])
+
+plt.subplot(1,4,4)
+plt.title('Reconstruction')
+
+plt.imshow(normalize(output[0,:,:].permute(1, 2, 0).detach().cpu().numpy()), cmap='gray')
+plt.xticks([])
+plt.yticks([])
+
 plt.show()
 
-
-
-
-
-
-
-
-
-# print(x_hat.shape)
-
-# %%

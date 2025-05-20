@@ -8,9 +8,20 @@ from colibri.models.learned_proximals import LearnedPrior
 
 class UnrollingFISTA(Fista):
 
-    '''
-    FISTA Unrolling algorithm
-    '''
+    r"""
+    Unrolling FISTA Algorithm.
+    ===================================================
+
+    The `UnrollingFISTA` class implements the Unrolling FISTA (Fast Iterative Shrinkage-Thresholding Algorithm), which is an optimization algorithm designed to solve inverse problems by iterating over stages in a learned network.
+
+    The optimization problem is formulated as:
+
+    .. math::
+
+        \arg\min_{\theta} \sum_{p=1}^P \left\| \mathcal{N}_{\theta^K} \left( \mathcal{N}_{\theta^{K-1}} \left( \cdots \mathcal{N}_{\theta^1} \left( \forwardLinear_\learnedOptics(\mathbf{x}_p) \right) \right) \right) \right\|_2
+
+    where :math:`\mathcal{N}_{\theta^k}, k = 1, \dots, K` are the stages of the unrolling network. Each stage corresponds to a step in the iterative recovery process of the image or signal.
+    """
 
     def __init__(self, acquistion_model, fidelity=None, max_iters=5, models=None, alpha=1e-3, _lambda=0.1):
         '''
@@ -52,28 +63,3 @@ class UnrollingFISTA(Fista):
     
 
     
-
-if __name__ == '__main__':
-    from colibri.models.autoencoder import Autoencoder
-    # from colibri.models.learned_proximals import SparseProximalMapping
-    from colibri.recovery.terms.fidelity import L2
-    from colibri.optics.spc import SPC
-
-    H = SPC([1,256,256],10)
-
-    autoencoder = Autoencoder(1,1)
-    # sp = SparseProximalMapping(autoencoder)
-
-    unrolling = UnrollingFISTA(alpha=0.01, rho=1.0, max_iters=7, fidelity=L2(), prior=autoencoder, acquistion_model=H)
-
-    xgt = torch.randn(1,1,256,256)
-
-    y = H(xgt,'forward')    
-
-    x0 = H(y,'backward')
-    x = unrolling(y, x0)
-    print('Initial guess: ',  torch.norm(x0 - xgt).item())
-    print('Reconstructed: ', torch.norm(x - xgt).item())
-    # print(x.shape)
-
-
