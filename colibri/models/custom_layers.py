@@ -1,7 +1,5 @@
 """ Utilities for building layers. """
 
-# import tensorflow as tf
-# import tensorflow.keras.layers as layers
 
 import torch
 import torch.nn as nn

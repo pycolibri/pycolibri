@@ -11,7 +11,7 @@ import os
 
 from torch.utils import data
 
-os.chdir(os.path.dirname(os.getcwd()))
+# os.chdir(os.path.dirname(os.getcwd()))
 print("Current Working Directory ", os.getcwd())
 
 import sys

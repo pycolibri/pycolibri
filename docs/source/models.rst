@@ -17,6 +17,8 @@ The models module contains the following models:
 
     colibri.models.autoencoder.Autoencoder
     colibri.models.unet.Unet
+    colibri.models.unrolling.UnrollingFISTA
+    colibri.models.learned_proximals.SparseProximalMapping
     
 
 List of custom layers

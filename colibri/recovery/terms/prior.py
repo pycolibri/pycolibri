@@ -3,7 +3,75 @@ import torch
 from .transforms import DCT2D
 
 
-class Sparsity(torch.nn.Module):
+class Prior(torch.nn.Module):
+    r"""
+        Base class for prior terms.
+    """
+    def __init__(self):
+        super(Prior, self).__init__()
+
+    def forward(self, x):
+        r"""
+        Compute prior term.
+
+        Args:
+            x (torch.Tensor): Input tensor.
+        
+        Returns:
+            torch.Tensor: Prior term.
+        """
+        raise NotImplementedError
+
+    def prox(self, x, _lambda):
+        r"""
+        Compute proximal operator of the prior term.
+
+        Args:
+            x (torch.Tensor): Input tensor.
+            _lambda (float): Regularization parameter.
+        
+        Returns:
+            torch.Tensor: Proximal operator of the prior term.
+        """
+        raise NotImplementedError
+
+    def reset(self):
+        r"""
+        Reset prior term.
+        """
+        pass
+
+
+class LearnedPrior(Prior):
+    r"""
+    Learned prior for image reconstruction in unrolling methods.
+    
+    .. math::
+        \boldsymbol{f}^{(k+1)} = S_{\theta^k}(\boldsymbol{f}^{(k)})
+
+    Args:
+
+        model (nn.Sequential): The neural network acting as the prior.
+        
+    """
+
+    def __init__(self, models=None):
+        super(LearnedPrior, self).__init__()
+
+        self.count = 0
+        self.models = models
+        
+    def prox(self, x,*args ,**kwargs):
+
+        x = self.models[self.count](x)
+        
+        self.count += 1
+
+        return x
+    def reset(self):
+        self.count = 0
+
+class Sparsity(Prior):
     r"""
         Sparsity prior 
         
@@ -14,17 +82,21 @@ class Sparsity(torch.nn.Module):
         where :math:`\transform` is the sparsity basis and :math:`\textbf{x}` is the input tensor.
 
     """
-    def __init__(self, basis=None):
+    def __init__(self, basis=None,type="soft"):
         r"""
         Args:
             basis (str): Basis function. 'dct', 'None'. Default is None.
         """
-        super(Sparsity, self).__init__()
 
         if basis == 'dct':
             self.transform = DCT2D()
         else:
             self.transform = None
+
+        self.type = type
+        
+        super(Sparsity, self).__init__()
+
 
     def forward(self, x):
         r"""
@@ -36,8 +108,10 @@ class Sparsity(torch.nn.Module):
         Returns:
             torch.Tensor: Sparsity term.
         """
+        
         x = self.transform.forward(x)
         return torch.norm(x, 1)**2
+    
     
     def prox(self, x, _lambda, type="soft"):
         r"""
@@ -76,6 +150,8 @@ class Sparsity(torch.nn.Module):
             return self.transform.inverse(x)
         else:
             return x
+        
+    
         
         
     

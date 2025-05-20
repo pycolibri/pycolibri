@@ -119,6 +119,9 @@ sphinx_gallery_conf = {
     # is an empty set, i.e. exclude nothing.
     "exclude_implicit_doc": {},
     "nested_sections": False,
+    'abort_on_example_error': False,  # Skip failing examples
+    'image_scrapers': ('matplotlib',),  # Add scrapers if needed
+    'min_reported_time': 1,  # Report only examples taking >1 second
 }
 
 

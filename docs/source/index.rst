@@ -114,6 +114,7 @@ Check out the demo list in the `examples <https://pycolibri.github.io/pycolibri/
 * Priors
    
       - `Sparsity <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.prior.Sparsity.html#colibri.recovery.terms.prior.Sparsity>`_
+      - `Learned Prior <https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.prior.LearnedPrior.html#colibri.recovery.terms.prior.LearnedPrior>`_
 
 * Transforms
    
