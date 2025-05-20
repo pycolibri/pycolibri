@@ -19,6 +19,7 @@ import sys
 sys.path.append(os.path.join(os.getcwd()))
 
 # General imports
+from torch.utils.data import DataLoader
 import matplotlib.pyplot as plt
 import torch
 import os
@@ -38,12 +39,15 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # -----------------------------------------------
 from colibri.data.datasets import CustomDataset
 
-name = "cifar10"
-path = "."
-batch_size = 128
 
-builtin_dict = dict(train=True, download=True)
-dataset = CustomDataset(name, path, builtin_dict=builtin_dict, transform_dict=None)
+name = 'fashion_mnist'  # ['cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave']
+path = 'data'
+batch_size = 128
+builtin_train = True
+builtin_download = True
+
+dataset = CustomDataset(name, path, builtin_train, builtin_download)
+dataset_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
 
 acquisition_name = "spc"  # ['spc', 'sd_cassi', 'dd_cassi', 'c_cassi']
 
@@ -63,6 +67,7 @@ from colibri.optics import SPC, SD_CASSI, DD_CASSI, C_CASSI
 
 
 img_size = sample.shape[1:]
+
 
 acquisition_config = dict(
     input_shape=img_size,
@@ -103,8 +108,7 @@ algo_params = {
 }
 
 fidelity = L2()
-prior = Sparsity(basis="dct")
-prior_args ={'in_channels': 3, 'out_channels': 3, 'feautures': [32, 64, 128, 256]}
+prior_args ={'in_channels': 3, 'out_channels': 3, 'feautures': [32,64,128,256]}
 models = nn.Sequential(*[Autoencoder(**prior_args) for _ in range(algo_params["max_iters"])])
 
 print('number of parameters in models ->', sum(p.numel() for p in models.parameters() if p.requires_grad))
@@ -113,19 +117,18 @@ fista_unrolling = UnrollingFISTA(acquisition_model, fidelity, **algo_params, mod
 # number of parameters in the model
 num_params = sum(p.numel() for p in fista_unrolling.parameters() if p.requires_grad)
 print(f"Number of parameters in the model: {num_params}")
-# x0 = acquisition_model.forward(y, type_calculation="backward")
 
-# x_hat = fista_unrolling(y, x0=x0)
-#train the model on the dataset
+
 # %%
+from tqdm import tqdm
+from colibri.metrics import psnr, ssim, mse, mae
 
 epochs = 100
-train_loader = data.DataLoader(dataset, batch_size=128, shuffle=True)
-optimizer = torch.optim.Adam(fista_unrolling.parameters(), lr=1e-3)
+optimizer = torch.optim.Adam(fista_unrolling.parameters(), lr=5e-4)
 criterion = torch.nn.MSELoss()
 
 for epoch in range(epochs):
-    for i, data in enumerate(train_loader):
+    for i, data in enumerate(dataset_loader):
         input = data['input'].to(device)
         y = acquisition_model(input, type_calculation="forward")
         x0 = acquisition_model.forward(y, type_calculation="backward")
@@ -136,9 +139,24 @@ for epoch in range(epochs):
         loss = criterion(output, input)
         loss.backward()
         optimizer.step()
+        psnr_value = psnr(output, input)
+        ssim_value = ssim(output, input)
 
-    if i % 1 == 0:
-        print(f'Epoch {epoch}, Loss {loss.item()}')
+        if i % 10 == 0:
+            print(
+                f"Epoch [{epoch + 1}/{epochs}], Step [{i + 1}/{len(dataset_loader)}], Loss: {loss.item():.4f}, PSNR: {psnr_value:.4f}, SSIM: {ssim_value:.4f}"
+            )
+        
+
+
+
+
+
+
+
+
+
+
 
 
 # %%
