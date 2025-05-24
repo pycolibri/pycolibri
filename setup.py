@@ -9,7 +9,8 @@ setup(
                       'matplotlib>=3.9.2', 
                       'h5py>=3.12.1', 
                       'torch_dct>=0.1.6', 
-                      'requests>=2.32.3'],
+                      'requests>=2.32.3',
+                      'scikit-image>=0.21.0'],
     extras_require={'doc': ['sphinx', 'sphinx_rtd_theme', 'autodocsumm', 'sphinx_gallery'],
                     'test': ['pytest']}
 )

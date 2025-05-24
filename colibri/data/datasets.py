@@ -97,7 +97,7 @@ class CustomDataset(Dataset):
 
         self.is_builtin_dataset = False
         if name in BUILTIN_DATASETS:  # builtin datasets
-            #assert kwargs_builtin is not None, "kwargs_builtin must be provided for builtin datasets"
+            # assert kwargs_builtin is not None, "kwargs_builtin must be provided for builtin datasets"
             self.is_builtin_dataset = True
             path = update_builtin_path(name, path)
             self.dataset = load_builtin_dataset(name, path, builtin_train, builtin_download)
@@ -128,7 +128,7 @@ class CustomDataset(Dataset):
         """
 
         # load sample
-        
+
         if self.is_builtin_dataset:
             data = {key: value[idx] for key, value in self.dataset.items()}
         else:

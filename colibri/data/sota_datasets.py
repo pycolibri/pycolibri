@@ -9,7 +9,7 @@ import torch
 class CaveDataset():
     r"""
 
-    Class to handle the CAVE dataset. 
+    Class to handle the CAVE dataset.
 
     The CAVE dataset is a database of multispectral images that were used to emulate the GAP camera. The images are of a wide variety of real-world materials and objects.
 
@@ -31,7 +31,8 @@ class CaveDataset():
         zip_path = self.path + ".zip"
         if not os.path.exists(self.path):
             r = requests.get(self.url, allow_redirects=True)
-            open(zip_path, 'wb').write(r.content)
+            with open(zip_path, 'wb') as zip_file:
+                zip_file.write(r.content)
 
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(self.path)
