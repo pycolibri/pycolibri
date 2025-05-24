@@ -1,0 +1,1112 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colibri.optics.functional &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/colibri-logo.svg"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../../../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colibri.optics.functional</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colibri.optics.functional</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="prism_operator">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.prism_operator.html#colibri.optics.functional.prism_operator">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prism_operator</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">shift_sign</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Prism operator, shifts linearly the input tensor x in the spectral dimension.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Input tensor with shape (B, L, M, N)</span>
+<span class="sd">        shift_sign (int): Integer, it can be 1 or -1, it indicates the direction of the shift</span>
+<span class="sd">            if 1 the shift is to the right, if -1 the shift is to the left</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Output tensor with shape (1, L, M, N+L-1) if shift_sign is 1, or (1, L, M, N-L+1) if shift_sign is -1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="n">shift_sign</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">shift_sign</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The shift sign must be 1 or -1&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># Extract spectral image shape</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unbind</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">shift_sign</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Shifting produced by the prism </span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">l</span><span class="p">],</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">L</span> <span class="o">-</span> <span class="n">l</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Unshifting produced by the prism</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="n">l</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">l</span><span class="p">:</span><span class="n">N</span> <span class="o">-</span> <span class="p">(</span><span class="n">L</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">)]</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="forward_color_cassi">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.forward_color_cassi.html#colibri.optics.functional.forward_color_cassi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_color_cassi</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Forward operator of color coded aperture snapshot spectral imager (Color-CASSI)</span>
+
+<span class="sd">    For more information refer to: Colored Coded Aperture Design by Concentration of Measure in Compressive Spectral Imaging https://doi.org/10.1109/TIP.2014.2310125</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Spectral image with shape (B, L, M, N)</span>
+<span class="sd">        ca (torch.Tensor): Coded aperture with shape (1, L, M, N)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns: </span>
+<span class="sd">        torch.Tensor: Measurement with shape (B, 1, M, N + L - 1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">prism_operator</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">shift_sign</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="backward_color_cassi">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.backward_color_cassi.html#colibri.optics.functional.backward_color_cassi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">backward_color_cassi</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Backward operator of color coded aperture snapshot spectral imager (Color-CASSI)</span>
+<span class="sd">    </span>
+<span class="sd">    For more information refer to: Colored Coded Aperture Design by Concentration of Measure in Compressive Spectral Imaging https://doi.org/10.1109/TIP.2014.2310125</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y (torch.Tensor): Measurement with shape (B, 1, M, N + L - 1)</span>
+<span class="sd">        ca (torch.Tensor): Coded aperture with shape (1, L, M, N)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Spectral image with shape (B, L, M, N)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">ca</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">prism_operator</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">shift_sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="forward_dd_cassi">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.forward_dd_cassi.html#colibri.optics.functional.forward_dd_cassi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_dd_cassi</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)</span>
+<span class="sd">    </span>
+<span class="sd">    For more information refer to: Single-shot compressive spectral imaging with a dual-disperser architecture https://doi.org/10.1364/OE.15.014013</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Spectral image with shape (B, L, M, N)</span>
+<span class="sd">        ca (torch.Tensor): Coded aperture with shape (1, 1, M, N + L - 1)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Measurement with shape (B, 1, M, N)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># Extract spectral image shape</span>
+    <span class="k">assert</span> <span class="n">ca</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">N</span> <span class="o">+</span> <span class="n">L</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;The coded aperture must have the same size as a dispersed scene&quot;</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="n">prism_operator</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">shift_sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="backward_dd_cassi">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.backward_dd_cassi.html#colibri.optics.functional.backward_dd_cassi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">backward_dd_cassi</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)</span>
+<span class="sd">    </span>
+<span class="sd">    For more information refer to: Single-shot compressive spectral imaging with a dual-disperser architecture https://doi.org/10.1364/OE.15.014013</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y (torch.Tensor): Measurement with shape (B, 1, M, N)</span>
+<span class="sd">        ca (torch.Tensor): Coded aperture with shape (1, 1, M, N + L - 1)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Spectral image with shape (1, L, M, N)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N_hat</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># Extract spectral image shape</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">N_hat</span> <span class="o">-</span> <span class="n">M</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Number of shifts</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="n">prism_operator</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">shift_sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="forward_sd_cassi">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.forward_sd_cassi.html#colibri.optics.functional.forward_sd_cassi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_sd_cassi</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Forward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)</span>
+<span class="sd">    </span>
+<span class="sd">    For more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Spectral image with shape (B, L, M, N)</span>
+<span class="sd">        ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Measurement with shape (B, 1, M, N + L - 1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span>  <span class="c1"># Multiplication of the scene by the coded aperture</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="n">y1</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># Extract spectral image shape</span>
+    <span class="c1"># shift and sum</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">prism_operator</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span> <span class="n">shift_sign</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y2</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="backward_sd_cassi">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.backward_sd_cassi.html#colibri.optics.functional.backward_sd_cassi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">backward_sd_cassi</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Backward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)</span>
+<span class="sd">    </span>
+<span class="sd">    For more information refer to: Compressive Coded Aperture Spectral Imaging: An Introduction: https://doi.org/10.1109/MSP.2013.2278763</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y (torch.Tensor): Measurement with shape (B, 1, M, N + L - 1)</span>
+<span class="sd">        ca (torch.Tensor): Coded aperture with shape (1, 1, M, N)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Spectral image with shape (B, L, M, N)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># Extract spectral image shape</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">N</span> <span class="o">-</span> <span class="n">M</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Number of shifts</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">prism_operator</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">shift_sign</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ca</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="forward_spc">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.forward_spc.html#colibri.optics.functional.forward_spc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">forward_spc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">H</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Forward propagation through the Single Pixel Camera (SPC) model.</span>
+
+<span class="sd">    For more information refer to: Optimized Sensing Matrix for Single Pixel Multi-Resolution Compressive Spectral Imaging 10.1109/TIP.2020.2971150</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Input image tensor of size (B, L, M, N).</span>
+<span class="sd">        H (torch.Tensor): Measurement matrix of size (S, M*N).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Output measurement tensor of size (B, S, L).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">M</span> <span class="o">*</span> <span class="n">N</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># measurement</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="backward_spc">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.backward_spc.html#colibri.optics.functional.backward_spc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">backward_spc</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">H</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">pinv</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Inverse operation to reconstruct the image from measurements.</span>
+
+<span class="sd">    For more information refer to: Optimized Sensing Matrix for Single Pixel Multi-Resolution Compressive Spectral Imaging  10.1109/TIP.2020.2971150</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y (torch.Tensor): Measurement tensor of size (B, S, L).</span>
+<span class="sd">        H (torch.Tensor): Measurement matrix of size (S, M*N).</span>
+<span class="sd">        pinv (bool): Boolean, if True the pseudo-inverse of H is used, otherwise the transpose of H is used, defaults to False.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Reconstructed image tensor of size (B, L, M, N).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">Hinv</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pinverse</span><span class="p">(</span><span class="n">H</span><span class="p">)</span> <span class="k">if</span> <span class="n">pinv</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">Hinv</span> <span class="o">=</span> <span class="n">Hinv</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">Hinv</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">hw</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">hw</span><span class="p">))</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<span class="c1">### Wave optics</span>
+
+<div class="viewcode-block" id="get_spatial_coords">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.get_spatial_coords.html#colibri.optics.functional.get_spatial_coords">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">),</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;cartesian&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    Generate the spatial coordinates for wave optics simulations in a specific coordinate system.</span>
+<span class="sd">    </span>
+<span class="sd">    .. note::</span>
+<span class="sd">        * if type is &#39;cartesian&#39;, we generate :math:`(x, y)` coordinates in the Cartesian coordinate system, where</span>
+<span class="sd">            * :math:`x \in \bigg[-\frac{\Delta\cdot N}{2}, \frac{\Delta\cdot N}{2} \bigg]`</span>
+<span class="sd">            * :math:`y \in \bigg[-\frac{\Delta\cdot M}{2}, \frac{\Delta\cdot M}{2} \bigg]`</span>
+<span class="sd">        * if type is &#39;polar&#39;, we generate :math:`(r, \theta)` coordinates in the Polar coordinate system, where</span>
+<span class="sd">            * :math:`r \in \Bigg[0, \sqrt{\bigg(\frac{\Delta\cdot N}{2}\bigg)^2 + \bigg(\frac{\Delta\cdot M}{2}\bigg)^2} \Bigg]`</span>
+<span class="sd">            * :math:`\theta \in [-\pi, \pi]`</span>
+<span class="sd">        </span>
+<span class="sd">        with :math:`\Delta` being the pixel size, :math:`M` the number of pixels in the y axis, and :math:`N` the number of pixels in the x axis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        M (int): number of pixels in the y axis.</span>
+<span class="sd">        N (int): number of pixels in the x axis.</span>
+<span class="sd">        pixel_size (float): Pixel size in meters.</span>
+<span class="sd">        device (torch.device): Device, for more see torch.device().</span>
+<span class="sd">        type (str): Type of coordinate system to generate (&#39;cartesian&#39; or &#39;polar&#39;).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple[torch.Tensor, torch.Tensor]: A tuple of tensors representing the X and Y coordinates</span>
+<span class="sd">                                            if &#39;cartesian&#39;, or radius (r) and angle (theta) if &#39;polar&#39;.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pixel_size</span> <span class="o">*</span> <span class="n">N</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">pixel_size</span> <span class="o">*</span> <span class="n">N</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">N</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">pixel_size</span> <span class="o">*</span> <span class="n">M</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">pixel_size</span> <span class="o">*</span> <span class="n">M</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">M</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s2">&quot;polar&quot;</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">theta</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="wave_number">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.wave_number.html#colibri.optics.functional.wave_number">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wave_number</span><span class="p">(</span><span class="n">wavelength</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wavenumber </span>
+<span class="sd">    </span>
+<span class="sd">    .. math::</span>
+<span class="sd">        k = \frac{2 \pi}{\lambda}</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\lambda` is the wavelength in meters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        wavelength (torch.Tensor): Wavelength in meters.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Wavenumber.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">wavelength</span></div>
+
+
+
+<div class="viewcode-block" id="transfer_function_fresnel">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.transfer_function_fresnel.html#colibri.optics.functional.transfer_function_fresnel">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transfer_function_fresnel</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                              <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                              <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                              <span class="n">wavelengths</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                              <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                              <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    The transfer function for the Fresnel propagation can be written as follows:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        H(f_x, f_y, \lambda) = e^{j k s \left(1 - \frac{\lambda^2}{2} (f_x^2 + f_y^2)\right)}</span>
+
+<span class="sd">    where :math:`f_x` and :math:`f_y` are the spatial frequencies, :math:`\lambda` is the wavelength, :math:`s` is the distance of propagation and :math:`k` is the wavenumber.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        M (int): Resolution at Y axis in pixels.</span>
+<span class="sd">        N (int): Resolution at N axis in pixels.</span>
+<span class="sd">        pixel_size (float): Pixel pixel_size in meters.</span>
+<span class="sd">        wavelengths (torch.Tensor): Wavelengths in meters.</span>
+<span class="sd">        distance (float): Distance in meters.</span>
+<span class="sd">        device (torch.device): Device, for more see torch.device().</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), M, N).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="n">pixel_size</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;polar&#39;</span><span class="p">)</span>
+    <span class="n">fr</span> <span class="o">=</span> <span class="n">fr</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">*</span> <span class="n">distance</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="n">fr</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">wavelengths</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">H</span></div>
+
+
+
+<div class="viewcode-block" id="transfer_function_angular_spectrum">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.transfer_function_angular_spectrum.html#colibri.optics.functional.transfer_function_angular_spectrum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">transfer_function_angular_spectrum</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                       <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    The transfer function for the angular spectrum propagation can be written as follows:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        H(f_x, f_y, \lambda) = e^{\frac{j s 2 \pi}{\lambda} \sqrt{1 - \lambda^2 (f_x^2 + f_y^2)}}</span>
+
+<span class="sd">    where :math:`f_x` and :math:`f_y` are the spatial frequencies, :math:`\lambda` is the wavelength, :math:`s` is the distance of propagation and :math:`k` is the wavenumber.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        M (int): Resolution at Y axis in pixels.</span>
+<span class="sd">        N (int): Resolution at X axis in pixels.</span>
+<span class="sd">        pixel_size (float): Pixel pixel_size in meters.</span>
+<span class="sd">        wavelengths (torch.Tensor): Wavelengths in meters.</span>
+<span class="sd">        distance (float): Distance in meters.</span>
+<span class="sd">        device (torch.device): Device, for more see torch.device().</span>
+<span class="sd">        type (str): Type of coordinates, can be &quot;cartesian&quot; or &quot;polar&quot;.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Complex kernel in Fourier domain with shape (len(wavelengths), M, N).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fr</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="n">pixel_size</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;polar&#39;</span><span class="p">)</span>
+    <span class="n">fr</span> <span class="o">=</span> <span class="n">fr</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">*</span> <span class="n">distance</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">((</span><span class="n">fr</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">wavelengths</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">H</span></div>
+
+
+
+<div class="viewcode-block" id="fraunhofer_propagation">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.fraunhofer_propagation.html#colibri.optics.functional.fraunhofer_propagation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fraunhofer_propagation</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                           <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Fraunhofer approximation of :math:`U_0(x&#39;,y&#39;)` is its Fourier transform, :math:`\mathcal{F}\{U_0\}` with an additional phase factor that depends on the distance of propagation, :math:`z`. The Fraunhofer approximation is given by the following equation:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        U(x,y,z) \approx \frac{e^{jkz}e^{\frac{jk\left(x^2+y^2\right)}{2z}}}{j\lambda z} \mathcal{F}\left\{U_0(x,y)\right\}\left(\frac{x}{\lambda z}, \frac{y}{\lambda z}\right)</span>
+
+<span class="sd">    where :math:`U(x,y,z)` is the field at distance :math:`z` from the source, :math:`U_0(x,y)` is the field at the source, :math:`\mathcal{F}` is the Fourier transform operator, :math:`k` is the wavenumber, :math:`\lambda` is the wavelength, :math:`\frac{x}{\lambda z}` and  :math:`\frac{y}{\lambda z}` are the spatial frequencies, and :math:`z` is the distance of propagation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field (torch.Tensor): Input field.</span>
+<span class="sd">        M (int): Resolution at Y axis in pixels.</span>
+<span class="sd">        N (int): Resolution at X axis in pixels.</span>
+<span class="sd">        pixel_size (float): Pixel pixel_size in meters.</span>
+<span class="sd">        wavelengths (torch.Tensor): Wavelengths in meters.</span>
+<span class="sd">        distance (float): Distance in meters.</span>
+<span class="sd">        device (torch.device): Device, for more see torch.device().</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Propagated field. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;polar&#39;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">*</span> <span class="n">distance</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wavelengths</span> <span class="o">*</span> <span class="n">distance</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">distance</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">field</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">pixel_size</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="fraunhofer_inverse_propagation">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.fraunhofer_inverse_propagation.html#colibri.optics.functional.fraunhofer_inverse_propagation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fraunhofer_inverse_propagation</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                   <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The inverse Fraunhofer approximation (to reconstruct the field at the source from the field at the sensor) is given by the following equation:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        U_0(x,y) \approx \frac{1}{j\lambda z} e^{j k z} e^{\frac{j k (x^2 + y^2)}{2z}} \mathcal{F}^{-1}\left\{ U(x,y) \right\}</span>
+
+<span class="sd">    where :math:`U_0(x,y)` is the field at the source, :math:`U(x,y)` is the field at the sensor, :math:`\mathcal{F}^{-1}` is the inverse Fourier transform operator,  :math:`k` is the wavenumber, :math:`\lambda` is the wavelength, and :math:`z` is the distance of propagation.   </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field (torch.Tensor): Field at the sensor.</span>
+<span class="sd">        pixel_size (float): Pixel pixel_size in meters.</span>
+<span class="sd">        wavelengths (torch.Tensor): Wavelengths in meters.</span>
+<span class="sd">        distance (float): Distance in meters.</span>
+<span class="sd">        device (torch.device): Device, for more see torch.device().</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Reconstructed field.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;polar&#39;</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">*</span> <span class="n">distance</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wavelengths</span> <span class="o">*</span> <span class="n">distance</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+        <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">distance</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="n">field</span> <span class="o">/</span> <span class="n">pixel_size</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="fft">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.fft.html#colibri.optics.functional.fft">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fft</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Fast Fourier Transform of an optical field</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field (torch.Tensor): Input field.</span>
+<span class="sd">        axis (tuple): Tuple with the axes to perform the fft.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Fourier transform of the input field.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fft2</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftshift</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">field</span></div>
+
+
+
+<div class="viewcode-block" id="ifft">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.ifft.html#colibri.optics.functional.ifft">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ifft</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    Inverse Fast Fourier Transform of an optical field</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field (torch.Tensor): Input field.</span>
+<span class="sd">        axis (tuple): Tuple with the axes to perform the ifft.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Inverse Fourier transform of the input field.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifft2</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">field</span></div>
+
+
+
+<div class="viewcode-block" id="scalar_diffraction_propagation">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.scalar_diffraction_propagation.html#colibri.optics.functional.scalar_diffraction_propagation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">scalar_diffraction_propagation</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+                                   <span class="n">approximation</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the optical field propagation using a scalar diffraction theory model which is given by the specific approximation selected.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    .. note::</span>
+<span class="sd">        * if &#39;approximation&#39; is &#39;fresnel&#39;, the transfer function is calculated using :func:`colibri.optics.functional.transfer_function_fresnel`.</span>
+<span class="sd">        * if &#39;approximation&#39; is &#39;angular_spectrum&#39;, the transfer function is calculated using :func:`colibri.optics.functional.transfer_function_angular_spectrum`.</span>
+<span class="sd">        * if &#39;approximation&#39; is &#39;fraunhofer&#39;, the transfer function is calculated using :func:`colibri.optics.functional.fraunhofer_propagation`.</span>
+<span class="sd">        * if &#39;approximation&#39; is &#39;fraunhofer_inverse&#39;, the transfer function is calculated using :func:`colibri.optics.functional.fraunhofer_inverse_propagation`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        field (torch.Tensor): Input optical field of shape (C, M, N).</span>
+<span class="sd">        distance (float): Propagation distance in meters.</span>
+<span class="sd">        pixel_size (float): Pixel size in meters.</span>
+<span class="sd">        wavelength (list): List of wavelengths in meters.</span>
+<span class="sd">        approximation (str): Approximation (or diffraction model type) to use, can be &quot;fresnel&quot;, &quot;angular_spectrum&quot; or &quot;fraunhofer&quot;.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: The propagated optical field according to the selected approximation of shape (C, M, N).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">approximation</span> <span class="o">==</span> <span class="s2">&quot;fresnel&quot;</span><span class="p">:</span>
+
+        <span class="n">H</span> <span class="o">=</span> <span class="n">transfer_function_fresnel</span><span class="p">(</span><span class="n">M</span><span class="p">,</span>
+                                      <span class="n">N</span><span class="p">,</span>
+                                      <span class="n">pixel_size</span><span class="p">,</span>
+                                      <span class="n">wavelength</span><span class="p">,</span>
+                                      <span class="n">distance</span><span class="p">,</span>
+                                      <span class="n">field</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">approximation</span> <span class="o">==</span> <span class="s2">&quot;angular_spectrum&quot;</span><span class="p">:</span>
+        <span class="n">H</span> <span class="o">=</span> <span class="n">transfer_function_angular_spectrum</span><span class="p">(</span><span class="n">M</span><span class="p">,</span>
+                                               <span class="n">N</span><span class="p">,</span>
+                                               <span class="n">pixel_size</span><span class="p">,</span>
+                                               <span class="n">wavelength</span><span class="p">,</span>
+                                               <span class="n">distance</span><span class="p">,</span>
+                                               <span class="n">field</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">approximation</span> <span class="o">==</span> <span class="s2">&quot;fraunhofer&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fraunhofer_propagation</span><span class="p">(</span><span class="n">field</span><span class="p">,</span>
+                                      <span class="n">M</span><span class="p">,</span>
+                                      <span class="n">N</span><span class="p">,</span>
+                                      <span class="n">pixel_size</span><span class="p">,</span>
+                                      <span class="n">wavelength</span><span class="p">,</span>
+                                      <span class="n">distance</span><span class="p">,</span>
+                                      <span class="n">field</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">approximation</span> <span class="o">==</span> <span class="s2">&quot;fraunhofer_inverse&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fraunhofer_inverse_propagation</span><span class="p">(</span><span class="n">field</span><span class="p">,</span>
+                                              <span class="n">pixel_size</span><span class="p">,</span>
+                                              <span class="n">wavelength</span><span class="p">,</span>
+                                              <span class="n">distance</span><span class="p">,</span>
+                                              <span class="n">field</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">approximation</span><span class="si">}</span><span class="s2"> approximation is implemented&quot;</span><span class="p">)</span>
+
+    <span class="n">U1</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+    <span class="n">U2</span> <span class="o">=</span> <span class="n">U1</span> <span class="o">*</span> <span class="n">H</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ifft</span><span class="p">(</span><span class="n">U2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="circular_aperture">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.circular_aperture.html#colibri.optics.functional.circular_aperture">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">circular_aperture</span><span class="p">(</span><span class="n">M</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Create a circular aperture mask of a given radius and pixel_size of size (M, N).</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        A(x, y) = \begin{cases} </span>
+<span class="sd">            1 &amp; \text{if } \pm \sqrt{(x^2 + y^2)} \leq \text{radius} \\</span>
+<span class="sd">            0 &amp; \text{otherwise}</span>
+<span class="sd">        \end{cases}</span>
+<span class="sd">        </span>
+<span class="sd">    where: :math:`(x, y)` are the coordinates of each pixel, normalized by the pixel size, :math:`\text{radius}` is the radius of the aperture</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        M (int): Resolution at Y axis in pixels.</span>
+<span class="sd">        N (int): Resolution at X axis in pixels.</span>
+<span class="sd">        radius (float): Radius of the circular aperture in meters.</span>
+<span class="sd">        pixel_size (float): Pixel size in meters.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: A binary mask with 1&#39;s inside the radius and 0&#39;s outside.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;polar&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">radius</span></div>
+
+
+
+<div class="viewcode-block" id="height2phase">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.height2phase.html#colibri.optics.functional.height2phase">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">height2phase</span><span class="p">(</span><span class="n">height_map</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">wavelengths</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Convert height map to phase modulation.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \Phi(x,y,\lambda) = k(\lambda) \Delta n(\lambda) h(x, y)</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\Phi` is the phase modulation,  :math:`h(x, y)` is the height map of the optical element, :math:`k(\lambda)` is the wavenumber for \lambda wavelength and :math:`\Delta n(\lambda)` is the change of refractive index between propagation medium and material of the optical element .</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        height_map (torch.Tensor): Height map.</span>
+<span class="sd">        wavelengths (torch.Tensor): Wavelengths in meters.</span>
+<span class="sd">        refractive_index (function): Function to calculate the refractive index.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Phase.    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+    <span class="n">phase_doe</span> <span class="o">=</span> <span class="n">refractive_index</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="o">*</span> <span class="n">k0</span> <span class="o">*</span> <span class="n">height_map</span>
+    <span class="k">return</span> <span class="n">phase_doe</span></div>
+
+
+
+<div class="viewcode-block" id="psf_single_doe_spectral">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.psf_single_doe_spectral.html#colibri.optics.functional.psf_single_doe_spectral">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">psf_single_doe_spectral</span><span class="p">(</span><span class="n">height_map</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">aperture</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">refractive_index</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span>
+                            <span class="n">wavelengths</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">source_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                            <span class="n">sensor_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">approximation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fresnel&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging. The PSF is calculated as follows:</span>
+<span class="sd">    </span>
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{H}(\learnedOptics)  = |\mathcal{P_2}(z_2, \lambda) \left( \mathcal{P_1}(z_1,  \lambda)(\delta) * \learnedOptics \right)|^2</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\mathcal{P_1}` is an operator that describes the propagation of light from the source to the DOE at a distance :math:`z_1`, :math:`\mathcal{P_2}` is an operator that describes the propagation of light from the DOE to the sensor at a distance :math:`z_2`, and :math:`\learnedOptics` is the DOE. </span>
+<span class="sd">    </span>
+<span class="sd">    The operator :math:`\mathcal{P_2}` depends on the given approximation:</span>
+
+<span class="sd">        - Fresnel :func:`colibri.optics.functional.transfer_function_fresnel`</span>
+<span class="sd">        - Angular Spectrum :func:`colibri.optics.functional.transfer_function_angular_spectrum`</span>
+<span class="sd">        - Fraunhofer :func:`colibri.optics.functional.fraunhofer_propagation`.</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        height_map (torch.Tensor): Height map of the DOE.</span>
+<span class="sd">        aperture (torch.Tensor): Aperture mask.</span>
+<span class="sd">        refractive_index (callable): Function to calculate the refractive index.</span>
+<span class="sd">        wavelengths (torch.Tensor): Wavelengths in meters.</span>
+<span class="sd">        source_distance (float): Distance from the source to the DOE in meters.</span>
+<span class="sd">        sensor_distance (float): Distance from the DOE to the sensor in meters.</span>
+<span class="sd">        pixel_size (float): Pixel size in meters.</span>
+<span class="sd">        approximation (str): Type of propagation model (&#39;fresnel&#39;, &#39;angular_spectrum&#39;, &#39;fraunhofer&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: PSF of the optical system, normalized to unit energy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">height_map</span> <span class="o">=</span> <span class="n">height_map</span> <span class="o">*</span> <span class="n">aperture</span>
+    <span class="n">M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">height_map</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">k0</span> <span class="o">=</span> <span class="n">wave_number</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+    <span class="n">doe</span> <span class="o">=</span> <span class="n">height2phase</span><span class="p">(</span><span class="n">height_map</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">height_map</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">wavelengths</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span>
+                       <span class="n">refractive_index</span><span class="o">=</span><span class="n">refractive_index</span><span class="p">)</span>
+    <span class="n">doe</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">doe</span> <span class="o">*</span> <span class="n">aperture</span><span class="p">)</span> <span class="o">*</span> <span class="n">aperture</span>
+    <span class="n">optical_field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">doe</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">source_distance</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">source_distance</span><span class="p">)):</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">get_spatial_coords</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">doe</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;polar&#39;</span><span class="p">)</span>
+        <span class="n">spherical_phase</span> <span class="o">=</span> <span class="p">(</span><span class="n">k0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">source_distance</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">optical_field</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">spherical_phase</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">wavelengths</span> <span class="o">*</span> <span class="n">source_distance</span><span class="p">))</span>
+
+    <span class="n">optical_field</span> <span class="o">=</span> <span class="n">optical_field</span> <span class="o">*</span> <span class="n">doe</span>
+    <span class="n">optical_field_in_sensor</span> <span class="o">=</span> <span class="n">scalar_diffraction_propagation</span><span class="p">(</span><span class="n">field</span><span class="o">=</span><span class="n">optical_field</span><span class="p">,</span>
+                                                             <span class="n">distance</span><span class="o">=</span><span class="n">sensor_distance</span><span class="p">,</span>
+                                                             <span class="n">pixel_size</span><span class="o">=</span><span class="n">pixel_size</span><span class="p">,</span>
+                                                             <span class="n">wavelength</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span>
+                                                             <span class="n">approximation</span><span class="o">=</span><span class="n">approximation</span><span class="p">)</span>
+    <span class="n">psf</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">optical_field_in_sensor</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">psf</span> <span class="o">=</span> <span class="n">psf</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">psf</span></div>
+
+
+
+<div class="viewcode-block" id="gaussian_noise">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.gaussian_noise.html#colibri.optics.functional.gaussian_noise">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gaussian_noise</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">snr</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add Gaussian noise to an image based on a specified signal-to-noise ratio (SNR).</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{\tilde{y}} = \mathbf{y} + n</span>
+
+<span class="sd">    where :math:`n` is a Gaussian noise with zero mean and variance :math:`\sigma^2` such that is derived from the SNR and the power of :math:`\mathbf{y}`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y (torch.Tensor): Original image tensor with shape (B, L, M, N).</span>
+<span class="sd">        snr (float): Desired signal-to-noise ratio in decibels (dB).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Noisy image tensor with the same shape as input.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">sigma_per_channel</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">snr</span> <span class="o">/</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma_per_channel</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span> <span class="o">+</span> <span class="n">noise</span></div>
+
+
+
+<div class="viewcode-block" id="fourier_conv">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.fourier_conv.html#colibri.optics.functional.fourier_conv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fourier_conv</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">psf</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply Fourier convolution theorem to simulate the effect of a linear system characterized by a point spread function (PSF).</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        g = \mathcal{F}^{-1}(\mathcal{F}(f) * \mathcal{F}(h))</span>
+
+<span class="sd">    where :math:`f` is the input image, :math:`h` is the PSF, :math:`g` is the convolved output, :math:`\mathcal{F}` and :math:`\mathcal{F}^{-1}` denote the Fourier and inverse Fourier transforms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)</span>
+<span class="sd">        psf (torch.Tensor): Point Spread Function (1, L, M, N)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Measurement (B, 1, M, N)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Fix psf and image size</span>
+    <span class="n">psf_size</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">image_size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">extra_size</span> <span class="o">=</span> <span class="p">[(</span><span class="n">psf_size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">image_size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image_size</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">psf</span> <span class="o">=</span> <span class="n">add_pad</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">add_pad</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+
+    <span class="n">img_fft</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">otf</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">psf</span><span class="p">)</span>
+    <span class="n">img_fft</span> <span class="o">=</span> <span class="n">img_fft</span> <span class="o">*</span> <span class="n">otf</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ifft</span><span class="p">(</span><span class="n">img_fft</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">unpad</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="add_pad">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.add_pad.html#colibri.optics.functional.add_pad">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_pad</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">pad</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Add zero padding to a tensor.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        * pad object is a list of the same length as the number of dimensions of the tensor x</span>
+<span class="sd">        * each element of the pad list is a integer, specifying the amount of padding to add on each side of the corresponding dimension in x.</span>
+
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Tensor to pad</span>
+<span class="sd">        pad list:  padding to ad</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        x (torch.Tensor): Padded tensor</span>
+<span class="sd">        </span>
+
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; x = torch.tensor([[1, 2], [3, 4]])</span>
+<span class="sd">        &gt;&gt;&gt; add_pad(x, [1, 1])</span>
+<span class="sd">        tensor([[0, 0, 0, 0],</span>
+<span class="sd">                [0, 1, 2, 0],</span>
+<span class="sd">                [0, 3, 4, 0],</span>
+<span class="sd">                [0, 0, 0, 0]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pad</span><span class="p">),</span> <span class="s2">&quot;The tensor and the padding must have the same number of dimensions&quot;</span>
+
+    <span class="n">pad_list</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([[</span><span class="n">pa</span><span class="p">,</span> <span class="n">pa</span><span class="p">]</span> <span class="k">for</span> <span class="n">pa</span> <span class="ow">in</span> <span class="n">pad</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[])</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pad_list</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="unpad">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.unpad.html#colibri.optics.functional.unpad">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpad</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">pad</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Unpad a tensor.</span>
+
+
+<span class="sd">    .. note::</span>
+<span class="sd">        * pad is a list of the same length as the number of dimensions of the tensor x</span>
+<span class="sd">        * each element of the pad list is a integer, specifying the amount of padding to remove on each side of the corresponding dimension in x.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Tensor to unpad</span>
+<span class="sd">        pad int:  padding to remove</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        x (torch.Tensor): Unpadded tensor</span>
+
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; x = torch.tensor([[0, 0, 0, 0],[0, 1, 2, 0],[0, 3, 4, 0],[0, 0, 0, 0]])</span>
+<span class="sd">        &gt;&gt;&gt; unpad(x, [1, 1])</span>
+<span class="sd">        tensor([[1, 2],</span>
+<span class="sd">                [3, 4]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">pad</span><span class="p">),</span> <span class="s2">&quot;The tensor and the padding must have the same number of dimensions&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+               <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">2</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">3</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">3</span><span class="p">])]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+               <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">2</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="p">(</span><span class="mi">0</span> <span class="o">+</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">]):(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">pad</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The tensor must have 2, 3 or 4 dimensions&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="signal_conv">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.signal_conv.html#colibri.optics.functional.signal_conv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">signal_conv</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">psf</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function applies the convolution of an image with a Point Spread Function (PSF) in the signal domain.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        g(x, y) = f(x, y) * h(x, y)</span>
+
+<span class="sd">    where :math:`f(x, y)` is the input image, :math:`h(x, y)` is the PSF, and :math:`g(x, y)` is the convolved output.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (torch.Tensor): Image to simulate the sensing (B, L, M, N)</span>
+<span class="sd">        psf (torch.Tensor): Point Spread Function (1, L, M, N)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Measurement (B, 1, M, N)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">original_size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">psf</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">C</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">conv2d</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">groups</span><span class="o">=</span><span class="n">C</span><span class="p">)</span>
+
+    <span class="n">new_size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">unpad</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">new_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">original_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">new_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">original_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">image</span></div>
+
+
+
+<div class="viewcode-block" id="convolutional_sensing">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.convolutional_sensing.html#colibri.optics.functional.convolutional_sensing">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convolutional_sensing</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">psf</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s1">&#39;fourier&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate the convolutional sensing model of an optical system, using either Fourier or spatial domain methods.</span>
+
+<span class="sd">    The &quot;domain&quot; argument choose to perform the convolution in the Fourier domain with :func:`colibri.optics.functional.fourier_conv` or the spatial domain with :func:`colibri.optics.functional.signal_conv`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (torch.Tensor): Image tensor to simulate the sensing (B, L, M, N).</span>
+<span class="sd">        psf (torch.Tensor): Point Spread Function (PSF) tensor (1, L, M, N).</span>
+<span class="sd">        domain (str): Domain for convolution operation, &#39;fourier&#39; or &#39;signal&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Convolved image tensor as measurement (B, 1, M, N).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: If the specified domain is not supported.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;fourier&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fourier_conv</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">psf</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">domain</span> <span class="o">==</span> <span class="s1">&#39;signal&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">signal_conv</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">psf</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">domain</span><span class="si">}</span><span class="s2"> domain is not implemented&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="wiener_filter">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.wiener_filter.html#colibri.optics.functional.wiener_filter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wiener_filter</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">psf</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    This function applies the Wiener filter to an image.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            X(x, y) &amp;= \mathcal{F}^{-1}\{Y(u, v) \frac{H^*(u, v)}{|H(u, v)|^2 + \alpha}\}</span>
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    where :math:`H(u, v)` is the optical transfer function, :math:`Y(u, v)` is the Fourier transform of the image, :math:`\alpha` is the regularization parameter, and :math:`X(x, y)` is the filtered image.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (torch.Tensor): Image to apply the Wiener filter (B, L, M, N)</span>
+<span class="sd">        psf (torch.Tensor): Point Spread Function (1, L, M, N)</span>
+<span class="sd">        alpha (float): Regularization parameter</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Filtered image (B, L, M, N)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Fix psf and image size</span>
+    <span class="n">psf_size</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">image_size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">extra_size</span> <span class="o">=</span> <span class="p">[(</span><span class="n">psf_size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">image_size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image_size</span><span class="p">))]</span>
+    <span class="k">if</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">psf</span> <span class="o">=</span> <span class="n">add_pad</span><span class="p">(</span><span class="n">psf</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">add_pad</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+
+    <span class="n">img_fft</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">otf</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">psf</span><span class="p">)</span>
+    <span class="nb">filter</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">otf</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">otf</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span>
+    <span class="n">img_fft</span> <span class="o">=</span> <span class="n">img_fft</span> <span class="o">*</span> <span class="nb">filter</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ifft</span><span class="p">(</span><span class="n">img_fft</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">unpad</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">extra_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">img</span></div>
+
+
+
+<div class="viewcode-block" id="ideal_panchromatic_sensor">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.ideal_panchromatic_sensor.html#colibri.optics.functional.ideal_panchromatic_sensor">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">ideal_panchromatic_sensor</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Simulate the response of an ideal panchromatic sensor by averaging the spectral channels.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        I = \frac{1}{L} \sum_{\lambda} I_{\lambda}</span>
+
+<span class="sd">    where :math:`I_{\lambda}` is the intensity at each wavelength, and :math:`L` is the number of spectral channels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (torch.Tensor): Multispectral image tensor (B, L, M, N).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Simulated sensor output as measurement (B, 1, M, N).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">/</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="coded_phase_imaging_forward">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.coded_phase_imaging_forward.html#colibri.optics.functional.coded_phase_imaging_forward">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coded_phase_imaging_forward</span><span class="p">(</span>
+        <span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> 
+        <span class="n">phase_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> 
+        <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">wavelength</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> 
+        <span class="n">approximation</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Forward model for phase retrieval using a single distance and wavelength.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{y} = \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics) </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image (torch.Tensor): Image tensor to simulate the sensing (B, 1, M, N).</span>
+<span class="sd">        distance (float): Distance in meters.</span>
+<span class="sd">        wavelength (float): Wavelength in meters.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Phase retrieval measurement (B, 1, M, N).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scalar_diffraction_propagation</span><span class="p">(</span><span class="n">field</span> <span class="o">*</span> <span class="n">phase_mask</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">approximation</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="coded_phase_imaging_backward">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.coded_phase_imaging_backward.html#colibri.optics.functional.coded_phase_imaging_backward">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coded_phase_imaging_backward</span><span class="p">(</span><span class="n">field</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">phase_mask</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">approximation</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Backward model for phase retrieval using a single distance and wavelength.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{x} = \mathcal{P}_{(-z, \lambda)}(\mathbf{x}) \odot \bar{\learnedOptics}</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        y (torch.Tensor): Measurement tensor (B, 1, M, N).</span>
+<span class="sd">        distance (float): Distance in meters.</span>
+<span class="sd">        wavelength (float): Wavelength in meters.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Reconstructed image tensor (B, 1, M, N).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scalar_diffraction_propagation</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="o">-</span><span class="n">distance</span><span class="p">,</span> <span class="n">pixel_size</span><span class="p">,</span> <span class="n">wavelength</span><span class="p">,</span> <span class="n">approximation</span><span class="p">)</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">conj</span><span class="p">(</span><span class="n">phase_mask</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="modulo">
+<a class="viewcode-back" href="../../../stubs/colibri.optics.functional.modulo.html#colibri.optics.functional.modulo">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">modulo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Modulo operation.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \mathbf{x} = \mathbf{x} - t \Big\lfloor \frac{\mathbf{x}}{t} \Big\rfloor</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        x (torch.Tensor): Input tensor with any shape (dim1, dim2, ..., dimN).</span>
+<span class="sd">        t (float): Modulo value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor: Modulo operation result with the same shape as input (dim1, dim2, ..., dimN).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">-</span> <span class="n">t</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

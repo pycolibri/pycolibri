@@ -1,0 +1,9 @@
+﻿conventional\_lens
+==================
+
+.. currentmodule:: colibri.optics.sota_does
+
+.. autofunction:: conventional_lens
+
+.. minigallery:: colibri.optics.sota_does.conventional_lens
+    :add-heading: Examples using ``conventional_lens``:

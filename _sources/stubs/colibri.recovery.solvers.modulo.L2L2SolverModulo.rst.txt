@@ -1,0 +1,15 @@
+﻿L2L2SolverModulo
+================
+
+.. currentmodule:: colibri.recovery.solvers.modulo
+
+.. autoclass:: L2L2SolverModulo
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.recovery.solvers.modulo.L2L2SolverModulo:
+
+.. minigallery:: colibri.recovery.solvers.modulo.L2L2SolverModulo
+    :add-heading: Examples using ``L2L2SolverModulo``:

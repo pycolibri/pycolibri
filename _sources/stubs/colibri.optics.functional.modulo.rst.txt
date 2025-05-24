@@ -1,0 +1,9 @@
+﻿modulo
+======
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: modulo
+
+.. minigallery:: colibri.optics.functional.modulo
+    :add-heading: Examples using ``modulo``:

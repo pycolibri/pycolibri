@@ -1,0 +1,9 @@
+﻿transfer\_function\_angular\_spectrum
+=====================================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: transfer_function_angular_spectrum
+
+.. minigallery:: colibri.optics.functional.transfer_function_angular_spectrum
+    :add-heading: Examples using ``transfer_function_angular_spectrum``:

@@ -1,0 +1,9 @@
+﻿height2phase
+============
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: height2phase
+
+.. minigallery:: colibri.optics.functional.height2phase
+    :add-heading: Examples using ``height2phase``:

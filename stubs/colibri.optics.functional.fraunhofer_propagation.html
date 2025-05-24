@@ -1,0 +1,172 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>fraunhofer_propagation &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="fraunhofer_inverse_propagation" href="colibri.optics.functional.fraunhofer_inverse_propagation.html" />
+    <link rel="prev" title="transfer_function_fresnel" href="colibri.optics.functional.transfer_function_fresnel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../optics.html">Optics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#spectral-imaging-systems">Spectral Imaging systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#phase-imaging-systems">Phase Imaging systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#functional-operators-of-the-optical-systems">Functional operators of the optical systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#functional-operators-of-optical-elements">Functional operators of optical elements</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../optics.html#functional-operators-of-light-propagation">Functional operators of light propagation</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="colibri.optics.functional.scalar_diffraction_propagation.html">scalar_diffraction_propagation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="colibri.optics.functional.transfer_function_angular_spectrum.html">transfer_function_angular_spectrum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="colibri.optics.functional.transfer_function_fresnel.html">transfer_function_fresnel</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">fraunhofer_propagation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#colibri.optics.functional.fraunhofer_propagation"><code class="docutils literal notranslate"><span class="pre">fraunhofer_propagation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="colibri.optics.functional.fraunhofer_inverse_propagation.html">fraunhofer_inverse_propagation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#state-of-the-art-optical-elements">state-of-the-art optical elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#utils">utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../optics.html">Optics</a></li>
+      <li class="breadcrumb-item active">fraunhofer_propagation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/stubs/colibri.optics.functional.fraunhofer_propagation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fraunhofer-propagation">
+<h1>fraunhofer_propagation<a class="headerlink" href="#fraunhofer-propagation" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="colibri.optics.functional.fraunhofer_propagation">
+<span class="sig-prename descclassname"><span class="pre">colibri.optics.functional.</span></span><span class="sig-name descname"><span class="pre">fraunhofer_propagation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelengths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">device(type='cpu')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/colibri/optics/functional.html#fraunhofer_propagation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colibri.optics.functional.fraunhofer_propagation" title="Link to this definition"></a></dt>
+<dd><p>The Fraunhofer approximation of <span class="math notranslate nohighlight">\(U_0(x',y')\)</span> is its Fourier transform, <span class="math notranslate nohighlight">\(\mathcal{F}\{U_0\}\)</span> with an additional phase factor that depends on the distance of propagation, <span class="math notranslate nohighlight">\(z\)</span>. The Fraunhofer approximation is given by the following equation:</p>
+<div class="math notranslate nohighlight">
+\[U(x,y,z) \approx \frac{e^{jkz}e^{\frac{jk\left(x^2+y^2\right)}{2z}}}{j\lambda z} \mathcal{F}\left\{U_0(x,y)\right\}\left(\frac{x}{\lambda z}, \frac{y}{\lambda z}\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(U(x,y,z)\)</span> is the field at distance <span class="math notranslate nohighlight">\(z\)</span> from the source, <span class="math notranslate nohighlight">\(U_0(x,y)\)</span> is the field at the source, <span class="math notranslate nohighlight">\(\mathcal{F}\)</span> is the Fourier transform operator, <span class="math notranslate nohighlight">\(k\)</span> is the wavenumber, <span class="math notranslate nohighlight">\(\lambda\)</span> is the wavelength, <span class="math notranslate nohighlight">\(\frac{x}{\lambda z}\)</span> and  <span class="math notranslate nohighlight">\(\frac{y}{\lambda z}\)</span> are the spatial frequencies, and <span class="math notranslate nohighlight">\(z\)</span> is the distance of propagation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>field</strong> (<em>torch.Tensor</em>) – Input field.</p></li>
+<li><p><strong>M</strong> (<em>int</em>) – Resolution at Y axis in pixels.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Resolution at X axis in pixels.</p></li>
+<li><p><strong>pixel_size</strong> (<em>float</em>) – Pixel pixel_size in meters.</p></li>
+<li><p><strong>wavelengths</strong> (<em>torch.Tensor</em>) – Wavelengths in meters.</p></li>
+<li><p><strong>distance</strong> (<em>float</em>) – Distance in meters.</p></li>
+<li><p><strong>device</strong> (<em>torch.device</em>) – Device, for more see torch.device().</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Propagated field.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="colibri.optics.functional.transfer_function_fresnel.html" class="btn btn-neutral float-left" title="transfer_function_fresnel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="colibri.optics.functional.fraunhofer_inverse_propagation.html" class="btn btn-neutral float-right" title="fraunhofer_inverse_propagation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

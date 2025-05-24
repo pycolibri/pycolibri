@@ -1,0 +1,9 @@
+﻿transfer\_function\_fresnel
+===========================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: transfer_function_fresnel
+
+.. minigallery:: colibri.optics.functional.transfer_function_fresnel
+    :add-heading: Examples using ``transfer_function_fresnel``:

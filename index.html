@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Computational Optical Learning Library (Colibri) Documentation &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="_static/colibri-logo.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Miscellaneous" href="miscellaneous.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            pycolibri
+              <img src="_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Computational Optical Learning Library (Colibri) Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="computational-optical-learning-library-colibri-documentation">
+<h1>Computational Optical Learning Library (Colibri) Documentation<a class="headerlink" href="#computational-optical-learning-library-colibri-documentation" title="Link to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/pycolibri/pycolibri/actions/workflows/test.yml"><img alt="Test Status" src="https://github.com/pycolibri/pycolibri/actions/workflows/test.yml/badge.svg" /></a> <a class="reference external" href="https://github.com/pycolibri/pycolibri/actions/workflows/documentation.yml"><img alt="Docs Status" src="https://github.com/pycolibri/pycolibri/actions/workflows/documentation.yml/badge.svg" /></a> <a class="reference external" href="https://www.python.org/downloads/release/python-380/"><img alt="Python 3.8+" src="https://img.shields.io/badge/python-3.8%2B-blue" /></a> <a class="reference external" href="https://colab.research.google.com/github/pycolibri/pycolibri/blob/main/main.ipynb"><img alt="colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<p>Colibri is a deep learning based library specialized in optimizing the key parameters of optical systems that can be learned from data to improve the performance of the system.</p>
+<p>In Colibri, optical systems, neural networks, model based recovery algorithms, and datasets are implemented to be easily used or modified for new research ideas. The purpose of Colibri is to boost the research-related areas where optics and networks are required and introduce new researchers to state-of-the-art algorithms in a straightforward and friendly manner.</p>
+<section id="relevant-links">
+<h2>🔗 Relevant Links<a class="headerlink" href="#relevant-links" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Source code: <a class="reference external" href="https://github.com/pycolibri/pycolibri">https://github.com/pycolibri/pycolibri</a></p></li>
+<li><p>Documentation: <a class="reference external" href="https://pycolibri.github.io/pycolibri/">https://pycolibri.github.io/pycolibri/</a></p></li>
+</ul>
+</section>
+<section id="goals">
+<h2>🥅 Goals<a class="headerlink" href="#goals" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Easy to use, customize and add modules.</p></li>
+<li><p>Comprehensive documentation and examples.</p></li>
+<li><p>High-quality code and tests.</p></li>
+<li><p>Fast and efficient algorithms.</p></li>
+<li><p>Wide range of optical systems, neural networks, recovery algorithms, and datasets.</p></li>
+<li><p>Support for the latest research in the field.</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>💿 Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>To get started with Colibri, install the library using the following steps:</p>
+<ol class="arabic simple">
+<li><p>Clone the repository:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/pycolibri/pycolibri.git
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Create a virtual environment with conda:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>colibri<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10
+conda<span class="w"> </span>activate<span class="w"> </span>colibri
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Install the requirements:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Enjoy! 😄</p></li>
+</ol>
+</section>
+<section id="quick-start">
+<h2>🚀 Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<p>Check out the demo list in the <a class="reference external" href="https://pycolibri.github.io/pycolibri/auto_examples/index.html">examples</a> folder to get started with Colibri.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/auto_examples/demo_datasets.html#sphx-glr-auto-examples-demo-datasets-py">Demo Colibri</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/auto_examples/demo_pnp.html#sphx-glr-auto-examples-demo-pnp-py">Demo PnP</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/auto_examples/demo_fista.html#sphx-glr-auto-examples-demo-fista-py">Demo FISTA</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/auto_examples/demo_does.html#sphx-glr-auto-examples-demo-does-py">Demo DOEs</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/auto_examples/demo_datasets.html#sphx-glr-auto-examples-demo-datasets-py">Demo Datasets</a></p></li>
+</ul>
+</section>
+<section id="available-modules">
+<h2>🧰 Available Modules<a class="headerlink" href="#available-modules" title="Link to this heading"></a></h2>
+<p>📷 <strong>Optical Systems</strong></p>
+<ul>
+<li><p>Spectral Imaging</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.optics.spc.SPC.html">Single Pixel Camera (SPC)</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI">Single Disperser CASSI (SD-CASSI)</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.DD_CASSI.html">Dual Disperser CASSI (DD-CASSI)</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.optics.cassi.C_CASSI.html">Color CASSI (C-CASSI)</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.optics.doe.SingleDOESpectral.html">Diffractive Optical Element (DOE)</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>📈 <strong>Regularizers</strong></p>
+<ul>
+<li><p>Binary Regularizers</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Reg_Binary.html#colibri.regularizers.Reg_Binary">Values</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Reg_Transmittance.html#colibri.regularizers.Reg_Transmittance">Transmitance</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Stochastic Regularizers</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.Correlation.html#colibri.regularizers.Correlation">Correlation</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.KLGaussian.html#colibri.regularizers.KLGaussian">Kullback-Leibler Divergence</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.regularizers.MinVariance.html#colibri.regularizers.MinVariance">Minimal Variance</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>💻️ <strong>Deep Neural Networks</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/models.html">Autoencoder</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/models.html">Unet</a></p></li>
+</ul>
+</div></blockquote>
+<p>🖥 <strong>Recovery Algorithms</strong></p>
+<ul>
+<li><p>Algorithms</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/recovery.html">Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.pnp.PnP_ADMM.html#colibri.recovery.pnp.PnP_ADMM">Alternating Direction Method of Multipliers Plug and Play (ADMM-PnP)</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Solvers</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.solvers.core.L2L2Solver.html#colibri.recovery.solvers.core.L2L2Solver">L2L2Solver</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Fidelity Terms</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.fidelity.L2.html#colibri.recovery.terms.fidelity.L2">L2</a></p></li>
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.fidelity.L1.html#colibri.recovery.terms.fidelity.L1">L1</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Priors</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.prior.Sparsity.html#colibri.recovery.terms.prior.Sparsity">Sparsity</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Transforms</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.recovery.terms.transforms.DCT2D.html#colibri.recovery.terms.transforms.DCT2D">DCT</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>🎆 <strong>Frameworks</strong></p>
+<ul>
+<li><p>Coupled Optimization for Optics and Recovery</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://pycolibri.github.io/pycolibri/stubs/colibri.misc.e2e.E2E.html#colibri.misc.e2e.E2E">End-to-end framework</a></p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</section>
+<section id="contributors">
+<h2>🫂 Contributors<a class="headerlink" href="#contributors" title="Link to this heading"></a></h2>
+<!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/bemc22">
+                    <img src="https://avatars.githubusercontent.com/u/27647840?v=4" width="100;" alt="bemc22"/>
+                    <br />
+                    <sub><b>Brayan Monroy</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/david-morales-norato">
+                    <img src="https://avatars.githubusercontent.com/u/46037413?v=4" width="100;" alt="david-morales-norato"/>
+                    <br />
+                    <sub><b>David Santiago Morales Norato</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/leonsuarez24">
+                    <img src="https://avatars.githubusercontent.com/u/138550157?v=4" width="100;" alt="leonsuarez24"/>
+                    <br />
+                    <sub><b>leonsuarez24</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/romanjacome99">
+                    <img src="https://avatars.githubusercontent.com/u/18606737?v=4" width="100;" alt="romanjacome99"/>
+                    <br />
+                    <sub><b>Roman Alejandro Jacome Carrascal</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/paularguello07">
+                    <img src="https://avatars.githubusercontent.com/u/68118520?v=4" width="100;" alt="paularguello07"/>
+                    <br />
+                    <sub><b>Paula Andrea Arguello Gutierrez</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/enmartz">
+                    <img src="https://avatars.githubusercontent.com/u/58752635?v=4" width="100;" alt="enmartz"/>
+                    <br />
+                    <sub><b>Emmanuel Martínez</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/yromariogh">
+                    <img src="https://avatars.githubusercontent.com/u/64557285?v=4" width="100;" alt="yromariogh"/>
+                    <br />
+                    <sub><b>Romario Gualdron Hurtado</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/factral">
+                    <img src="https://avatars.githubusercontent.com/u/74687828?v=4" width="100;" alt="factral"/>
+                    <br />
+                    <sub><b>Fabian Perez *-*</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
+<!-- readme: bemc22,David-Morales-Norato,leonsuarez24,romanjacome99,paularguello07,Enmartz,yromariogh,Factral -end -->
+</section>
+<section id="contributing">
+<h2>💡 Contributing<a class="headerlink" href="#contributing" title="Link to this heading"></a></h2>
+<p>Information about contributing to Colibri can be found in the <a class="reference external" href="https://github.com/pycolibri/pycolibri/blob/main/README.md">CONTRIBUTING.md</a> guide. and in the guide <a class="reference external" href="https://pycolibri.github.io/pycolibri/contributing.html">How to Contribute</a></p>
+</section>
+<section id="license">
+<h2>🛡️ License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="miscellaneous.html" class="btn btn-neutral float-right" title="Miscellaneous" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+﻿CodedPhaseImaging
+=================
+
+.. currentmodule:: colibri.optics.phase_imaging
+
+.. autoclass:: CodedPhaseImaging
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.optics.phase_imaging.CodedPhaseImaging:
+
+.. minigallery:: colibri.optics.phase_imaging.CodedPhaseImaging
+    :add-heading: Examples using ``CodedPhaseImaging``:

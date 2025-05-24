@@ -1,0 +1,197 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fista &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PnP_ADMM" href="colibri.recovery.pnp.PnP_ADMM.html" />
+    <link rel="prev" title="Recovery" href="../recovery.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../recovery.html">Recovery</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../recovery.html#list-of-algorithms">List of Algorithms</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Fista</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#colibri.recovery.fista.Fista"><code class="docutils literal notranslate"><span class="pre">Fista</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="colibri.recovery.pnp.PnP_ADMM.html">PnP_ADMM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="colibri.recovery.lfsi.LFSI.html">LFSI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../recovery.html#list-of-solvers">List of Solvers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../recovery.html#fidelity-terms">Fidelity Terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../recovery.html#prior-terms">Prior Terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../recovery.html#transormation">Transormation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../recovery.html">Recovery</a></li>
+      <li class="breadcrumb-item active">Fista</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/stubs/colibri.recovery.fista.Fista.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="fista">
+<h1>Fista<a class="headerlink" href="#fista" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="colibri.recovery.fista.Fista">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">colibri.recovery.fista.</span></span><span class="sig-name descname"><span class="pre">Fista</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">acquistion_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fidelity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">L2()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Sparsity()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_lambda</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/colibri/recovery/fista.html#Fista"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colibri.recovery.fista.Fista" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)</p>
+<p>The FISTA algorithm solves the optimization problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{equation}
+    \underset{\mathbf{x}}{\text{arg min}} \quad \frac{1}{2}||\mathbf{y} - \forwardLinear (\mathbf{x})||^2 + \lambda||\mathbf{x}||_1
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\forwardLinear\)</span> is the forward model, <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> is the data to be reconstructed, <span class="math notranslate nohighlight">\(\lambda\)</span> is the regularization parameter and <span class="math notranslate nohighlight">\(||\cdot||_1\)</span> is the L1 norm.</p>
+<p>The FISTA algorithm is an iterative algorithm that solves the optimization problem by performing a gradient step and a proximal step.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+ \mathbf{x}_{k+1} &amp;= \text{prox}_{\lambda||\cdot||_1}( \mathbf{z}_k - \alpha \nabla f( \mathbf{z}_k)) \\
+t_{k+1} &amp;= \frac{1 + (1 + 4t_k^2)^{0.5}}{2} \\
+\mathbf{z}_{k+1} &amp;=  \mathbf{x}_{k+1} + \frac{t_k-1}{t_{k+1}}( \mathbf{x}_{k} - \mathbf{x}_{k-1})
+\end{align*}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is the step size and <span class="math notranslate nohighlight">\(f\)</span> is the fidelity term.</p>
+<p>Implementation based on the formulation of authors in <a class="reference external" href="https://doi.org/10.1137/080716542">https://doi.org/10.1137/080716542</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fidelity</strong> (<em>nn.Module</em>) – The fidelity term in the optimization problem. This is a function that measures the discrepancy between the data and the model prediction.</p></li>
+<li><p><strong>prior</strong> (<em>nn.Module</em>) – The prior term in the optimization problem. This is a function that encodes prior knowledge about the solution.</p></li>
+<li><p><strong>acquistion_model</strong> (<em>nn.Module</em>) – The acquisition model of the imaging system. This is a function that models the process of data acquisition in the imaging system.</p></li>
+<li><p><strong>max_iters</strong> (<em>int</em>) – The maximum number of iterations for the FISTA algorithm. Defaults to 5.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – The step size for the gradient step. Defaults to 1e-3.</p></li>
+<li><p><strong>_lambda</strong> (<em>float</em>) – The regularization parameter for the prior term. Defaults to 0.1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="colibri.recovery.fista.Fista.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/colibri/recovery/fista.html#Fista.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colibri.recovery.fista.Fista.forward" title="Link to this definition"></a></dt>
+<dd><p>Runs the FISTA algorithm to solve the optimization problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y</strong> (<em>torch.Tensor</em>) – The measurement data to be reconstructed.</p></li>
+<li><p><strong>x0</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – The initial guess for the solution. Defaults to None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The reconstructed image.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="sphx-glr-backref-colibri-recovery-fista-fista"></span></section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../recovery.html" class="btn btn-neutral float-left" title="Recovery" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="colibri.recovery.pnp.PnP_ADMM.html" class="btn btn-neutral float-right" title="PnP_ADMM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

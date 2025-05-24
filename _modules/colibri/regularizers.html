@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colibri.regularizers &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../../_static/colibri-logo.svg"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colibri.regularizers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colibri.regularizers</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+
+
+
+<div class="viewcode-block" id="Binary">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.Binary.html#colibri.regularizers.Binary">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Binary</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Binary Regularization for Coded Aperture Design.</span>
+
+<span class="sd">    Code adapted from  Bacca, Jorge, Tatiana Gelvez-Barrera, and Henry Arguello. </span>
+<span class="sd">    &quot;Deep coded aperture design: An end-to-end approach for computational imaging tasks.&quot; </span>
+<span class="sd">    IEEE Transactions on Computational Imaging 7 (2021): 1148-1160.</span>
+<span class="sd">    The regularizer computes:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \begin{equation*}</span>
+<span class="sd">        R(\learnedOptics) = \mu\sum_{i=1}^{n} (\learnedOptics_i - \text{min_v})^2(\learnedOptics_i - \text{max_v})^2  </span>
+<span class="sd">        \end{equation*}</span>
+
+<span class="sd">    where :math:`\mu` is the regularization parameter and :math:`\text{min_v}` and :math:`\text{max_v}` are the minimum and maximum values for the weights, respectively.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">min_v</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_v</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            parameter (float): Regularization parameter.</span>
+<span class="sd">            min_v (float): Minimum value for weight clipping.</span>
+<span class="sd">            max_v (float): Maximum value for weight clipping.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">(</span><span class="n">Binary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_v</span> <span class="o">=</span> <span class="n">min_v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_v</span> <span class="o">=</span> <span class="n">max_v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_reg</span> <span class="o">=</span> <span class="s1">&#39;ca&#39;</span>
+
+<div class="viewcode-block" id="Binary.forward">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.Binary.html#colibri.regularizers.Binary.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute binary regularization term.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Input tensor (layer&#39;s weight).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Binary regularization term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regularization</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">*</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_v</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_v</span><span class="p">))))</span>
+        <span class="k">return</span> <span class="n">regularization</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Transmittance">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.Transmittance.html#colibri.regularizers.Transmittance">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Transmittance</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transmittance Regularization for Coded Apeuture Design.</span>
+<span class="sd">    </span>
+
+<span class="sd">    Code adapted from  Bacca, Jorge, Tatiana Gelvez-Barrera, and Henry Arguello. </span>
+<span class="sd">    &quot;Deep coded aperture design: An end-to-end approach for computational imaging tasks.&quot; </span>
+<span class="sd">    IEEE Transactions on Computational Imaging 7 (2021): 1148-1160.</span>
+<span class="sd">    </span>
+<span class="sd">    The regularizer computes:</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{equation}</span>
+<span class="sd">        R(\learnedOptics) = \mu \left(\sum_{i=1}^{n}\frac{\learnedOptics_i}{n}-t\right)^2 </span>
+<span class="sd">        \end{equation}</span>
+
+<span class="sd">    where :math:`\mu` is the regularization parameter and :math:`t` is the target transmittance value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            parameter (float): Regularization parameter.</span>
+<span class="sd">            t (float): Target transmittance value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Transmittance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">=</span> <span class="n">parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_reg</span> <span class="o">=</span> <span class="s1">&#39;ca&#39;</span>
+
+<div class="viewcode-block" id="Transmittance.forward">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.Transmittance.html#colibri.regularizers.Transmittance.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute transmittance regularization term.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Input tensor (layer&#39;s weight).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Transmittance regularization term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transmittance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter</span> <span class="o">*</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">numel</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">transmittance</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Correlation">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.Correlation.html#colibri.regularizers.Correlation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Correlation</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correlation Regularization for the outputs of optical layers.</span>
+
+<span class="sd">    This regularizer computes </span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{equation*}</span>
+<span class="sd">        R(\mathbf{y}_1,\mathbf{y}_2) = \mu\left\|\mathbf{C_{yy_1}} - \mathbf{C_{yy_2}}\right\|_2</span>
+<span class="sd">        \end{equation*}</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\mathbf{C_{yy_1}}` and :math:`\mathbf{C_{yy_2}}` are the correlation matrices of the measurements tensors :math:`\mathbf{y}_1,\mathbf{y}_2 \in \yset` and `\mu` is a regularization parameter .</span>
+
+<span class="sd">    </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="mf">0.001</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch_size (int): Batch size used for reshaping.</span>
+<span class="sd">            param (float): Regularization parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>        
+        <span class="nb">super</span><span class="p">(</span><span class="n">Correlation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_reg</span> <span class="o">=</span> <span class="s1">&#39;measurements&#39;</span>
+
+<div class="viewcode-block" id="Correlation.forward">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.Correlation.html#colibri.regularizers.Correlation.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute correlation regularization term.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputs (tuple): Tuple containing two input tensors (x and y).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Correlation regularization term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">inputs</span>
+        <span class="n">x_reshaped</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">y_reshaped</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">Cxx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">x_reshaped</span><span class="p">,</span> <span class="n">x_reshaped</span><span class="o">.</span><span class="n">t</span><span class="p">())</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="n">Cyy</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mm</span><span class="p">(</span><span class="n">y_reshaped</span><span class="p">,</span> <span class="n">y_reshaped</span><span class="o">.</span><span class="n">t</span><span class="p">())</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">Cxx</span> <span class="o">-</span> <span class="n">Cyy</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div>
+</div>
+
+
+<div class="viewcode-block" id="KLGaussian">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.KLGaussian.html#colibri.regularizers.KLGaussian">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KLGaussian</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    KL Divergence Regularization for Gaussian Distributions.</span>
+<span class="sd">    </span>
+<span class="sd">    Code adapted from [2] Jacome, Roman, Pablo Gomez, and Henry Arguello.</span>
+<span class="sd">    &quot;Middle output regularized end-to-end optimization for computational imaging.&quot; </span>
+<span class="sd">    Optica 10.11 (2023): 1421-1431.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{equation*}</span>
+<span class="sd">        R(\mathbf{y}) = \text{KL}(p_\mathbf{y},p_\mathbf{z}) = -\frac{1}{2}\sum_{i=1}^{n} \left(1 + \log(\sigma_{\mathbf{y}_i}^2) - \log(\sigma_{\mathbf{z}_i}^2) - \frac{\sigma_{\mathbf{y}_i}^2 + (\mu_{\mathbf{y}_i} - \mu_{\mathbf{z}_i})^2}{\sigma_{\mathbf{z}_i}^2}\right)</span>
+<span class="sd">        \end{equation*}</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\mu_{\mathbf{y}_i}` and :math:`\sigma_{\mathbf{y}_i}` are the mean and standard deviation of the input tensor :math:`\mathbf{y}\in\yset`, respectively, and :math:`\mu_{\mathbf{z}_i}` and :math:`\sigma_{\mathbf{z}_i}` are the target mean and standard deviation, respectively.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="mf">2.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">KLGaussian</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">            Args:</span>
+<span class="sd">                mean (float): Target mean for the Gaussian distribution.</span>
+<span class="sd">                stddev (float): Target standard deviation for the Gaussian distribution.</span>
+<span class="sd">            </span>
+<span class="sd">            Returns:</span>
+<span class="sd">                torch.Tensor: KL divergence regularization term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">=</span> <span class="n">stddev</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_reg</span> <span class="o">=</span> <span class="s1">&#39;measurements&#39;</span>
+
+<div class="viewcode-block" id="KLGaussian.forward">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.KLGaussian.html#colibri.regularizers.KLGaussian.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute KL divergence regularization term.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y (torch.Tensor): Input tensor representing a Gaussian distribution.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: KL divergence regularization term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">z_mean</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">z_log_var</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">kl_loss</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
+            <span class="n">z_log_var</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stddev</span><span class="o">*</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">z_log_var</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">z_log_var</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">z_mean</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stddev</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">kl_loss</span></div>
+</div>
+
+
+<div class="viewcode-block" id="MinVariance">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.MinVariance.html#colibri.regularizers.MinVariance">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MinVariance</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Minimum Variance Regularization.</span>
+
+
+<span class="sd">    Code adapted from [2] Jacome, Roman, Pablo Gomez, and Henry Arguello.</span>
+<span class="sd">    &quot;Middle output regularized end-to-end optimization for computational imaging.&quot; </span>
+<span class="sd">    Optica 10.11 (2023): 1421-1431.</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        \begin{equation*}</span>
+<span class="sd">        R(\mathbf{y}) = \mu\left\|\sigma_{\mathbf{y}}\right\|_2</span>
+<span class="sd">        \end{equation*}</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`\sigma_{\mathbf{y}}` is the standard deviation of the input tensor :math:`\mathbf{y}\in\yset`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            param (float): Regularization parameter.</span>
+<span class="sd">        &quot;&quot;&quot;</span>   
+        <span class="nb">super</span><span class="p">(</span><span class="n">MinVariance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_reg</span> <span class="o">=</span> <span class="s1">&#39;measurements&#39;</span>
+     
+
+<div class="viewcode-block" id="MinVariance.forward">
+<a class="viewcode-back" href="../../stubs/colibri.regularizers.MinVariance.html#colibri.regularizers.MinVariance.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute minimum variance regularization term.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            y (torch.Tensor): Input tensor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Minimum variance regularization term.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">std_dev</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">var_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">std_dev</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">var_loss</span></div>
+</div>
+
+
+
+
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

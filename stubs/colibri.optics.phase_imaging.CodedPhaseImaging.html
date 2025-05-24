@@ -1,0 +1,213 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodedPhaseImaging &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="coded_phase_imaging_forward" href="colibri.optics.functional.coded_phase_imaging_forward.html" />
+    <link rel="prev" title="Modulo" href="colibri.optics.modulo.Modulo.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../optics.html">Optics</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#spectral-imaging-systems">Spectral Imaging systems</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../optics.html#phase-imaging-systems">Phase Imaging systems</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">CodedPhaseImaging</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#colibri.optics.phase_imaging.CodedPhaseImaging"><code class="docutils literal notranslate"><span class="pre">CodedPhaseImaging</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#functional-operators-of-the-optical-systems">Functional operators of the optical systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#functional-operators-of-optical-elements">Functional operators of optical elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#functional-operators-of-light-propagation">Functional operators of light propagation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#state-of-the-art-optical-elements">state-of-the-art optical elements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../optics.html#utils">utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../optics.html">Optics</a></li>
+      <li class="breadcrumb-item active">CodedPhaseImaging</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/stubs/colibri.optics.phase_imaging.CodedPhaseImaging.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="codedphaseimaging">
+<h1>CodedPhaseImaging<a class="headerlink" href="#codedphaseimaging" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="colibri.optics.phase_imaging.CodedPhaseImaging">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">colibri.optics.phase_imaging.</span></span><span class="sig-name descname"><span class="pre">CodedPhaseImaging</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pixel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wavelength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tensor([5.5000e-07])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">approximation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fresnel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trainable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/colibri/optics/phase_imaging.html#CodedPhaseImaging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colibri.optics.phase_imaging.CodedPhaseImaging" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseOpticsLayer</span></code></p>
+<p>Coded Phase Imaging</p>
+<p>This optical system allow for the capture of a single intensity image of an object, and the subsequent reconstruction of the phase of the object. The system is composed of a phase mask that modulates the phase of the incoming light, and a sensor that captures the intensity of the light. The phase mask is designed to encode the phase information of the object in the intensity image. The phase of the object can be reconstructed from the intensity image using a phase retrieval algorithm.</p>
+<p>Mathematically, this system can be described as follows:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} = \vert \forwardLinear_{\learnedOptics}(\mathbf{x}) \vert^2+ \noise\]</div>
+<p>where <span class="math notranslate nohighlight">\(\noise\)</span> is the sensor noise, <span class="math notranslate nohighlight">\(\mathbf{x} \in \xset\)</span> is the input optical field, <span class="math notranslate nohighlight">\(\mathbf{y} \in \yset\)</span> are the acquired signal, for CodedPhaseImaging, <span class="math notranslate nohighlight">\(\xset \in \mathbb{C}^{M \times N}\)</span> and <span class="math notranslate nohighlight">\(\yset \in \mathbb{R}^{M \times N}\)</span>, and <span class="math notranslate nohighlight">\(\forwardLinear_{\learnedOptics}:\xset\rightarrow \yset\)</span> is the forward operator of the optical system, which is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align*}
+\forwardLinear_{\learnedOptics}: \mathbf{x} &amp;\mapsto \mathbf{y} \\
+                \mathbf{y} &amp;= \left| \mathcal{P}_{(z, \lambda)}(\mathbf{x} \odot \learnedOptics) \right|^2 + \noise
+\end{align*}\end{split}\]</div>
+<p>with <span class="math notranslate nohighlight">\(\learnedOptics \in \mathbb{C}^{M \times N}\)</span> being the phase mask, <span class="math notranslate nohighlight">\(\mathcal{P}_{(z, \lambda)}(\cdot)\)</span> the forward operator of the optical system for a given wavelength <span class="math notranslate nohighlight">\(\lambda\)</span> and propagation distance <span class="math notranslate nohighlight">\(z\)</span>,, <span class="math notranslate nohighlight">\(\odot\)</span> the element-wise product, and <span class="math notranslate nohighlight">\(\noise\)</span> the sensor noise.</p>
+<p>Initializes the CodedPhaseImaging layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_shape</strong> (<em>torch.Size</em>) – The spatial shape of the input tensor, (M, N) used to define the phase mask shape.</p></li>
+<li><p><strong>phase_mask</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – The phase mask tensor. Defaults to None.</p></li>
+<li><p><strong>pixel_size</strong> (<em>float</em><em>, </em><em>optional</em>) – The size of each pixel in meters. Defaults to 1e-6.</p></li>
+<li><p><strong>wavelength</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – The wavelength of the light in meters. Defaults to torch.tensor([550])*1e-9.</p></li>
+<li><p><strong>sensor_distance</strong> (<em>float</em><em>, </em><em>optional</em>) – The distance from the sensor to the object in meters. Defaults to 50e-3.</p></li>
+<li><p><strong>approximation</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of approximation to use (e.g., “fresnel”). Defaults to “fresnel”.</p></li>
+<li><p><strong>trainable</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the phase mask is trainable. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="colibri.optics.phase_imaging.CodedPhaseImaging.intensity">
+<span class="sig-name descname"><span class="pre">intensity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/colibri/optics/phase_imaging.html#CodedPhaseImaging.intensity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colibri.optics.phase_imaging.CodedPhaseImaging.intensity" title="Link to this definition"></a></dt>
+<dd><p>Computes the intensity of the input tensor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – Input tensor with shape (B, M, N)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Intensity of the input tensor with shape (B, M, N)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colibri.optics.phase_imaging.CodedPhaseImaging.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_calculation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intensity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/colibri/optics/phase_imaging.html#CodedPhaseImaging.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colibri.optics.phase_imaging.CodedPhaseImaging.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs the forward or backward operator according to the type_calculation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – Input tensor with shape (B, M, N)</p></li>
+<li><p><strong>type_calculation</strong> (<em>str</em>) – String, it can be “forward”, “backward” or “forward_backward”</p></li>
+<li><p><strong>intensity</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor with shape (B, M, N)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If type_calculation is not “forward”, “backward” or “forward_backward”</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="sphx-glr-backref-colibri-optics-phase-imaging-codedphaseimaging"></span></section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="colibri.optics.modulo.Modulo.html" class="btn btn-neutral float-left" title="Modulo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="colibri.optics.functional.coded_phase_imaging_forward.html" class="btn btn-neutral float-right" title="coded_phase_imaging_forward" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

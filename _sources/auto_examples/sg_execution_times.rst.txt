@@ -1,0 +1,58 @@
+
+:orphan:
+
+.. _sphx_glr_auto_examples_sg_execution_times:
+
+
+Computation times
+=================
+**02:37.174** total execution time for 8 files **from auto_examples**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_demo_colibri.py` (``demo_colibri.py``)
+     - 01:41.749
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_datasets.py` (``demo_datasets.py``)
+     - 00:26.653
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_fista.py` (``demo_fista.py``)
+     - 00:09.853
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_pnp.py` (``demo_pnp.py``)
+     - 00:08.442
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_lfsi.py` (``demo_lfsi.py``)
+     - 00:07.256
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_does.py` (``demo_does.py``)
+     - 00:01.800
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_fast_sdcassi.py` (``demo_fast_sdcassi.py``)
+     - 00:00.981
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_demo_modulo.py` (``demo_modulo.py``)
+     - 00:00.440
+     - 0.0

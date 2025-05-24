@@ -1,0 +1,15 @@
+﻿DefaultTransform
+================
+
+.. currentmodule:: colibri.data.datasets
+
+.. autoclass:: DefaultTransform
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.data.datasets.DefaultTransform:
+
+.. minigallery:: colibri.data.datasets.DefaultTransform
+    :add-heading: Examples using ``DefaultTransform``:

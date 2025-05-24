@@ -1,0 +1,15 @@
+﻿Transmittance
+=============
+
+.. currentmodule:: colibri.regularizers
+
+.. autoclass:: Transmittance
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.regularizers.Transmittance:
+
+.. minigallery:: colibri.regularizers.Transmittance
+    :add-heading: Examples using ``Transmittance``:

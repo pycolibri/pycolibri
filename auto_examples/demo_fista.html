@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo FISTA. &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Demo PnP." href="demo_pnp.html" />
+    <link rel="prev" title="Demo Filtered Spectral Initialization" href="demo_lfsi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="demo_modulo.html">Demo Modulo.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_datasets.html">Demo Datasets.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_lfsi.html">Demo Filtered Spectral Initialization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Demo FISTA.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-working-directory-and-device">Select Working Directory and Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#load-dataset">Load dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-dataset">Visualize dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="demo_pnp.html">Demo PnP.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fast_sdcassi.html">Demo Fast SD CASSI.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_does.html">Demo DOEs.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_colibri.html">Demo Colibri.</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Demo FISTA.</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/demo_fista.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-demo-fista-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="demo-fista">
+<span id="sphx-glr-auto-examples-demo-fista-py"></span><h1>Demo FISTA.<a class="headerlink" href="#demo-fista" title="Link to this heading"></a></h1>
+<section id="select-working-directory-and-device">
+<h2>Select Working Directory and Device<a class="headerlink" href="#select-working-directory-and-device" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">data</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current Working Directory &quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+
+<span class="c1"># General imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="c1"># Set random seed for reproducibility</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">manual_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="c1"># Check GPU support</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU support: &quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">manual_device</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">manual_device</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Current Working Directory  /home/runner/work/pycolibri/pycolibri
+GPU support:  False
+</pre></div>
+</div>
+</section>
+<section id="load-dataset">
+<h2>Load dataset<a class="headerlink" href="#load-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">colibri.data.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomDataset</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cifar10&quot;</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+
+<span class="n">acquisition_name</span> <span class="o">=</span> <span class="s1">&#39;spc&#39;</span>  <span class="c1"># [&#39;spc&#39;, &#39;cassi&#39;]</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-dataset">
+<h2>Visualize dataset<a class="headerlink" href="#visualize-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_grid</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Optics forward model</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPC</span><span class="p">,</span> <span class="n">SD_CASSI</span><span class="p">,</span> <span class="n">DD_CASSI</span><span class="p">,</span> <span class="n">C_CASSI</span>
+
+
+<span class="n">img_size</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">acquisition_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">input_shape</span><span class="o">=</span><span class="n">img_size</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s2">&quot;spc&quot;</span><span class="p">:</span>
+    <span class="n">n_measurements</span> <span class="o">=</span> <span class="mi">25</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">n_measurements_sqrt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_measurements</span><span class="p">))</span>
+    <span class="n">acquisition_config</span><span class="p">[</span><span class="s2">&quot;n_measurements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_measurements</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;spc&quot;</span><span class="p">:</span> <span class="n">SPC</span><span class="p">,</span> <span class="s2">&quot;sd_cassi&quot;</span><span class="p">:</span> <span class="n">SD_CASSI</span><span class="p">,</span> <span class="s2">&quot;dd_cassi&quot;</span><span class="p">:</span> <span class="n">DD_CASSI</span><span class="p">,</span> <span class="s2">&quot;c_cassi&quot;</span><span class="p">:</span> <span class="n">C_CASSI</span><span class="p">}[</span>
+    <span class="n">acquisition_name</span>
+<span class="p">]</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="o">**</span><span class="n">acquisition_config</span><span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="c1"># Reconstruct image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.fista</span><span class="w"> </span><span class="kn">import</span> <span class="n">Fista</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sparsity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.fidelity</span><span class="w"> </span><span class="kn">import</span> <span class="n">L2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.recovery.terms.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCT2D</span>
+
+
+<span class="n">algo_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;max_iters&quot;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+    <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+    <span class="s2">&quot;_lambda&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">fidelity</span> <span class="o">=</span> <span class="n">L2</span><span class="p">()</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="n">Sparsity</span><span class="p">(</span><span class="n">basis</span><span class="o">=</span><span class="s2">&quot;dct&quot;</span><span class="p">)</span>
+
+<span class="n">fista</span> <span class="o">=</span> <span class="n">Fista</span><span class="p">(</span><span class="n">acquisition_model</span><span class="p">,</span> <span class="n">fidelity</span><span class="p">,</span> <span class="n">prior</span><span class="p">,</span> <span class="o">**</span><span class="n">algo_params</span><span class="p">)</span>
+
+<span class="n">x0</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">type_calculation</span><span class="o">=</span><span class="s2">&quot;backward&quot;</span><span class="p">)</span>
+<span class="n">x_hat</span> <span class="o">=</span> <span class="n">fista</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
+
+<span class="n">basis</span> <span class="o">=</span> <span class="n">DCT2D</span><span class="p">()</span>
+
+<span class="n">theta</span> <span class="o">=</span> <span class="n">basis</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_hat</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+<span class="n">normalize</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Reference&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Sparse Representation&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]))</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s2">&quot;spc&quot;</span><span class="p">:</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Measurement&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Reconstruction&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">normalize</span><span class="p">(</span><span class="n">x_hat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_fista_001.png" srcset="../_images/sphx_glr_demo_fista_001.png" alt="Reference, Sparse Representation, Measurement, Reconstruction" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.853 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-fista-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/1b2ca65789ed9a0e4ce9e0fbb6c2c568/demo_fista.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">demo_fista.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/a74948e5f718c62926b78983158a09ef/demo_fista.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">demo_fista.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/c0ee3023ee04d585f8987a7d526ac04a/demo_fista.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">demo_fista.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="demo_lfsi.html" class="btn btn-neutral float-left" title="Demo Filtered Spectral Initialization" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="demo_pnp.html" class="btn btn-neutral float-right" title="Demo PnP." accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+﻿ideal\_panchromatic\_sensor
+===========================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: ideal_panchromatic_sensor
+
+.. minigallery:: colibri.optics.functional.ideal_panchromatic_sensor
+    :add-heading: Examples using ``ideal_panchromatic_sensor``:

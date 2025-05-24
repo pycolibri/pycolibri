@@ -1,0 +1,368 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optics &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="_static/colibri-logo.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SD_CASSI" href="stubs/colibri.optics.cassi.SD_CASSI.html" />
+    <link rel="prev" title="outBlock" href="stubs/colibri.models.custom_layers.outBlock.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pycolibri
+              <img src="_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Optics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spectral-imaging-systems">Spectral Imaging systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.cassi.SD_CASSI.html">SD_CASSI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.cassi.DD_CASSI.html">DD_CASSI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.cassi.C_CASSI.html">C_CASSI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.spc.SPC.html">SPC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.doe.SingleDOESpectral.html">SingleDOESpectral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.modulo.Modulo.html">Modulo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#phase-imaging-systems">Phase Imaging systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.phase_imaging.CodedPhaseImaging.html">CodedPhaseImaging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functional-operators-of-the-optical-systems">Functional operators of the optical systems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.coded_phase_imaging_forward.html">coded_phase_imaging_forward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.coded_phase_imaging_backward.html">coded_phase_imaging_backward</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.forward_color_cassi.html">forward_color_cassi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.backward_color_cassi.html">backward_color_cassi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.forward_dd_cassi.html">forward_dd_cassi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.backward_dd_cassi.html">backward_dd_cassi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.forward_sd_cassi.html">forward_sd_cassi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.backward_sd_cassi.html">backward_sd_cassi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.forward_spc.html">forward_spc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.backward_spc.html">backward_spc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.psf_single_doe_spectral.html">psf_single_doe_spectral</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.convolutional_sensing.html">convolutional_sensing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.fourier_conv.html">fourier_conv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.signal_conv.html">signal_conv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.wiener_filter.html">wiener_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.gaussian_noise.html">gaussian_noise</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.modulo.html">modulo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functional-operators-of-optical-elements">Functional operators of optical elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.prism_operator.html">prism_operator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.circular_aperture.html">circular_aperture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.height2phase.html">height2phase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.ideal_panchromatic_sensor.html">ideal_panchromatic_sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.wave_number.html">wave_number</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.get_spatial_coords.html">get_spatial_coords</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#functional-operators-of-light-propagation">Functional operators of light propagation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.scalar_diffraction_propagation.html">scalar_diffraction_propagation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.transfer_function_angular_spectrum.html">transfer_function_angular_spectrum</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.transfer_function_fresnel.html">transfer_function_fresnel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.fraunhofer_propagation.html">fraunhofer_propagation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.fraunhofer_inverse_propagation.html">fraunhofer_inverse_propagation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#state-of-the-art-optical-elements">state-of-the-art optical elements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.sota_does.conventional_lens.html">conventional_lens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.sota_does.spiral_doe.html">spiral_doe</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utils">utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.add_pad.html">add_pad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.unpad.html">unpad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.fft.html">fft</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.optics.functional.ifft.html">ifft</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Optics</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/optics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="optics">
+<span id="id1"></span><h1>Optics<a class="headerlink" href="#optics" title="Link to this heading"></a></h1>
+<p>The PyColibri optics module encompasses a collection of optical systems extensively employed in the computational imaging research for spectral, depth, phase and other imaging applications. This module facilitates the simulation of optical propagation and the design of optical elements inside the systems, offering researchers and developers a powerful toolkit for advancing imaging technologies.</p>
+<p>Mathematically, all implemented optical systems are of the form</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} = \forwardLinear_{\learnedOptics}(\mathbf{x}) + \noise\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{x}\in\xset\)</span> is the input optical field, <span class="math notranslate nohighlight">\(\mathbf{y}\in\yset\)</span> are the acquired signal,
+<span class="math notranslate nohighlight">\(\forwardLinear:\xset\mapsto \yset\)</span> is a deterministic (linear or non-linear) optics model of the acquisition system,
+<span class="math notranslate nohighlight">\(\learnedOptics\)</span> is a set of learnable parameters characterizing the optical system,
+and <span class="math notranslate nohighlight">\(\noise\)</span> is a stochastic mapping which characterizes the noise affecting the measurements.</p>
+<section id="spectral-imaging-systems">
+<h2>Spectral Imaging systems<a class="headerlink" href="#spectral-imaging-systems" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.cassi.SD_CASSI.html#colibri.optics.cassi.SD_CASSI" title="colibri.optics.cassi.SD_CASSI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.cassi.SD_CASSI</span></code></a></p></td>
+<td><p>Single Disperser Coded Aperture Snapshot Spectral Imager (SD-CASSI)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.cassi.DD_CASSI.html#colibri.optics.cassi.DD_CASSI" title="colibri.optics.cassi.DD_CASSI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.cassi.DD_CASSI</span></code></a></p></td>
+<td><p>Dual Disperser Coded Aperture Snapshot Spectral Imager (DD-CASSI)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.cassi.C_CASSI.html#colibri.optics.cassi.C_CASSI" title="colibri.optics.cassi.C_CASSI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.cassi.C_CASSI</span></code></a></p></td>
+<td><p>Color Coded Aperture Snapshot Spectral Imager (C-CASSI)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.spc.SPC.html#colibri.optics.spc.SPC" title="colibri.optics.spc.SPC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.spc.SPC</span></code></a></p></td>
+<td><p>Single Pixel Camera (SPC).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.doe.SingleDOESpectral.html#colibri.optics.doe.SingleDOESpectral" title="colibri.optics.doe.SingleDOESpectral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.doe.SingleDOESpectral</span></code></a></p></td>
+<td><p>Single Diffractive Optical Element for Spectral Imaging</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.modulo.Modulo.html#colibri.optics.modulo.Modulo" title="colibri.optics.modulo.Modulo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.modulo.Modulo</span></code></a></p></td>
+<td><p>Modulo Sensing Operator</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="phase-imaging-systems">
+<h2>Phase Imaging systems<a class="headerlink" href="#phase-imaging-systems" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.phase_imaging.CodedPhaseImaging.html#colibri.optics.phase_imaging.CodedPhaseImaging" title="colibri.optics.phase_imaging.CodedPhaseImaging"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.phase_imaging.CodedPhaseImaging</span></code></a></p></td>
+<td><p>Coded Phase Imaging</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functional-operators-of-the-optical-systems">
+<h2>Functional operators of the optical systems<a class="headerlink" href="#functional-operators-of-the-optical-systems" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.coded_phase_imaging_forward.html#colibri.optics.functional.coded_phase_imaging_forward" title="colibri.optics.functional.coded_phase_imaging_forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.coded_phase_imaging_forward</span></code></a></p></td>
+<td><p>Forward model for phase retrieval using a single distance and wavelength.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.coded_phase_imaging_backward.html#colibri.optics.functional.coded_phase_imaging_backward" title="colibri.optics.functional.coded_phase_imaging_backward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.coded_phase_imaging_backward</span></code></a></p></td>
+<td><p>Backward model for phase retrieval using a single distance and wavelength.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.forward_color_cassi.html#colibri.optics.functional.forward_color_cassi" title="colibri.optics.functional.forward_color_cassi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.forward_color_cassi</span></code></a></p></td>
+<td><p>Forward operator of color coded aperture snapshot spectral imager (Color-CASSI)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.backward_color_cassi.html#colibri.optics.functional.backward_color_cassi" title="colibri.optics.functional.backward_color_cassi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.backward_color_cassi</span></code></a></p></td>
+<td><p>Backward operator of color coded aperture snapshot spectral imager (Color-CASSI)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.forward_dd_cassi.html#colibri.optics.functional.forward_dd_cassi" title="colibri.optics.functional.forward_dd_cassi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.forward_dd_cassi</span></code></a></p></td>
+<td><p>Forward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.backward_dd_cassi.html#colibri.optics.functional.backward_dd_cassi" title="colibri.optics.functional.backward_dd_cassi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.backward_dd_cassi</span></code></a></p></td>
+<td><p>Backward operator of dual disperser coded aperture snapshot spectral imager (DD-CASSI)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.forward_sd_cassi.html#colibri.optics.functional.forward_sd_cassi" title="colibri.optics.functional.forward_sd_cassi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.forward_sd_cassi</span></code></a></p></td>
+<td><p>Forward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.backward_sd_cassi.html#colibri.optics.functional.backward_sd_cassi" title="colibri.optics.functional.backward_sd_cassi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.backward_sd_cassi</span></code></a></p></td>
+<td><p>Backward operator of single disperser coded aperture snapshot spectral imager (SD-CASSI)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.forward_spc.html#colibri.optics.functional.forward_spc" title="colibri.optics.functional.forward_spc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.forward_spc</span></code></a></p></td>
+<td><p>Forward propagation through the Single Pixel Camera (SPC) model.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.backward_spc.html#colibri.optics.functional.backward_spc" title="colibri.optics.functional.backward_spc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.backward_spc</span></code></a></p></td>
+<td><p>Inverse operation to reconstruct the image from measurements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.psf_single_doe_spectral.html#colibri.optics.functional.psf_single_doe_spectral" title="colibri.optics.functional.psf_single_doe_spectral"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.psf_single_doe_spectral</span></code></a></p></td>
+<td><p>Calculate the point spread function (PSF) of an optical system comprising a diffractive optical element (DOE) for spectral imaging.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.convolutional_sensing.html#colibri.optics.functional.convolutional_sensing" title="colibri.optics.functional.convolutional_sensing"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.convolutional_sensing</span></code></a></p></td>
+<td><p>Simulate the convolutional sensing model of an optical system, using either Fourier or spatial domain methods.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.fourier_conv.html#colibri.optics.functional.fourier_conv" title="colibri.optics.functional.fourier_conv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.fourier_conv</span></code></a></p></td>
+<td><p>Apply Fourier convolution theorem to simulate the effect of a linear system characterized by a point spread function (PSF).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.signal_conv.html#colibri.optics.functional.signal_conv" title="colibri.optics.functional.signal_conv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.signal_conv</span></code></a></p></td>
+<td><p>This function applies the convolution of an image with a Point Spread Function (PSF) in the signal domain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.wiener_filter.html#colibri.optics.functional.wiener_filter" title="colibri.optics.functional.wiener_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.wiener_filter</span></code></a></p></td>
+<td><p>This function applies the Wiener filter to an image.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.gaussian_noise.html#colibri.optics.functional.gaussian_noise" title="colibri.optics.functional.gaussian_noise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.gaussian_noise</span></code></a></p></td>
+<td><p>Add Gaussian noise to an image based on a specified signal-to-noise ratio (SNR).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.modulo.html#colibri.optics.functional.modulo" title="colibri.optics.functional.modulo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.modulo</span></code></a></p></td>
+<td><p>Modulo operation.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functional-operators-of-optical-elements">
+<h2>Functional operators of optical elements<a class="headerlink" href="#functional-operators-of-optical-elements" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.prism_operator.html#colibri.optics.functional.prism_operator" title="colibri.optics.functional.prism_operator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.prism_operator</span></code></a></p></td>
+<td><p>Prism operator, shifts linearly the input tensor x in the spectral dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.circular_aperture.html#colibri.optics.functional.circular_aperture" title="colibri.optics.functional.circular_aperture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.circular_aperture</span></code></a></p></td>
+<td><p>Create a circular aperture mask of a given radius and pixel_size of size (M, N).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.height2phase.html#colibri.optics.functional.height2phase" title="colibri.optics.functional.height2phase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.height2phase</span></code></a></p></td>
+<td><p>Convert height map to phase modulation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.ideal_panchromatic_sensor.html#colibri.optics.functional.ideal_panchromatic_sensor" title="colibri.optics.functional.ideal_panchromatic_sensor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.ideal_panchromatic_sensor</span></code></a></p></td>
+<td><p>Simulate the response of an ideal panchromatic sensor by averaging the spectral channels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.wave_number.html#colibri.optics.functional.wave_number" title="colibri.optics.functional.wave_number"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.wave_number</span></code></a></p></td>
+<td><p>Wavenumber</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.get_spatial_coords.html#colibri.optics.functional.get_spatial_coords" title="colibri.optics.functional.get_spatial_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.get_spatial_coords</span></code></a></p></td>
+<td><p>Generate the spatial coordinates for wave optics simulations in a specific coordinate system.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functional-operators-of-light-propagation">
+<h2>Functional operators of light propagation<a class="headerlink" href="#functional-operators-of-light-propagation" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.scalar_diffraction_propagation.html#colibri.optics.functional.scalar_diffraction_propagation" title="colibri.optics.functional.scalar_diffraction_propagation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.scalar_diffraction_propagation</span></code></a></p></td>
+<td><p>Compute the optical field propagation using a scalar diffraction theory model which is given by the specific approximation selected.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.transfer_function_angular_spectrum.html#colibri.optics.functional.transfer_function_angular_spectrum" title="colibri.optics.functional.transfer_function_angular_spectrum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.transfer_function_angular_spectrum</span></code></a></p></td>
+<td><p>The transfer function for the angular spectrum propagation can be written as follows:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.transfer_function_fresnel.html#colibri.optics.functional.transfer_function_fresnel" title="colibri.optics.functional.transfer_function_fresnel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.transfer_function_fresnel</span></code></a></p></td>
+<td><p>The transfer function for the Fresnel propagation can be written as follows:</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.fraunhofer_propagation.html#colibri.optics.functional.fraunhofer_propagation" title="colibri.optics.functional.fraunhofer_propagation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.fraunhofer_propagation</span></code></a></p></td>
+<td><p>The Fraunhofer approximation of <span class="math notranslate nohighlight">\(U_0(x',y')\)</span> is its Fourier transform, <span class="math notranslate nohighlight">\(\mathcal{F}\{U_0\}\)</span> with an additional phase factor that depends on the distance of propagation, <span class="math notranslate nohighlight">\(z\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.fraunhofer_inverse_propagation.html#colibri.optics.functional.fraunhofer_inverse_propagation" title="colibri.optics.functional.fraunhofer_inverse_propagation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.fraunhofer_inverse_propagation</span></code></a></p></td>
+<td><p>The inverse Fraunhofer approximation (to reconstruct the field at the source from the field at the sensor) is given by the following equation:</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="state-of-the-art-optical-elements">
+<h2>state-of-the-art optical elements<a class="headerlink" href="#state-of-the-art-optical-elements" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.sota_does.conventional_lens.html#colibri.optics.sota_does.conventional_lens" title="colibri.optics.sota_does.conventional_lens"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.sota_does.conventional_lens</span></code></a></p></td>
+<td><p>Code to generate a conventional lens with a given focal length and radius following the equation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.sota_does.spiral_doe.html#colibri.optics.sota_does.spiral_doe" title="colibri.optics.sota_does.spiral_doe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.sota_does.spiral_doe</span></code></a></p></td>
+<td><p>Code to generate a spiral DOE with a given number of spirals, radius, focal length and wavelength range.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="utils">
+<h2>utils<a class="headerlink" href="#utils" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.add_pad.html#colibri.optics.functional.add_pad" title="colibri.optics.functional.add_pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.add_pad</span></code></a></p></td>
+<td><p>Add zero padding to a tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.unpad.html#colibri.optics.functional.unpad" title="colibri.optics.functional.unpad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.unpad</span></code></a></p></td>
+<td><p>Unpad a tensor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.fft.html#colibri.optics.functional.fft" title="colibri.optics.functional.fft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.fft</span></code></a></p></td>
+<td><p>Fast Fourier Transform of an optical field</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.optics.functional.ifft.html#colibri.optics.functional.ifft" title="colibri.optics.functional.ifft"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.optics.functional.ifft</span></code></a></p></td>
+<td><p>Inverse Fast Fourier Transform of an optical field</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stubs/colibri.models.custom_layers.outBlock.html" class="btn btn-neutral float-left" title="outBlock" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stubs/colibri.optics.cassi.SD_CASSI.html" class="btn btn-neutral float-right" title="SD_CASSI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

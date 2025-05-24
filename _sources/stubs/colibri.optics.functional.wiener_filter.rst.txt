@@ -1,0 +1,9 @@
+﻿wiener\_filter
+==============
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: wiener_filter
+
+.. minigallery:: colibri.optics.functional.wiener_filter
+    :add-heading: Examples using ``wiener_filter``:

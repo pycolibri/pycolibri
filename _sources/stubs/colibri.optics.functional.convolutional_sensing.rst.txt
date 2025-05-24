@@ -1,0 +1,9 @@
+﻿convolutional\_sensing
+======================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: convolutional_sensing
+
+.. minigallery:: colibri.optics.functional.convolutional_sensing
+    :add-heading: Examples using ``convolutional_sensing``:

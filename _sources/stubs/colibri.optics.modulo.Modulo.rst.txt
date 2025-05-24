@@ -1,0 +1,15 @@
+﻿Modulo
+======
+
+.. currentmodule:: colibri.optics.modulo
+
+.. autoclass:: Modulo
+    :members:
+    :show-inheritance:
+    :no-undoc-members:
+    :special-members: __mul__, __add__, __div__, __neg__, __sub__, __truediv__
+
+.. _sphx_glr_backref_colibri.optics.modulo.Modulo:
+
+.. minigallery:: colibri.optics.modulo.Modulo
+    :add-heading: Examples using ``Modulo``:

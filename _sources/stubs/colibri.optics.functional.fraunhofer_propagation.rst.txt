@@ -1,0 +1,9 @@
+﻿fraunhofer\_propagation
+=======================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: fraunhofer_propagation
+
+.. minigallery:: colibri.optics.functional.fraunhofer_propagation
+    :add-heading: Examples using ``fraunhofer_propagation``:

@@ -1,0 +1,9 @@
+﻿fourier\_conv
+=============
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: fourier_conv
+
+.. minigallery:: colibri.optics.functional.fourier_conv
+    :add-heading: Examples using ``fourier_conv``:

@@ -1,0 +1,224 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recovery &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="_static/colibri-logo.svg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Fista" href="stubs/colibri.recovery.fista.Fista.html" />
+    <link rel="prev" title="MinVariance" href="stubs/colibri.regularizers.MinVariance.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pycolibri
+              <img src="_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regularizers.html">Regularizers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Recovery</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#list-of-algorithms">List of Algorithms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.fista.Fista.html">Fista</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.pnp.PnP_ADMM.html">PnP_ADMM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.lfsi.LFSI.html">LFSI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#list-of-solvers">List of Solvers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.solvers.core.L2L2Solver.html">L2L2Solver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.solvers.spc.L2L2SolverSPC.html">L2L2SolverSPC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.solvers.modulo.L2L2SolverModulo.html">L2L2SolverModulo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fidelity-terms">Fidelity Terms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.terms.fidelity.L2.html">L2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.terms.fidelity.L1.html">L1</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#prior-terms">Prior Terms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.terms.prior.Sparsity.html">Sparsity</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#transormation">Transormation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stubs/colibri.recovery.terms.transforms.DCT2D.html">DCT2D</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Recovery</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/recovery.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="recovery">
+<h1>Recovery<a class="headerlink" href="#recovery" title="Link to this heading"></a></h1>
+<p>The recovery module provides an implementation of state-of-the-art recovery algorithms widely used
+in image restoration on inverse problems.</p>
+<div class="math notranslate nohighlight">
+\[\textbf{x}^{*} \in  \underset{\textbf{x}}{ \argmin } \; f(\mathbf{x})+ \lambda g(\mathbf{x})\]</div>
+<p>where <span class="math notranslate nohighlight">\(f(\mathbf{x})\)</span> is the fidelity term ( e.g., <span class="math notranslate nohighlight">\(\Vert \textbf{y} - \textbf{H}(\textbf{x}) \Vert_2^2\)</span> ) and <span class="math notranslate nohighlight">\(g(\mathbf{x})\)</span> is the prior term.</p>
+<section id="list-of-algorithms">
+<h2>List of Algorithms<a class="headerlink" href="#list-of-algorithms" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.fista.Fista.html#colibri.recovery.fista.Fista" title="colibri.recovery.fista.Fista"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.fista.Fista</span></code></a></p></td>
+<td><p>Fast Iterative Shrinkage-Thresholding Algorithm (FISTA)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.recovery.pnp.PnP_ADMM.html#colibri.recovery.pnp.PnP_ADMM" title="colibri.recovery.pnp.PnP_ADMM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.pnp.PnP_ADMM</span></code></a></p></td>
+<td><p>Plug-and-Play (PnP) algorithm with Alternating Direction Method of Multipliers (ADMM) formulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.lfsi.LFSI.html#colibri.recovery.lfsi.LFSI" title="colibri.recovery.lfsi.LFSI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.lfsi.LFSI</span></code></a></p></td>
+<td><p>Learned Filtered Spectral Initialization (LFSI).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="list-of-solvers">
+<h2>List of Solvers<a class="headerlink" href="#list-of-solvers" title="Link to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.solvers.core.L2L2Solver.html#colibri.recovery.solvers.core.L2L2Solver" title="colibri.recovery.solvers.core.L2L2Solver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.solvers.core.L2L2Solver</span></code></a></p></td>
+<td><p>Base class for linear solvers.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.recovery.solvers.spc.L2L2SolverSPC.html#colibri.recovery.solvers.spc.L2L2SolverSPC" title="colibri.recovery.solvers.spc.L2L2SolverSPC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.solvers.spc.L2L2SolverSPC</span></code></a></p></td>
+<td><p>Solver for the SPC acquisition model.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.solvers.modulo.L2L2SolverModulo.html#colibri.recovery.solvers.modulo.L2L2SolverModulo" title="colibri.recovery.solvers.modulo.L2L2SolverModulo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.solvers.modulo.L2L2SolverModulo</span></code></a></p></td>
+<td><p>Solver for the Modulo acquisition model.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fidelity-terms">
+<h2>Fidelity Terms<a class="headerlink" href="#fidelity-terms" title="Link to this heading"></a></h2>
+<p>The module contains differents fidelity terms <span class="math notranslate nohighlight">\(f(\mathbf{x})\)</span> that can be used in the recovery algorithms.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.terms.fidelity.L2.html#colibri.recovery.terms.fidelity.L2" title="colibri.recovery.terms.fidelity.L2"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.terms.fidelity.L2</span></code></a></p></td>
+<td><p>L2 fidelity</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="stubs/colibri.recovery.terms.fidelity.L1.html#colibri.recovery.terms.fidelity.L1" title="colibri.recovery.terms.fidelity.L1"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.terms.fidelity.L1</span></code></a></p></td>
+<td><p>L1 fidelity</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="prior-terms">
+<h2>Prior Terms<a class="headerlink" href="#prior-terms" title="Link to this heading"></a></h2>
+<p>The module contains differents prior terms <span class="math notranslate nohighlight">\(g(\mathbf{x})\)</span> that can be used in the recovery algorithms.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.terms.prior.Sparsity.html#colibri.recovery.terms.prior.Sparsity" title="colibri.recovery.terms.prior.Sparsity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.terms.prior.Sparsity</span></code></a></p></td>
+<td><p>Sparsity prior</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="transormation">
+<h2>Transormation<a class="headerlink" href="#transormation" title="Link to this heading"></a></h2>
+<p>The module contains differents signal transforms that can be used in the recovery algorithms.</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="stubs/colibri.recovery.terms.transforms.DCT2D.html#colibri.recovery.terms.transforms.DCT2D" title="colibri.recovery.terms.transforms.DCT2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">colibri.recovery.terms.transforms.DCT2D</span></code></a></p></td>
+<td><p>2D Discrete Cosine Transform</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="stubs/colibri.regularizers.MinVariance.html" class="btn btn-neutral float-left" title="MinVariance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stubs/colibri.recovery.fista.Fista.html" class="btn btn-neutral float-right" title="Fista" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

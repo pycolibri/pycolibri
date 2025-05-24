@@ -1,0 +1,9 @@
+﻿fft
+===
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: fft
+
+.. minigallery:: colibri.optics.functional.fft
+    :add-heading: Examples using ``fft``:

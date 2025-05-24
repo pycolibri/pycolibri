@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo DOEs. &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Demo Colibri." href="demo_colibri.html" />
+    <link rel="prev" title="Demo Fast SD CASSI." href="demo_fast_sdcassi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="demo_modulo.html">Demo Modulo.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_datasets.html">Demo Datasets.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_lfsi.html">Demo Filtered Spectral Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fista.html">Demo FISTA.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_pnp.html">Demo PnP.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fast_sdcassi.html">Demo Fast SD CASSI.</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Demo DOEs.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-working-directory-and-device">Select Working Directory and Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#load-dataset">Load dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-dataset">Visualize dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optics-forward-model">Optics forward model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#functional-api-for-does">Functional API for DOEs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#doe-class">DOE Class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="demo_colibri.html">Demo Colibri.</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Demo DOEs.</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/demo_does.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-demo-does-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="demo-does">
+<span id="sphx-glr-auto-examples-demo-does-py"></span><h1>Demo DOEs.<a class="headerlink" href="#demo-does" title="Link to this heading"></a></h1>
+<p>In this example we show how to use a DOE,</p>
+<p>In progress…</p>
+<section id="select-working-directory-and-device">
+<h2>Select Working Directory and Device<a class="headerlink" href="#select-working-directory-and-device" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current Working Directory &quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics.functional</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">psf_single_doe_spectral</span><span class="p">,</span>
+    <span class="n">convolutional_sensing</span><span class="p">,</span>
+    <span class="n">ideal_panchromatic_sensor</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics.sota_does</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">spiral_doe</span><span class="p">,</span>
+    <span class="n">conventional_lens</span><span class="p">,</span>
+    <span class="n">spiral_refractive_index</span><span class="p">,</span>
+    <span class="n">nbk7_refractive_index</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">SingleDOESpectral</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri</span><span class="w"> </span><span class="kn">import</span> <span class="n">seed_everything</span>
+
+<span class="c1"># General imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">seed_everything</span><span class="p">()</span>
+<span class="n">manual_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="n">doe_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">img_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">type_doe</span> <span class="o">=</span> <span class="s2">&quot;spiral&quot;</span>  <span class="c1"># spiral, conventional_lens</span>
+<span class="n">convolution_domain</span> <span class="o">=</span> <span class="s2">&quot;fourier&quot;</span>  <span class="c1"># signal, fourier</span>
+<span class="n">type_wave_propagation</span> <span class="o">=</span> <span class="s2">&quot;angular_spectrum&quot;</span>  <span class="c1"># fresnel, angular_spectrum, fraunhofer</span>
+<span class="n">wavelengths</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">450</span><span class="p">,</span> <span class="mi">550</span><span class="p">,</span> <span class="mi">650</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1e-9</span>
+
+<span class="c1"># Check GPU support</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU support: &quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">manual_device</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">manual_device</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Current Working Directory  /home/runner/work/pycolibri/pycolibri
+GPU support:  False
+</pre></div>
+</div>
+</section>
+<section id="load-dataset">
+<h2>Load dataset<a class="headerlink" href="#load-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">colibri.data.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomDataset</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cifar10&quot;</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">16</span>
+
+
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+<span class="n">dataset_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-dataset">
+<h2>Visualize dataset<a class="headerlink" href="#visualize-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_grid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchvision</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataset_loader</span><span class="p">))[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">sample</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;CIFAR10 dataset&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_does_001.png" srcset="../_images/sphx_glr_demo_does_001.png" alt="CIFAR10 dataset" class = "sphx-glr-single-img"/></section>
+<section id="optics-forward-model">
+<h2>Optics forward model<a class="headerlink" href="#optics-forward-model" title="Link to this heading"></a></h2>
+<p>Define the forward operators <span class="math notranslate nohighlight">\(\mathbf{y} = \mathbf{H}_\phi \mathbf{x}\)</span>, in this case, the CASSI and SPC forward models.
+Each optics model can comptute the forward and backward operators i.e., <span class="math notranslate nohighlight">\(\mathbf{y} = \mathbf{H}_\phi \mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}\)</span>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># source_distance = np.inf</span>
+<span class="k">if</span> <span class="n">type_wave_propagation</span> <span class="o">==</span> <span class="s2">&quot;fraunhofer&quot;</span><span class="p">:</span>
+    <span class="n">source_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">source_distance</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># meters</span>
+
+<span class="k">if</span> <span class="n">type_doe</span> <span class="o">==</span> <span class="s2">&quot;spiral&quot;</span><span class="p">:</span>
+    <span class="n">radius_doe</span> <span class="o">=</span> <span class="mf">0.5e-3</span>
+    <span class="n">sensor_distance</span> <span class="o">=</span> <span class="mf">50e-3</span>
+    <span class="n">pixel_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius_doe</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">doe_size</span><span class="p">)</span>
+    <span class="n">height_map</span><span class="p">,</span> <span class="n">aperture</span> <span class="o">=</span> <span class="n">spiral_doe</span><span class="p">(</span>
+        <span class="n">M</span><span class="o">=</span><span class="n">doe_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">N</span><span class="o">=</span><span class="n">doe_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="n">number_spirals</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="n">radius_doe</span><span class="p">,</span>
+        <span class="n">focal</span><span class="o">=</span><span class="mf">50e-3</span><span class="p">,</span>
+        <span class="n">start_w</span><span class="o">=</span><span class="mf">450e-9</span><span class="p">,</span>
+        <span class="n">end_w</span><span class="o">=</span><span class="mf">650e-9</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">refractive_index</span> <span class="o">=</span> <span class="n">spiral_refractive_index</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">radius_doe</span> <span class="o">=</span> <span class="mf">0.5e-3</span>  <span class="c1"># .0e-3</span>
+    <span class="n">focal</span> <span class="o">=</span> <span class="mf">50e-3</span>
+
+    <span class="k">if</span> <span class="n">source_distance</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+        <span class="n">sensor_distance</span> <span class="o">=</span> <span class="n">focal</span>  <span class="c1"># 0.88</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sensor_distance</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">focal</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">source_distance</span><span class="p">))</span>
+    <span class="n">pixel_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius_doe</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">doe_size</span><span class="p">)</span>
+    <span class="n">height_map</span><span class="p">,</span> <span class="n">aperture</span> <span class="o">=</span> <span class="n">conventional_lens</span><span class="p">(</span>
+        <span class="n">M</span><span class="o">=</span><span class="n">doe_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">N</span><span class="o">=</span><span class="n">doe_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">focal</span><span class="o">=</span><span class="n">focal</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius_doe</span>
+    <span class="p">)</span>
+    <span class="n">refractive_index</span> <span class="o">=</span> <span class="n">nbk7_refractive_index</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">height_map</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Height map&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">aperture</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Aperture map&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_does_002.png" srcset="../_images/sphx_glr_demo_does_002.png" alt="Height map, Aperture map" class = "sphx-glr-single-img"/></section>
+<section id="functional-api-for-does">
+<h2>Functional API for DOEs<a class="headerlink" href="#functional-api-for-does" title="Link to this heading"></a></h2>
+<p>Define the recovery model <span class="math notranslate nohighlight">\(\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})\)</span>, in this case, a simple U-Net model.
+You can add you custom model by using the :meth: <cite>build_network</cite> function.
+Additionally we define the end-to-end model that combines the forward and recovery models.
+Define the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>, and the regularizers <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> for the forward and recovery models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">psf</span> <span class="o">=</span> <span class="n">psf_single_doe_spectral</span><span class="p">(</span>
+    <span class="n">height_map</span><span class="o">=</span><span class="n">height_map</span><span class="p">,</span>
+    <span class="n">aperture</span><span class="o">=</span><span class="n">aperture</span><span class="p">,</span>
+    <span class="n">refractive_index</span><span class="o">=</span><span class="n">refractive_index</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span>
+    <span class="n">source_distance</span><span class="o">=</span><span class="n">source_distance</span><span class="p">,</span>
+    <span class="n">sensor_distance</span><span class="o">=</span><span class="n">sensor_distance</span><span class="p">,</span>
+    <span class="n">pixel_size</span><span class="o">=</span><span class="n">pixel_size</span><span class="p">,</span>
+    <span class="n">approximation</span><span class="o">=</span><span class="n">type_wave_propagation</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(((</span><span class="n">psf</span> <span class="o">-</span> <span class="n">psf</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">psf</span><span class="o">.</span><span class="n">min</span><span class="p">()))</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">convolutional_sensing</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">psf</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">convolution_domain</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;CIFAR10 imaged&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">ideal_panchromatic_sensor</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;CIFAR10 imaged pancromatic sensor&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img src="../_images/sphx_glr_demo_does_003.png" srcset="../_images/sphx_glr_demo_does_003.png" alt="demo does" class = "sphx-glr-multi-img"/></li>
+<li><img src="../_images/sphx_glr_demo_does_004.png" srcset="../_images/sphx_glr_demo_does_004.png" alt="CIFAR10 imaged" class = "sphx-glr-multi-img"/></li>
+<li><img src="../_images/sphx_glr_demo_does_005.png" srcset="../_images/sphx_glr_demo_does_005.png" alt="CIFAR10 imaged pancromatic sensor" class = "sphx-glr-multi-img"/></li>
+</ul>
+</section>
+<section id="doe-class">
+<h2>DOE Class<a class="headerlink" href="#doe-class" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">acquisition_model</span> <span class="o">=</span> <span class="n">SingleDOESpectral</span><span class="p">(</span>
+    <span class="n">input_shape</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+    <span class="n">height_map</span><span class="o">=</span><span class="n">height_map</span><span class="p">,</span>
+    <span class="n">aperture</span><span class="o">=</span><span class="n">aperture</span><span class="p">,</span>
+    <span class="n">wavelengths</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span>
+    <span class="n">source_distance</span><span class="o">=</span><span class="n">source_distance</span><span class="p">,</span>
+    <span class="n">sensor_distance</span><span class="o">=</span><span class="n">sensor_distance</span><span class="p">,</span>
+    <span class="n">sensor_spectral_sensitivity</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">pixel_size</span><span class="o">=</span><span class="n">pixel_size</span><span class="p">,</span>
+    <span class="n">doe_refractive_index</span><span class="o">=</span><span class="n">refractive_index</span><span class="p">,</span>
+    <span class="n">approximation</span><span class="o">=</span><span class="n">type_wave_propagation</span><span class="p">,</span>
+    <span class="n">domain</span><span class="o">=</span><span class="n">convolution_domain</span><span class="p">,</span>
+    <span class="n">trainable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">psf</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="o">.</span><span class="n">get_psf</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(((</span><span class="n">psf</span> <span class="o">-</span> <span class="n">psf</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">psf</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">psf</span><span class="o">.</span><span class="n">min</span><span class="p">()))</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;RGB PSF&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;CIFAR10 imaged&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">ideal_panchromatic_sensor</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;CIFAR10 imaged pancromatic sensor&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img src="../_images/sphx_glr_demo_does_006.png" srcset="../_images/sphx_glr_demo_does_006.png" alt="RGB PSF" class = "sphx-glr-multi-img"/></li>
+<li><img src="../_images/sphx_glr_demo_does_007.png" srcset="../_images/sphx_glr_demo_does_007.png" alt="CIFAR10 imaged" class = "sphx-glr-multi-img"/></li>
+<li><img src="../_images/sphx_glr_demo_does_008.png" srcset="../_images/sphx_glr_demo_does_008.png" alt="CIFAR10 imaged pancromatic sensor" class = "sphx-glr-multi-img"/></li>
+</ul>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.800 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-does-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/807a894942e557908b3c78092850943c/demo_does.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">demo_does.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/5b25c5e4f30050e1c3756b36ef4203e4/demo_does.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">demo_does.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/b83047066f5d626379b631a771f14536/demo_does.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">demo_does.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="demo_fast_sdcassi.html" class="btn btn-neutral float-left" title="Demo Fast SD CASSI." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="demo_colibri.html" class="btn btn-neutral float-right" title="Demo Colibri." accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

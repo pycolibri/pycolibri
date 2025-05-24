@@ -1,0 +1,9 @@
+﻿coded\_phase\_imaging\_backward
+===============================
+
+.. currentmodule:: colibri.optics.functional
+
+.. autofunction:: coded_phase_imaging_backward
+
+.. minigallery:: colibri.optics.functional.coded_phase_imaging_backward
+    :add-heading: Examples using ``coded_phase_imaging_backward``:

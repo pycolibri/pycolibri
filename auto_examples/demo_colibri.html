@@ -1,0 +1,664 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Colibri. &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../_static/colibri-logo.svg"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"tex": {"equationNumbers": {"autoNumber": "AMS", "useLabelIds": true}, "macros": {"forwardLinear": "\\mathbf{H}", "learnedOptics": "\\mathbf{\\Phi}", "psf": "\\mathbf{h}", "noise": "\\epsilon", "xset": "\\mathcal{X}", "thetaset": "\\mathcal{\\Omega}", "yset": "\\mathcal{Y}", "argmin": "\\operatorname{arg\\,min}", "coloneqq": "\\mathrel{:=}", "reconnet": "\\mathcal{N}_{\\theta}", "transform": "\\mathbf{\\Phi}", "generator": "\\mathcal{G}", "discriminator": "\\mathcal{D}", "expectation": "\\mathbb{E}"}}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Demo DOEs." href="demo_does.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="demo_modulo.html">Demo Modulo.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_datasets.html">Demo Datasets.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_lfsi.html">Demo Filtered Spectral Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fista.html">Demo FISTA.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_pnp.html">Demo PnP.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_fast_sdcassi.html">Demo Fast SD CASSI.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="demo_does.html">Demo DOEs.</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Demo Colibri.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#select-working-directory-and-device">Select Working Directory and Device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#load-dataset">Load dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-dataset">Visualize dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#optics-forward-model">Optics forward model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reconstruction-model">Reconstruction model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#visualize-results">Visualize results</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Demo Colibri.</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/auto_examples/demo_colibri.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-demo-colibri-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="demo-colibri">
+<span id="sphx-glr-auto-examples-demo-colibri-py"></span><h1>Demo Colibri.<a class="headerlink" href="#demo-colibri" title="Link to this heading"></a></h1>
+<p>In this example we show how to use a simple pipeline of end-to-end learning with the CASSI and SPC forward models. Mainly, the forward model is defined,</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{y} = \mathbf{H}_\phi \mathbf{x}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{H}\)</span> is the forward model, <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is the input image and <span class="math notranslate nohighlight">\(\mathbf{y}\)</span> is the measurement and <span class="math notranslate nohighlight">\(\phi\)</span> are the coding elements of the forward model. The recovery model is defined as,</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{G}\)</span> is the recovery model and <span class="math notranslate nohighlight">\(\theta\)</span> are the parameters of the recovery model.</p>
+<p>The training is performed by minimizing the following loss function,</p>
+<div class="math notranslate nohighlight">
+\[\{\phi^*,\theta^*\} = \arg \min_{\phi,\theta} \sum_{p=1}^{P}\mathcal{L}(\mathbf{x}_p, \mathcal{G}_\theta( \mathbf{H}_\phi \mathbf{x}_p)) + \lambda \mathcal{R}(\phi) + \mu \mathcal{R}(\mathbf{H}_\phi \mathbf{x})\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> is the loss function, <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> is the regularizer, <span class="math notranslate nohighlight">\(\lambda\)</span> and <span class="math notranslate nohighlight">\(\mu\)</span> are the regularization weights, and <span class="math notranslate nohighlight">\(P\)</span> is the number of samples in the training dataset.</p>
+<section id="select-working-directory-and-device">
+<h2>Select Working Directory and Device<a class="headerlink" href="#select-working-directory-and-device" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current Working Directory &quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+
+<span class="c1"># General imports</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="n">manual_device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="c1"># Check GPU support</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GPU support: &quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+
+<span class="k">if</span> <span class="n">manual_device</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">manual_device</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda:0&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Current Working Directory  /home/runner/work/pycolibri/pycolibri
+GPU support:  False
+</pre></div>
+</div>
+</section>
+<section id="load-dataset">
+<h2>Load dataset<a class="headerlink" href="#load-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">colibri.data.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">CustomDataset</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;cifar10&#39;</span>  <span class="c1"># [&#39;cifar10&#39;, &#39;cifar100&#39;, &#39;mnist&#39;, &#39;fashion_mnist&#39;, &#39;cave&#39;]</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">acquisition_name</span> <span class="o">=</span> <span class="s1">&#39;c_cassi&#39;</span>  <span class="c1"># [&#39;spc&#39;, &#39;cassi&#39;, &#39;doe&#39;]</span>
+
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">CustomDataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+
+<span class="n">dataset_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visualize-dataset">
+<h2>Visualize dataset<a class="headerlink" href="#visualize-dataset" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_grid</span>
+
+<span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">dataset_loader</span><span class="p">))[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">sample</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;CIFAR10 dataset&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_colibri_001.png" srcset="../_images/sphx_glr_demo_colibri_001.png" alt="CIFAR10 dataset" class = "sphx-glr-single-img"/></section>
+<section id="optics-forward-model">
+<h2>Optics forward model<a class="headerlink" href="#optics-forward-model" title="Link to this heading"></a></h2>
+<p>Define the forward operators <span class="math notranslate nohighlight">\(\mathbf{y} = \mathbf{H}_\phi \mathbf{x}\)</span>, in this case, the CASSI and SPC forward models.
+Each optics model can comptute the forward and backward operators i.e., <span class="math notranslate nohighlight">\(\mathbf{y} = \mathbf{H}_\phi \mathbf{x}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{x} = \mathbf{H}^T_\phi \mathbf{y}\)</span>.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPC</span><span class="p">,</span> <span class="n">SD_CASSI</span><span class="p">,</span> <span class="n">DD_CASSI</span><span class="p">,</span> <span class="n">C_CASSI</span><span class="p">,</span> <span class="n">SingleDOESpectral</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.optics.sota_does</span><span class="w"> </span><span class="kn">import</span> <span class="n">spiral_doe</span><span class="p">,</span> <span class="n">spiral_refractive_index</span>
+
+<span class="n">img_size</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+<span class="n">acquisition_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">input_shape</span><span class="o">=</span><span class="n">img_size</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">n_measurements</span>  <span class="o">=</span> <span class="mi">256</span>
+    <span class="n">n_measurements_sqrt</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n_measurements</span><span class="p">))</span>
+    <span class="n">acquisition_config</span><span class="p">[</span><span class="s1">&#39;n_measurements&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_measurements</span>
+
+<span class="k">elif</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;doe&#39;</span><span class="p">:</span>
+    <span class="n">wavelengths</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">450</span><span class="p">,</span> <span class="mi">550</span><span class="p">,</span> <span class="mi">650</span><span class="p">])</span><span class="o">*</span><span class="mf">1e-9</span>
+    <span class="n">doe_size</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+    <span class="n">radius_doe</span> <span class="o">=</span> <span class="mf">0.5e-3</span>
+    <span class="n">source_distance</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># meters</span>
+    <span class="n">sensor_distance</span> <span class="o">=</span> <span class="mf">50e-3</span>
+    <span class="n">pixel_size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">radius_doe</span><span class="p">)</span> <span class="o">/</span> <span class="nb">min</span><span class="p">(</span><span class="n">doe_size</span><span class="p">)</span>
+    <span class="n">height_map</span><span class="p">,</span> <span class="n">aperture</span> <span class="o">=</span> <span class="n">spiral_doe</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="n">doe_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">N</span><span class="o">=</span><span class="n">doe_size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                      <span class="n">number_spirals</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius_doe</span><span class="p">,</span>
+                                      <span class="n">focal</span><span class="o">=</span><span class="mf">50e-3</span><span class="p">,</span> <span class="n">start_w</span><span class="o">=</span><span class="mf">450e-9</span><span class="p">,</span> <span class="n">end_w</span><span class="o">=</span><span class="mf">650e-9</span><span class="p">)</span>
+    <span class="n">refractive_index</span> <span class="o">=</span> <span class="n">spiral_refractive_index</span>
+
+    <span class="n">acquisition_config</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;height_map&quot;</span><span class="p">:</span> <span class="n">height_map</span><span class="p">,</span>
+                               <span class="s2">&quot;aperture&quot;</span><span class="p">:</span> <span class="n">aperture</span><span class="p">,</span>
+                               <span class="s2">&quot;wavelengths&quot;</span><span class="p">:</span> <span class="n">wavelengths</span><span class="p">,</span>
+                               <span class="s2">&quot;source_distance&quot;</span><span class="p">:</span> <span class="n">source_distance</span><span class="p">,</span>
+                               <span class="s2">&quot;sensor_distance&quot;</span><span class="p">:</span> <span class="n">sensor_distance</span><span class="p">,</span>
+                               <span class="s2">&quot;sensor_spectral_sensitivity&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+                               <span class="s2">&quot;pixel_size&quot;</span><span class="p">:</span> <span class="n">pixel_size</span><span class="p">,</span>
+                               <span class="s2">&quot;doe_refractive_index&quot;</span><span class="p">:</span> <span class="n">refractive_index</span><span class="p">,</span>
+                               <span class="s2">&quot;trainable&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;spc&#39;</span><span class="p">:</span> <span class="n">SPC</span><span class="p">,</span>
+    <span class="s1">&#39;sd_cassi&#39;</span><span class="p">:</span> <span class="n">SD_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;dd_cassi&#39;</span><span class="p">:</span> <span class="n">DD_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;c_cassi&#39;</span><span class="p">:</span> <span class="n">C_CASSI</span><span class="p">,</span>
+    <span class="s1">&#39;doe&#39;</span><span class="p">:</span> <span class="n">SingleDOESpectral</span><span class="p">,</span>
+<span class="p">}[</span><span class="n">acquisition_name</span><span class="p">]</span>
+
+<span class="n">acquisition_model</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="o">**</span><span class="n">acquisition_config</span><span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">32</span><span class="p">],</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">acquisition_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s1"> measurements&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_colibri_002.png" srcset="../_images/sphx_glr_demo_colibri_002.png" alt="C_CASSI measurements" class = "sphx-glr-single-img"/></section>
+<section id="reconstruction-model">
+<h2>Reconstruction model<a class="headerlink" href="#reconstruction-model" title="Link to this heading"></a></h2>
+<p>Define the recovery model <span class="math notranslate nohighlight">\(\mathbf{x} = \mathcal{G}_\theta( \mathbf{y})\)</span>, in this case, a simple U-Net model.
+You can add you custom model by using the :meth: <cite>build_network</cite> function.
+Additionally we define the end-to-end model that combines the forward and recovery models.
+Define the loss function <span class="math notranslate nohighlight">\(\mathcal{L}\)</span>, and the regularizers <span class="math notranslate nohighlight">\(\mathcal{R}\)</span> for the forward and recovery models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">colibri.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_network</span><span class="p">,</span> <span class="n">Unet</span><span class="p">,</span> <span class="n">Autoencoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">E2E</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.train</span><span class="w"> </span><span class="kn">import</span> <span class="n">Training</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">psnr</span><span class="p">,</span> <span class="n">ssim</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">colibri.regularizers</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Binary</span><span class="p">,</span>
+    <span class="n">Transmittance</span><span class="p">,</span>
+    <span class="n">MinVariance</span><span class="p">,</span>
+    <span class="n">KLGaussian</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">network_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">in_channels</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">out_channels</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">reduce_spatial</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># Only for Autoencoder</span>
+<span class="p">)</span>
+
+<span class="n">recovery_model</span> <span class="o">=</span> <span class="n">build_network</span><span class="p">(</span><span class="n">Unet</span><span class="p">,</span> <span class="o">**</span><span class="n">network_config</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">E2E</span><span class="p">(</span><span class="n">acquisition_model</span><span class="p">,</span> <span class="n">recovery_model</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="n">losses</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MSE&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">(),</span> <span class="s2">&quot;L1&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">L1Loss</span><span class="p">()}</span>
+<span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;PSNR&quot;</span><span class="p">:</span> <span class="n">psnr</span><span class="p">,</span> <span class="s2">&quot;SSIM&quot;</span><span class="p">:</span> <span class="n">ssim</span><span class="p">}</span>
+<span class="n">losses_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+
+<span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">steps_per_epoch</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">frequency</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="s2">&quot;cassi&quot;</span> <span class="ow">in</span> <span class="n">acquisition_name</span> <span class="ow">or</span> <span class="s2">&quot;spc&quot;</span> <span class="ow">in</span> <span class="n">acquisition_name</span><span class="p">:</span>
+    <span class="n">regularizers_optics_ce</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;RB&quot;</span><span class="p">:</span> <span class="n">Binary</span><span class="p">(),</span> <span class="s2">&quot;RT&quot;</span><span class="p">:</span> <span class="n">Transmittance</span><span class="p">()}</span>
+    <span class="n">regularizers_optics_ce_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">regularizers_optics_ce</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">regularizers_optics_ce_weights</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">regularizers_optics_mo</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;MV&quot;</span><span class="p">:</span> <span class="n">MinVariance</span><span class="p">(),</span> <span class="s2">&quot;KLG&quot;</span><span class="p">:</span> <span class="n">KLGaussian</span><span class="p">(</span><span class="n">stddev</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)}</span>
+<span class="n">regularizers_optics_mo_weights</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+
+<span class="n">train_schedule</span> <span class="o">=</span> <span class="n">Training</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">train_loader</span><span class="o">=</span><span class="n">dataset_loader</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loss_func</span><span class="o">=</span><span class="n">losses</span><span class="p">,</span>
+    <span class="n">losses_weights</span><span class="o">=</span><span class="n">losses_weights</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
+    <span class="n">regularizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">regularization_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">schedulers</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[],</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+    <span class="n">regularizers_optics_ce</span><span class="o">=</span><span class="n">regularizers_optics_ce</span><span class="p">,</span>
+    <span class="n">regularization_optics_weights_ce</span><span class="o">=</span><span class="n">regularizers_optics_ce_weights</span><span class="p">,</span>
+    <span class="n">regularizers_optics_mo</span><span class="o">=</span><span class="n">regularizers_optics_mo</span><span class="p">,</span>
+    <span class="n">regularization_optics_weights_mo</span><span class="o">=</span><span class="n">regularizers_optics_mo_weights</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">train_schedule</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">n_epochs</span><span class="o">=</span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">steps_per_epoch</span><span class="o">=</span><span class="n">steps_per_epoch</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">frequency</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 1/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 1/10:   0%|          | 1/391 [00:00&lt;06:15,  1.04it/s, s=MSE: 0.08, L1: 0.22, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 10.71, SSIM: 0.05,]
+Train :: Epoch: 1/10:   1%|          | 2/391 [00:00&lt;03:07,  2.07it/s, s=MSE: 0.08, L1: 0.22, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 10.71, SSIM: 0.05,]
+Train :: Epoch: 1/10:   1%|          | 2/391 [00:01&lt;03:07,  2.07it/s, s=MSE: 0.05, L1: 0.18, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 12.26, SSIM: 0.14,]
+Train :: Epoch: 1/10:   1%|          | 3/391 [00:01&lt;04:14,  1.52it/s, s=MSE: 0.05, L1: 0.18, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 12.26, SSIM: 0.14,]
+Train :: Epoch: 1/10:   1%|          | 3/391 [00:02&lt;04:14,  1.52it/s, s=MSE: 0.04, L1: 0.16, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 12.45, SSIM: 0.21,]
+Train :: Epoch: 1/10:   1%|          | 4/391 [00:02&lt;04:49,  1.34it/s, s=MSE: 0.04, L1: 0.16, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 12.45, SSIM: 0.21,]
+Train :: Epoch: 1/10:   1%|          | 4/391 [00:03&lt;04:49,  1.34it/s, s=MSE: 0.04, L1: 0.16, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 12.97, SSIM: 0.25,]
+Train :: Epoch: 1/10:   1%|▏         | 5/391 [00:03&lt;05:09,  1.25it/s, s=MSE: 0.04, L1: 0.16, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 12.97, SSIM: 0.25,]
+Train :: Epoch: 1/10:   1%|▏         | 5/391 [00:04&lt;05:09,  1.25it/s, s=MSE: 0.03, L1: 0.14, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 14.16, SSIM: 0.28,]
+Train :: Epoch: 1/10:   2%|▏         | 6/391 [00:04&lt;05:21,  1.20it/s, s=MSE: 0.03, L1: 0.14, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 14.16, SSIM: 0.28,]
+Train :: Epoch: 1/10:   2%|▏         | 6/391 [00:05&lt;05:21,  1.20it/s, s=MSE: 0.03, L1: 0.13, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 14.89, SSIM: 0.31,]
+Train :: Epoch: 1/10:   2%|▏         | 7/391 [00:05&lt;05:29,  1.17it/s, s=MSE: 0.03, L1: 0.13, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 14.89, SSIM: 0.31,]
+Train :: Epoch: 1/10:   2%|▏         | 7/391 [00:06&lt;05:29,  1.17it/s, s=MSE: 0.03, L1: 0.13, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 15.01, SSIM: 0.33,]
+Train :: Epoch: 1/10:   2%|▏         | 8/391 [00:06&lt;05:35,  1.14it/s, s=MSE: 0.03, L1: 0.13, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 15.01, SSIM: 0.33,]
+Train :: Epoch: 1/10:   2%|▏         | 8/391 [00:07&lt;05:35,  1.14it/s, s=MSE: 0.02, L1: 0.12, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 15.86, SSIM: 0.35,]
+Train :: Epoch: 1/10:   2%|▏         | 9/391 [00:07&lt;05:37,  1.13it/s, s=MSE: 0.02, L1: 0.12, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 15.86, SSIM: 0.35,]
+Train :: Epoch: 1/10:   2%|▏         | 9/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.02, L1: 0.12, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 15.95, SSIM: 0.38,]
+Train :: Epoch: 1/10:   3%|▎         | 10/391 [00:08&lt;05:39,  1.12it/s, s=MSE: 0.02, L1: 0.12, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 15.95, SSIM: 0.38,]
+Train :: Epoch: 1/10:   3%|▎         | 10/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.02, L1: 0.12, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 16.12, SSIM: 0.38,]
+Train :: Epoch: 1/10:   3%|▎         | 11/391 [00:09&lt;05:40,  1.12it/s, s=MSE: 0.02, L1: 0.12, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 16.12, SSIM: 0.38,]
+Train :: Epoch: 1/10:   3%|▎         | 11/391 [00:10&lt;05:40,  1.12it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 16.68, SSIM: 0.41,]
+Train :: Epoch: 1/10:   3%|▎         | 11/391 [00:10&lt;05:46,  1.10it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 16.68, SSIM: 0.41,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 2/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 2/10:   0%|          | 1/391 [00:00&lt;05:54,  1.10it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 16.75, SSIM: 0.42,]
+Train :: Epoch: 2/10:   1%|          | 2/391 [00:00&lt;02:57,  2.20it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 16.75, SSIM: 0.42,]
+Train :: Epoch: 2/10:   1%|          | 2/391 [00:01&lt;02:57,  2.20it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 17.10, SSIM: 0.43,]
+Train :: Epoch: 2/10:   1%|          | 3/391 [00:01&lt;04:09,  1.56it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 17.10, SSIM: 0.43,]
+Train :: Epoch: 2/10:   1%|          | 3/391 [00:02&lt;04:09,  1.56it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 16.72, SSIM: 0.44,]
+Train :: Epoch: 2/10:   1%|          | 4/391 [00:02&lt;04:47,  1.35it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 16.72, SSIM: 0.44,]
+Train :: Epoch: 2/10:   1%|          | 4/391 [00:03&lt;04:47,  1.35it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 16.65, SSIM: 0.45,]
+Train :: Epoch: 2/10:   1%|▏         | 5/391 [00:03&lt;05:08,  1.25it/s, s=MSE: 0.02, L1: 0.11, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 16.65, SSIM: 0.45,]
+Train :: Epoch: 2/10:   1%|▏         | 5/391 [00:04&lt;05:08,  1.25it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 17.18, SSIM: 0.46,]
+Train :: Epoch: 2/10:   2%|▏         | 6/391 [00:04&lt;05:21,  1.20it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 17.18, SSIM: 0.46,]
+Train :: Epoch: 2/10:   2%|▏         | 6/391 [00:05&lt;05:21,  1.20it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 17.26, SSIM: 0.47,]
+Train :: Epoch: 2/10:   2%|▏         | 7/391 [00:05&lt;05:29,  1.17it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 17.26, SSIM: 0.47,]
+Train :: Epoch: 2/10:   2%|▏         | 7/391 [00:06&lt;05:29,  1.17it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 16.93, SSIM: 0.47,]
+Train :: Epoch: 2/10:   2%|▏         | 8/391 [00:06&lt;05:34,  1.15it/s, s=MSE: 0.02, L1: 0.10, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 16.93, SSIM: 0.47,]
+Train :: Epoch: 2/10:   2%|▏         | 8/391 [00:07&lt;05:34,  1.15it/s, s=MSE: 0.02, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 17.68, SSIM: 0.48,]
+Train :: Epoch: 2/10:   2%|▏         | 9/391 [00:07&lt;05:36,  1.14it/s, s=MSE: 0.02, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 17.68, SSIM: 0.48,]
+Train :: Epoch: 2/10:   2%|▏         | 9/391 [00:08&lt;05:36,  1.14it/s, s=MSE: 0.02, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 17.59, SSIM: 0.49,]
+Train :: Epoch: 2/10:   3%|▎         | 10/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.02, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 17.59, SSIM: 0.49,]
+Train :: Epoch: 2/10:   3%|▎         | 10/391 [00:09&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 17.78, SSIM: 0.48,]
+Train :: Epoch: 2/10:   3%|▎         | 11/391 [00:09&lt;05:40,  1.12it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 17.78, SSIM: 0.48,]
+Train :: Epoch: 2/10:   3%|▎         | 11/391 [00:09&lt;05:40,  1.12it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 18.21, SSIM: 0.51,]
+Train :: Epoch: 2/10:   3%|▎         | 11/391 [00:09&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 18.21, SSIM: 0.51,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 3/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 3/10:   0%|          | 1/391 [00:00&lt;05:52,  1.11it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 18.12, SSIM: 0.51,]
+Train :: Epoch: 3/10:   1%|          | 2/391 [00:00&lt;02:56,  2.21it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 18.12, SSIM: 0.51,]
+Train :: Epoch: 3/10:   1%|          | 2/391 [00:01&lt;02:56,  2.21it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 18.46, SSIM: 0.52,]
+Train :: Epoch: 3/10:   1%|          | 3/391 [00:01&lt;04:07,  1.57it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 18.46, SSIM: 0.52,]
+Train :: Epoch: 3/10:   1%|          | 3/391 [00:02&lt;04:07,  1.57it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 18.20, SSIM: 0.52,]
+Train :: Epoch: 3/10:   1%|          | 4/391 [00:02&lt;04:47,  1.35it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 18.20, SSIM: 0.52,]
+Train :: Epoch: 3/10:   1%|          | 4/391 [00:03&lt;04:47,  1.35it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 18.06, SSIM: 0.53,]
+Train :: Epoch: 3/10:   1%|▏         | 5/391 [00:03&lt;05:07,  1.25it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 18.06, SSIM: 0.53,]
+Train :: Epoch: 3/10:   1%|▏         | 5/391 [00:04&lt;05:07,  1.25it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 18.65, SSIM: 0.54,]
+Train :: Epoch: 3/10:   2%|▏         | 6/391 [00:04&lt;05:20,  1.20it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 18.65, SSIM: 0.54,]
+Train :: Epoch: 3/10:   2%|▏         | 6/391 [00:05&lt;05:20,  1.20it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 18.65, SSIM: 0.55,]
+Train :: Epoch: 3/10:   2%|▏         | 7/391 [00:05&lt;05:28,  1.17it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 18.65, SSIM: 0.55,]
+Train :: Epoch: 3/10:   2%|▏         | 7/391 [00:06&lt;05:28,  1.17it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 18.27, SSIM: 0.55,]
+Train :: Epoch: 3/10:   2%|▏         | 8/391 [00:06&lt;05:32,  1.15it/s, s=MSE: 0.01, L1: 0.09, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 18.27, SSIM: 0.55,]
+Train :: Epoch: 3/10:   2%|▏         | 8/391 [00:07&lt;05:32,  1.15it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 18.84, SSIM: 0.55,]
+Train :: Epoch: 3/10:   2%|▏         | 9/391 [00:07&lt;05:36,  1.14it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 18.84, SSIM: 0.55,]
+Train :: Epoch: 3/10:   2%|▏         | 9/391 [00:08&lt;05:36,  1.14it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 18.91, SSIM: 0.57,]
+Train :: Epoch: 3/10:   3%|▎         | 10/391 [00:08&lt;05:38,  1.13it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 18.91, SSIM: 0.57,]
+Train :: Epoch: 3/10:   3%|▎         | 10/391 [00:09&lt;05:38,  1.13it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 19.03, SSIM: 0.56,]
+Train :: Epoch: 3/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 19.03, SSIM: 0.56,]
+Train :: Epoch: 3/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 19.59, SSIM: 0.58,]
+Train :: Epoch: 3/10:   3%|▎         | 11/391 [00:09&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 19.59, SSIM: 0.58,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 4/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 4/10:   0%|          | 1/391 [00:00&lt;05:55,  1.10it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 19.18, SSIM: 0.58,]
+Train :: Epoch: 4/10:   1%|          | 2/391 [00:00&lt;02:57,  2.19it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 19.18, SSIM: 0.58,]
+Train :: Epoch: 4/10:   1%|          | 2/391 [00:01&lt;02:57,  2.19it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 19.64, SSIM: 0.59,]
+Train :: Epoch: 4/10:   1%|          | 3/391 [00:01&lt;04:09,  1.56it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 19.64, SSIM: 0.59,]
+Train :: Epoch: 4/10:   1%|          | 3/391 [00:02&lt;04:09,  1.56it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 19.39, SSIM: 0.59,]
+Train :: Epoch: 4/10:   1%|          | 4/391 [00:02&lt;04:46,  1.35it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 19.39, SSIM: 0.59,]
+Train :: Epoch: 4/10:   1%|          | 4/391 [00:03&lt;04:46,  1.35it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 19.25, SSIM: 0.59,]
+Train :: Epoch: 4/10:   1%|▏         | 5/391 [00:03&lt;05:08,  1.25it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 19.25, SSIM: 0.59,]
+Train :: Epoch: 4/10:   1%|▏         | 5/391 [00:04&lt;05:08,  1.25it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 19.77, SSIM: 0.60,]
+Train :: Epoch: 4/10:   2%|▏         | 6/391 [00:04&lt;05:20,  1.20it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 19.77, SSIM: 0.60,]
+Train :: Epoch: 4/10:   2%|▏         | 6/391 [00:05&lt;05:20,  1.20it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 19.78, SSIM: 0.60,]
+Train :: Epoch: 4/10:   2%|▏         | 7/391 [00:05&lt;05:29,  1.17it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 19.78, SSIM: 0.60,]
+Train :: Epoch: 4/10:   2%|▏         | 7/391 [00:06&lt;05:29,  1.17it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 19.35, SSIM: 0.60,]
+Train :: Epoch: 4/10:   2%|▏         | 8/391 [00:06&lt;05:34,  1.15it/s, s=MSE: 0.01, L1: 0.08, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 19.35, SSIM: 0.60,]
+Train :: Epoch: 4/10:   2%|▏         | 8/391 [00:07&lt;05:34,  1.15it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 19.80, SSIM: 0.61,]
+Train :: Epoch: 4/10:   2%|▏         | 9/391 [00:07&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 19.80, SSIM: 0.61,]
+Train :: Epoch: 4/10:   2%|▏         | 9/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 19.94, SSIM: 0.62,]
+Train :: Epoch: 4/10:   3%|▎         | 10/391 [00:08&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 19.94, SSIM: 0.62,]
+Train :: Epoch: 4/10:   3%|▎         | 10/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 20.02, SSIM: 0.61,]
+Train :: Epoch: 4/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 20.02, SSIM: 0.61,]
+Train :: Epoch: 4/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 20.53, SSIM: 0.63,]
+Train :: Epoch: 4/10:   3%|▎         | 11/391 [00:09&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 20.53, SSIM: 0.63,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 5/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 5/10:   0%|          | 1/391 [00:00&lt;05:50,  1.11it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 19.94, SSIM: 0.62,]
+Train :: Epoch: 5/10:   1%|          | 2/391 [00:00&lt;02:55,  2.22it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 19.94, SSIM: 0.62,]
+Train :: Epoch: 5/10:   1%|          | 2/391 [00:01&lt;02:55,  2.22it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 20.51, SSIM: 0.63,]
+Train :: Epoch: 5/10:   1%|          | 3/391 [00:01&lt;04:07,  1.57it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 20.51, SSIM: 0.63,]
+Train :: Epoch: 5/10:   1%|          | 3/391 [00:02&lt;04:07,  1.57it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 20.22, SSIM: 0.63,]
+Train :: Epoch: 5/10:   1%|          | 4/391 [00:02&lt;04:46,  1.35it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 20.22, SSIM: 0.63,]
+Train :: Epoch: 5/10:   1%|          | 4/391 [00:03&lt;04:46,  1.35it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 20.08, SSIM: 0.64,]
+Train :: Epoch: 5/10:   1%|▏         | 5/391 [00:03&lt;05:07,  1.26it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 20.08, SSIM: 0.64,]
+Train :: Epoch: 5/10:   1%|▏         | 5/391 [00:04&lt;05:07,  1.26it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 20.61, SSIM: 0.64,]
+Train :: Epoch: 5/10:   2%|▏         | 6/391 [00:04&lt;05:19,  1.20it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 20.61, SSIM: 0.64,]
+Train :: Epoch: 5/10:   2%|▏         | 6/391 [00:05&lt;05:19,  1.20it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 20.56, SSIM: 0.64,]
+Train :: Epoch: 5/10:   2%|▏         | 7/391 [00:05&lt;05:27,  1.17it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 20.56, SSIM: 0.64,]
+Train :: Epoch: 5/10:   2%|▏         | 7/391 [00:06&lt;05:27,  1.17it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 20.16, SSIM: 0.64,]
+Train :: Epoch: 5/10:   2%|▏         | 8/391 [00:06&lt;05:32,  1.15it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 20.16, SSIM: 0.64,]
+Train :: Epoch: 5/10:   2%|▏         | 8/391 [00:07&lt;05:32,  1.15it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 20.57, SSIM: 0.65,]
+Train :: Epoch: 5/10:   2%|▏         | 9/391 [00:07&lt;05:35,  1.14it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 20.57, SSIM: 0.65,]
+Train :: Epoch: 5/10:   2%|▏         | 9/391 [00:08&lt;05:35,  1.14it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 20.69, SSIM: 0.65,]
+Train :: Epoch: 5/10:   3%|▎         | 10/391 [00:08&lt;05:38,  1.13it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 20.69, SSIM: 0.65,]
+Train :: Epoch: 5/10:   3%|▎         | 10/391 [00:09&lt;05:38,  1.13it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 20.73, SSIM: 0.64,]
+Train :: Epoch: 5/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 20.73, SSIM: 0.64,]
+Train :: Epoch: 5/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 21.20, SSIM: 0.66,]
+Train :: Epoch: 5/10:   3%|▎         | 11/391 [00:09&lt;05:43,  1.11it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 21.20, SSIM: 0.66,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 6/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 6/10:   0%|          | 1/391 [00:00&lt;05:54,  1.10it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 20.53, SSIM: 0.65,]
+Train :: Epoch: 6/10:   1%|          | 2/391 [00:00&lt;02:56,  2.20it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 20.53, SSIM: 0.65,]
+Train :: Epoch: 6/10:   1%|          | 2/391 [00:01&lt;02:56,  2.20it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.02, SSIM: 0.66,]
+Train :: Epoch: 6/10:   1%|          | 3/391 [00:01&lt;04:09,  1.55it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.02, SSIM: 0.66,]
+Train :: Epoch: 6/10:   1%|          | 3/391 [00:02&lt;04:09,  1.55it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 20.71, SSIM: 0.66,]
+Train :: Epoch: 6/10:   1%|          | 4/391 [00:02&lt;04:47,  1.35it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 20.71, SSIM: 0.66,]
+Train :: Epoch: 6/10:   1%|          | 4/391 [00:03&lt;04:47,  1.35it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 20.64, SSIM: 0.66,]
+Train :: Epoch: 6/10:   1%|▏         | 5/391 [00:03&lt;05:08,  1.25it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 20.64, SSIM: 0.66,]
+Train :: Epoch: 6/10:   1%|▏         | 5/391 [00:04&lt;05:08,  1.25it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 21.15, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 6/391 [00:04&lt;05:21,  1.20it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 21.15, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 6/391 [00:05&lt;05:21,  1.20it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 21.04, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 7/391 [00:05&lt;05:29,  1.17it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 21.04, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 7/391 [00:06&lt;05:29,  1.17it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 20.75, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 8/391 [00:06&lt;05:34,  1.15it/s, s=MSE: 0.01, L1: 0.07, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 20.75, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 8/391 [00:07&lt;05:34,  1.15it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.02, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 9/391 [00:07&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.02, SSIM: 0.67,]
+Train :: Epoch: 6/10:   2%|▏         | 9/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 21.18, SSIM: 0.68,]
+Train :: Epoch: 6/10:   3%|▎         | 10/391 [00:08&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 21.18, SSIM: 0.68,]
+Train :: Epoch: 6/10:   3%|▎         | 10/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 21.16, SSIM: 0.67,]
+Train :: Epoch: 6/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 21.16, SSIM: 0.67,]
+Train :: Epoch: 6/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 21.60, SSIM: 0.68,]
+Train :: Epoch: 6/10:   3%|▎         | 11/391 [00:09&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 21.60, SSIM: 0.68,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 7/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 7/10:   0%|          | 1/391 [00:00&lt;05:52,  1.11it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 20.93, SSIM: 0.68,]
+Train :: Epoch: 7/10:   1%|          | 2/391 [00:00&lt;02:56,  2.21it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 20.93, SSIM: 0.68,]
+Train :: Epoch: 7/10:   1%|          | 2/391 [00:01&lt;02:56,  2.21it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.53, SSIM: 0.69,]
+Train :: Epoch: 7/10:   1%|          | 3/391 [00:01&lt;04:07,  1.57it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.53, SSIM: 0.69,]
+Train :: Epoch: 7/10:   1%|          | 3/391 [00:02&lt;04:07,  1.57it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 21.16, SSIM: 0.68,]
+Train :: Epoch: 7/10:   1%|          | 4/391 [00:02&lt;04:45,  1.36it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 21.16, SSIM: 0.68,]
+Train :: Epoch: 7/10:   1%|          | 4/391 [00:03&lt;04:45,  1.36it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 21.11, SSIM: 0.69,]
+Train :: Epoch: 7/10:   1%|▏         | 5/391 [00:03&lt;05:06,  1.26it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 21.11, SSIM: 0.69,]
+Train :: Epoch: 7/10:   1%|▏         | 5/391 [00:04&lt;05:06,  1.26it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 21.49, SSIM: 0.70,]
+Train :: Epoch: 7/10:   2%|▏         | 6/391 [00:04&lt;05:19,  1.21it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 21.49, SSIM: 0.70,]
+Train :: Epoch: 7/10:   2%|▏         | 6/391 [00:05&lt;05:19,  1.21it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 21.45, SSIM: 0.69,]
+Train :: Epoch: 7/10:   2%|▏         | 7/391 [00:05&lt;05:27,  1.17it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 21.45, SSIM: 0.69,]
+Train :: Epoch: 7/10:   2%|▏         | 7/391 [00:06&lt;05:27,  1.17it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 21.20, SSIM: 0.69,]
+Train :: Epoch: 7/10:   2%|▏         | 8/391 [00:06&lt;05:32,  1.15it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 21.20, SSIM: 0.69,]
+Train :: Epoch: 7/10:   2%|▏         | 8/391 [00:07&lt;05:32,  1.15it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.44, SSIM: 0.70,]
+Train :: Epoch: 7/10:   2%|▏         | 9/391 [00:07&lt;05:35,  1.14it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.44, SSIM: 0.70,]
+Train :: Epoch: 7/10:   2%|▏         | 9/391 [00:08&lt;05:35,  1.14it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 21.61, SSIM: 0.70,]
+Train :: Epoch: 7/10:   3%|▎         | 10/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 21.61, SSIM: 0.70,]
+Train :: Epoch: 7/10:   3%|▎         | 10/391 [00:09&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 21.63, SSIM: 0.69,]
+Train :: Epoch: 7/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 21.63, SSIM: 0.69,]
+Train :: Epoch: 7/10:   3%|▎         | 11/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 21.95, SSIM: 0.70,]
+Train :: Epoch: 7/10:   3%|▎         | 11/391 [00:09&lt;05:42,  1.11it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 21.95, SSIM: 0.70,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 8/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 8/10:   0%|          | 1/391 [00:00&lt;06:04,  1.07it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 21.34, SSIM: 0.70,]
+Train :: Epoch: 8/10:   1%|          | 2/391 [00:00&lt;03:02,  2.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 21.34, SSIM: 0.70,]
+Train :: Epoch: 8/10:   1%|          | 2/391 [00:01&lt;03:02,  2.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.88, SSIM: 0.70,]
+Train :: Epoch: 8/10:   1%|          | 3/391 [00:01&lt;04:12,  1.54it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.88, SSIM: 0.70,]
+Train :: Epoch: 8/10:   1%|          | 3/391 [00:02&lt;04:12,  1.54it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 21.51, SSIM: 0.70,]
+Train :: Epoch: 8/10:   1%|          | 4/391 [00:02&lt;04:49,  1.34it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 21.51, SSIM: 0.70,]
+Train :: Epoch: 8/10:   1%|          | 4/391 [00:03&lt;04:49,  1.34it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 21.47, SSIM: 0.71,]
+Train :: Epoch: 8/10:   1%|▏         | 5/391 [00:03&lt;05:10,  1.24it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 21.47, SSIM: 0.71,]
+Train :: Epoch: 8/10:   1%|▏         | 5/391 [00:04&lt;05:10,  1.24it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 21.80, SSIM: 0.72,]
+Train :: Epoch: 8/10:   2%|▏         | 6/391 [00:04&lt;05:23,  1.19it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 21.80, SSIM: 0.72,]
+Train :: Epoch: 8/10:   2%|▏         | 6/391 [00:05&lt;05:23,  1.19it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 21.81, SSIM: 0.71,]
+Train :: Epoch: 8/10:   2%|▏         | 7/391 [00:05&lt;05:32,  1.16it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 21.81, SSIM: 0.71,]
+Train :: Epoch: 8/10:   2%|▏         | 7/391 [00:06&lt;05:32,  1.16it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 21.53, SSIM: 0.71,]
+Train :: Epoch: 8/10:   2%|▏         | 8/391 [00:06&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 21.53, SSIM: 0.71,]
+Train :: Epoch: 8/10:   2%|▏         | 8/391 [00:07&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.74, SSIM: 0.71,]
+Train :: Epoch: 8/10:   2%|▏         | 9/391 [00:07&lt;05:41,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.74, SSIM: 0.71,]
+Train :: Epoch: 8/10:   2%|▏         | 9/391 [00:08&lt;05:41,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 21.97, SSIM: 0.72,]
+Train :: Epoch: 8/10:   3%|▎         | 10/391 [00:08&lt;05:43,  1.11it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 21.97, SSIM: 0.72,]
+Train :: Epoch: 8/10:   3%|▎         | 10/391 [00:09&lt;05:43,  1.11it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 21.91, SSIM: 0.71,]
+Train :: Epoch: 8/10:   3%|▎         | 11/391 [00:09&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 21.91, SSIM: 0.71,]
+Train :: Epoch: 8/10:   3%|▎         | 11/391 [00:10&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 22.26, SSIM: 0.72,]
+Train :: Epoch: 8/10:   3%|▎         | 11/391 [00:10&lt;05:48,  1.09it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 22.26, SSIM: 0.72,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 9/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 9/10:   0%|          | 1/391 [00:00&lt;05:56,  1.09it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 21.59, SSIM: 0.71,]
+Train :: Epoch: 9/10:   1%|          | 2/391 [00:00&lt;02:58,  2.18it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 21.59, SSIM: 0.71,]
+Train :: Epoch: 9/10:   1%|          | 2/391 [00:01&lt;02:58,  2.18it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 22.15, SSIM: 0.72,]
+Train :: Epoch: 9/10:   1%|          | 3/391 [00:01&lt;04:09,  1.56it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 22.15, SSIM: 0.72,]
+Train :: Epoch: 9/10:   1%|          | 3/391 [00:02&lt;04:09,  1.56it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 21.80, SSIM: 0.72,]
+Train :: Epoch: 9/10:   1%|          | 4/391 [00:02&lt;04:46,  1.35it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 21.80, SSIM: 0.72,]
+Train :: Epoch: 9/10:   1%|          | 4/391 [00:03&lt;04:46,  1.35it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 21.77, SSIM: 0.72,]
+Train :: Epoch: 9/10:   1%|▏         | 5/391 [00:03&lt;05:07,  1.26it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 21.77, SSIM: 0.72,]
+Train :: Epoch: 9/10:   1%|▏         | 5/391 [00:04&lt;05:07,  1.26it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 22.08, SSIM: 0.73,]
+Train :: Epoch: 9/10:   2%|▏         | 6/391 [00:04&lt;05:20,  1.20it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 22.08, SSIM: 0.73,]
+Train :: Epoch: 9/10:   2%|▏         | 6/391 [00:05&lt;05:20,  1.20it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 22.03, SSIM: 0.72,]
+Train :: Epoch: 9/10:   2%|▏         | 7/391 [00:05&lt;05:29,  1.17it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 22.03, SSIM: 0.72,]
+Train :: Epoch: 9/10:   2%|▏         | 7/391 [00:06&lt;05:29,  1.17it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 21.87, SSIM: 0.72,]
+Train :: Epoch: 9/10:   2%|▏         | 8/391 [00:06&lt;05:34,  1.14it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 21.87, SSIM: 0.72,]
+Train :: Epoch: 9/10:   2%|▏         | 8/391 [00:07&lt;05:34,  1.14it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.98, SSIM: 0.73,]
+Train :: Epoch: 9/10:   2%|▏         | 9/391 [00:07&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 21.98, SSIM: 0.73,]
+Train :: Epoch: 9/10:   2%|▏         | 9/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 22.26, SSIM: 0.73,]
+Train :: Epoch: 9/10:   3%|▎         | 10/391 [00:08&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 22.26, SSIM: 0.73,]
+Train :: Epoch: 9/10:   3%|▎         | 10/391 [00:09&lt;05:39,  1.12it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 22.12, SSIM: 0.72,]
+Train :: Epoch: 9/10:   3%|▎         | 11/391 [00:09&lt;05:40,  1.11it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 22.12, SSIM: 0.72,]
+Train :: Epoch: 9/10:   3%|▎         | 11/391 [00:09&lt;05:40,  1.11it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 22.54, SSIM: 0.73,]
+Train :: Epoch: 9/10:   3%|▎         | 11/391 [00:09&lt;05:44,  1.10it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 22.54, SSIM: 0.73,]
+
+  0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 10/10:   0%|          | 0/391 [00:00&lt;?, ?it/s]
+Train :: Epoch: 10/10:   0%|          | 1/391 [00:00&lt;05:55,  1.10it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 21.79, SSIM: 0.72,]
+Train :: Epoch: 10/10:   1%|          | 2/391 [00:00&lt;02:57,  2.19it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.63, , PSNR: 21.79, SSIM: 0.72,]
+Train :: Epoch: 10/10:   1%|          | 2/391 [00:01&lt;02:57,  2.19it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 22.41, SSIM: 0.73,]
+Train :: Epoch: 10/10:   1%|          | 3/391 [00:01&lt;04:10,  1.55it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 22.41, SSIM: 0.73,]
+Train :: Epoch: 10/10:   1%|          | 3/391 [00:02&lt;04:10,  1.55it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 22.00, SSIM: 0.72,]
+Train :: Epoch: 10/10:   1%|          | 4/391 [00:02&lt;04:48,  1.34it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.81, , PSNR: 22.00, SSIM: 0.72,]
+Train :: Epoch: 10/10:   1%|          | 4/391 [00:03&lt;04:48,  1.34it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 22.04, SSIM: 0.74,]
+Train :: Epoch: 10/10:   1%|▏         | 5/391 [00:03&lt;05:09,  1.25it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.72, , PSNR: 22.04, SSIM: 0.74,]
+Train :: Epoch: 10/10:   1%|▏         | 5/391 [00:04&lt;05:09,  1.25it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 22.25, SSIM: 0.74,]
+Train :: Epoch: 10/10:   2%|▏         | 6/391 [00:04&lt;05:22,  1.19it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.71, , PSNR: 22.25, SSIM: 0.74,]
+Train :: Epoch: 10/10:   2%|▏         | 6/391 [00:05&lt;05:22,  1.19it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 22.37, SSIM: 0.74,]
+Train :: Epoch: 10/10:   2%|▏         | 7/391 [00:05&lt;05:29,  1.16it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.88, , PSNR: 22.37, SSIM: 0.74,]
+Train :: Epoch: 10/10:   2%|▏         | 7/391 [00:06&lt;05:29,  1.16it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 22.01, SSIM: 0.73,]
+Train :: Epoch: 10/10:   2%|▏         | 8/391 [00:06&lt;05:34,  1.14it/s, s=MSE: 0.01, L1: 0.06, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.83, , PSNR: 22.01, SSIM: 0.73,]
+Train :: Epoch: 10/10:   2%|▏         | 8/391 [00:07&lt;05:34,  1.14it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 22.25, SSIM: 0.73,]
+Train :: Epoch: 10/10:   2%|▏         | 9/391 [00:07&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.67, , PSNR: 22.25, SSIM: 0.73,]
+Train :: Epoch: 10/10:   2%|▏         | 9/391 [00:08&lt;05:37,  1.13it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 22.37, SSIM: 0.74,]
+Train :: Epoch: 10/10:   3%|▎         | 10/391 [00:08&lt;05:42,  1.11it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.86, , PSNR: 22.37, SSIM: 0.74,]
+Train :: Epoch: 10/10:   3%|▎         | 10/391 [00:09&lt;05:42,  1.11it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 22.39, SSIM: 0.73,]
+Train :: Epoch: 10/10:   3%|▎         | 11/391 [00:09&lt;05:41,  1.11it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.85, , PSNR: 22.39, SSIM: 0.73,]
+Train :: Epoch: 10/10:   3%|▎         | 11/391 [00:09&lt;05:41,  1.11it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 22.64, SSIM: 0.74,]
+Train :: Epoch: 10/10:   3%|▎         | 11/391 [00:09&lt;05:45,  1.10it/s, s=MSE: 0.01, L1: 0.05, , RB: 1725.91, RT: 6.24, , MV: 0.01, KLG: 4.69, , PSNR: 22.64, SSIM: 0.74,]
+</pre></div>
+</div>
+</section>
+<section id="visualize-results">
+<h2>Visualize results<a class="headerlink" href="#visualize-results" title="Link to this heading"></a></h2>
+<p>Performs the inference <span class="math notranslate nohighlight">\(\tilde{\mathbf{x}} = \mathcal{G}_{\theta^*}( \mathbf{H}_{\phi^*}\mathbf{x})\)</span> and visualize the results.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">x_est</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">acquisition_model</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+
+<span class="n">normalize</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">,</span> <span class="n">n_measurements_sqrt</span><span class="p">)</span>
+
+<span class="n">img</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">sample</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">img_est</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">x_est</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">img_y</span> <span class="o">=</span> <span class="n">make_grid</span><span class="p">(</span><span class="n">y</span><span class="p">[:</span><span class="mi">16</span><span class="p">],</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scale_each</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pad_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">imgs_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;CIFAR10 dataset&quot;</span><span class="p">:</span> <span class="n">img</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">acquisition_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2"> measurements&quot;</span><span class="p">:</span> <span class="n">img_y</span><span class="p">,</span>
+    <span class="s2">&quot;Recons CIFAR10&quot;</span><span class="p">:</span> <span class="n">img_est</span>
+<span class="p">}</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mf">2.7</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">imgs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+
+<span class="n">ca</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">acquisition_model</span><span class="o">.</span><span class="n">learnable_optics</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+<span class="n">ca</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;spc&#39;</span><span class="p">:</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="n">ca</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_measurements</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">elif</span> <span class="n">acquisition_name</span> <span class="o">==</span> <span class="s1">&#39;c_cassi&#39;</span><span class="p">:</span>
+    <span class="n">ca</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Learned CA&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../_images/sphx_glr_demo_colibri_003.png" srcset="../_images/sphx_glr_demo_colibri_003.png" alt="CIFAR10 dataset, C_CASSI measurements, Recons CIFAR10, Learned CA" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 41.749 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-demo-colibri-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/a49897e12c884ab34e93dfd3a66376a7/demo_colibri.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">demo_colibri.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/f3ef70da3ac8b7a83cd0c92e9095b1ed/demo_colibri.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">demo_colibri.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../_downloads/79235bc7a255882308ecb3c1991e71a8/demo_colibri.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">demo_colibri.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="demo_does.html" class="btn btn-neutral float-left" title="Demo DOEs." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

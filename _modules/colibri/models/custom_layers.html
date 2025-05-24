@@ -1,0 +1,437 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colibri.models.custom_layers &mdash; Colibri</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+
+  
+    <link rel="shortcut icon" href="../../../_static/colibri-logo.svg"/>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pycolibri
+              <img src="../../../_static/colibri-logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../miscellaneous.html">Miscellaneous</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optics.html">Optics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets.html">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../regularizers.html">Regularizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recovery.html">Recovery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/index.html">Examples</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pycolibri</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colibri.models.custom_layers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colibri.models.custom_layers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Utilities for building layers. &quot;&quot;&quot;</span>
+
+<span class="c1"># import tensorflow as tf</span>
+<span class="c1"># import tensorflow.keras.layers as layers</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+
+
+<div class="viewcode-block" id="Activation">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.Activation.html#colibri.models.custom_layers.Activation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Activation</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Activation Layer&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Activation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Activation Layer</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            activation (str or nn.functional, optional): Activation function, such as tf.nn.relu, or string name of built-in activation function, such as &quot;relu&quot;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            nn.Module: Activation layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">activation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">act_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_activation</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">act_fn</span> <span class="o">=</span> <span class="n">activation</span>
+
+<div class="viewcode-block" id="Activation.get_activation">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.Activation.html#colibri.models.custom_layers.Activation.get_activation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_activation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get activation function by name.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): Name of the activation function.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            nn.Module: Activation function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">activations</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;relu&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="s2">&quot;sigmoid&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
+            <span class="s2">&quot;softmax&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="s2">&quot;tanh&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span>
+            <span class="s2">&quot;identity&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">activations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">activations</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown activation function: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="Activation.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.Activation.html#colibri.models.custom_layers.Activation.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the activation function.</span>
+<span class="sd">        </span>
+<span class="sd">        Args: </span>
+<span class="sd">            x (torch.Tensor): Input tensor.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">act_fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="convBlock">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.convBlock.html#colibri.models.custom_layers.convBlock">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">convBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convolutional Block</span>
+
+<span class="sd">    default configuration: (Conv2D =&gt; Batchnorm =&gt; ReLU) * 2</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;CBR&quot;</span><span class="p">,</span>
+        <span class="n">factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convolutional Block</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            out_channels (int, optional): number of output channels. Defaults to 1.</span>
+<span class="sd">            kernel_size (int, optional): size of the kernel. Defaults to 3.</span>
+<span class="sd">            bias (bool, optional): whether to use bias or not. Defaults to False.</span>
+<span class="sd">            mode (str, optional): mode of the convBlock, posible values are: [&#39;C&#39;, &#39;B&#39;, &#39;R&#39;, &#39;U&#39;, &#39;M&#39;, &#39;A&#39;]. Defaults to &#39;CBR&#39;.</span>
+<span class="sd">            factor (int, optional): factor for upsampling/downsampling. Defaults to 2.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">convBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
+        
+        <span class="n">pad_size</span> <span class="o">=</span> <span class="n">kernel_size</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="n">conv_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="n">in_channels</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="n">out_channels</span><span class="p">,</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="n">kernel_size</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="n">pad_size</span><span class="p">,</span>
+            <span class="n">bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">first_conv</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="n">layer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_layer</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">conv_kwargs</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">layer</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span> <span class="ow">and</span> <span class="n">first_conv</span><span class="p">:</span>
+                <span class="n">first_conv</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">conv_kwargs</span><span class="p">[</span><span class="s2">&quot;in_channels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">conv_kwargs</span><span class="p">[</span><span class="s2">&quot;out_channels&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="convBlock.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.convBlock.html#colibri.models.custom_layers.convBlock.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass of the convBlock.</span>
+
+<span class="sd">        Args:</span>
+
+<span class="sd">            x (torch.Tensor): Input tensor</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="convBlock.build_layer">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.convBlock.html#colibri.models.custom_layers.convBlock.build_layer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_layer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build layer based on the mode.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            c (str): mode of the layer</span>
+<span class="sd">            params (dict): parameters for the layer</span>
+<span class="sd">            factor (int): factor for upsampling/downsampling</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            nn.Module: Layer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_features</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;out_channels&quot;</span><span class="p">]</span>
+        <span class="n">batch_norm_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">num_features</span><span class="o">=</span><span class="n">num_features</span><span class="p">)</span>
+
+        <span class="n">params_mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span>
+            <span class="s2">&quot;B&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm2d</span><span class="p">,</span> <span class="n">batch_norm_params</span><span class="p">),</span>
+            <span class="s2">&quot;R&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="s2">&quot;U&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Upsample</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">factor</span><span class="p">))),</span>
+            <span class="s2">&quot;M&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">factor</span><span class="p">))),</span>
+            <span class="s2">&quot;A&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">AvgPool2d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="n">factor</span><span class="p">,</span> <span class="n">factor</span><span class="p">))),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">params_mapping</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">layer</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">params_mapping</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">layer</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="k">if</span> <span class="n">params</span> <span class="k">else</span> <span class="n">layer</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown layer type: </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="downBlock">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.downBlock.html#colibri.models.custom_layers.downBlock">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">downBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spatial downsampling and then convBlock&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            in_channels (int): number of input channels</span>
+<span class="sd">            out_channels (int): number of output channels</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            nn.Module: DownBlock model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">downBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool_conv</span> <span class="o">=</span> <span class="n">convBlock</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;MCBRCBR&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="upBlock">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.upBlock.html#colibri.models.custom_layers.upBlock">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">upBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spatial upsampling and then convBlock&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            in_channels (int): number of input channels</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">upBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">up</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Upsample</span><span class="p">(</span><span class="n">scale_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_block</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">convBlock</span><span class="p">(</span><span class="n">in_channels</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">),</span> <span class="n">convBlock</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="upBlock.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.upBlock.html#colibri.models.custom_layers.upBlock.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass of the upBlock.</span>
+
+<span class="sd">        Args:   </span>
+<span class="sd">            x1 (torch.Tensor): Input tensor</span>
+<span class="sd">            x2 (torch.Tensor): Input tensor</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">up</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+        <span class="c1"># input is CHW</span>
+        <span class="n">diffY</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">diffX</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="p">(</span><span class="n">diffX</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">diffX</span> <span class="o">-</span> <span class="n">diffX</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">diffY</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">diffY</span> <span class="o">-</span> <span class="n">diffY</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_block</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">x2</span><span class="p">,</span> <span class="n">x1</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="upBlockNoSkip">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.upBlockNoSkip.html#colibri.models.custom_layers.upBlockNoSkip">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">upBlockNoSkip</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Spatial upsampling and then convBlock&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span><span class="n">out_channels</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            in_channels (int): number of input channels</span>
+<span class="sd">            out_channels (int): number of output channels</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">upBlockNoSkip</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">up</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Upsample</span><span class="p">(</span><span class="n">scale_factor</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;bilinear&quot;</span><span class="p">,</span> <span class="n">align_corners</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv_block</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">convBlock</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span><span class="n">out_channels</span> <span class="p">),</span> <span class="n">convBlock</span><span class="p">(</span><span class="n">out_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="upBlockNoSkip.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.upBlockNoSkip.html#colibri.models.custom_layers.upBlockNoSkip.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass of the upBlock.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x1 (torch.Tensor): Input tensor</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">            torch.Tensor: Output tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">up</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+        <span class="c1"># input is CHW</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_block</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="outBlock">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.outBlock.html#colibri.models.custom_layers.outBlock">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">outBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convolutional Block with 1x1 kernel and without activation&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            in_channels (int): number of input channels</span>
+<span class="sd">            out_channels (int): number of output channels</span>
+<span class="sd">            activation (str, optional): activation function. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">outBlock</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv</span> <span class="o">=</span> <span class="n">convBlock</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">out_channels</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">Activation</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span> <span class="k">if</span> <span class="n">activation</span> <span class="k">else</span> <span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span>
+
+<div class="viewcode-block" id="outBlock.forward">
+<a class="viewcode-back" href="../../../stubs/colibri.models.custom_layers.outBlock.html#colibri.models.custom_layers.outBlock.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward pass of the outBlock.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (torch.Tensor): Input tensor</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor: Output tensor</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, colibri.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
