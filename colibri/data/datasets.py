@@ -84,15 +84,15 @@ class CustomDataset(Dataset):
         - output: `transforms.ToTensor()`
 
     """
-
-    def __init__(self, name: str, path: str = "data", transform_dict: dict = {}, **kwargs_builtin):
+    def __init__(self, name: str, path: str= "data", builtin_train: bool=True, builtin_download: bool=True, transform_dict:dict={}):
         r"""
         Args:
             name (string): Name of the dataset.
                 Current options are: ('cifar10', 'cifar100', 'mnist', 'fashion_mnist', 'cave').
             path (string): Path to directory with the dataset.
+            builtin_train (bool): Whether to load the training or test set. This option is only available for builtin datasets.
+            builtin_download (bool): Whether to download the dataset if it is not found. This option is only available for builtin datasets.
             transform_dict (dict,object): Dictionary with the transformations to apply to the data.
-            kwargs_builtin (dict,object): Dictionary with the parameters to load the builtin datasets, each pytorch dataset has its own parameters please refer to the pytorch documentation.
         """
 
         self.is_builtin_dataset = False
@@ -100,7 +100,7 @@ class CustomDataset(Dataset):
             # assert kwargs_builtin is not None, "kwargs_builtin must be provided for builtin datasets"
             self.is_builtin_dataset = True
             path = update_builtin_path(name, path)
-            self.dataset = load_builtin_dataset(name, path, **kwargs_builtin)
+            self.dataset = load_builtin_dataset(name, path, builtin_train, builtin_download)
             self.len_dataset = len(self.dataset['input'])
 
         else:  # custom datasets

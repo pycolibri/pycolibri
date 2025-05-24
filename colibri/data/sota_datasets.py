@@ -15,7 +15,6 @@ class CaveDataset():
 
     URL: https://www.cs.columbia.edu/CAVE/databases/multispectral/
     """
-
     def __init__(self, path: str, download: bool = True, url : str ='https://cave.cs.columbia.edu/old/databases/multispectral/zip/complete_ms_data.zip'):
         self.url = url
         self.tmp_name = 'cave_dataset'
@@ -29,9 +28,7 @@ class CaveDataset():
         Downloads the dataset from the specified URL and extracts it to the specified path.
         """
 
-    
         zip_path = self.path + ".zip"
-        
         if not os.path.exists(self.path):
             r = requests.get(self.url, allow_redirects=True)
             with open(zip_path, 'wb') as zip_file:
@@ -74,9 +71,7 @@ class CaveDataset():
             spectral_band = np.array(Image.open(spectral_band_filename))
             if len(spectral_band.shape) > 2:
                 spectral_band = spectral_band[..., :3].mean(axis=-1)
-            spectral_band = spectral_band / (2 ** 16 - 1) if isinstance(spectral_band[0, 0],
-                                                                        np.uint16) else spectral_band
-            spectral_band = spectral_band / (2 ** 8 - 1) if isinstance(spectral_band[0, 0], np.uint8) else spectral_band
+            spectral_band = spectral_band / (2 ** 16 - 1)
             spectral_image.append(spectral_band.astype(np.float32))  # [np.newaxis, ...]
         spectral_image = np.stack(spectral_image, axis=0)  # [np.newaxis, ...]
 

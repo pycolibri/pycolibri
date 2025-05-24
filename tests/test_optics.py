@@ -11,6 +11,7 @@ from colibri.optics.spc import SPC
 from colibri.optics.doe import SingleDOESpectral
 from colibri.optics.modulo import Modulo
 from colibri.optics.sota_does import conventional_lens, nbk7_refractive_index
+from colibri.optics.phase_imaging import CodedPhaseImaging
 
 
 @pytest.fixture
@@ -122,6 +123,39 @@ def test_doe_forward(doe_config):
 
 
 @pytest.fixture
+def coded_phase_imaging_config():
+    phase_mask_size=(100, 100)
+    img_size=(32, 100, 100)
+    type_wave_propagation = "fresnel" 
+    wavelengths = 550*1e-9
+    pixel_size = 100e-6
+    distance = 50e-3
+    return phase_mask_size, img_size, type_wave_propagation, wavelengths, pixel_size, distance
+
+
+
+def test_coded_phase_imaging(coded_phase_imaging_config):
+    phase_mask_size, img_size, type_wave_propagation, wavelengths, pixel_size, distance = coded_phase_imaging_config
+    images = torch.randn(img_size)
+
+    phase_imaging = CodedPhaseImaging(input_shape = phase_mask_size, 
+                            phase_mask = None, 
+                            pixel_size = pixel_size, 
+                            wavelength = wavelengths, 
+                            sensor_distance = distance, 
+                            approximation = type_wave_propagation,
+                            trainable = False)
+
+    intensity = phase_imaging.intensity(images)
+    output = phase_imaging(images)
+    backward = phase_imaging(output, type_calculation="backward")
+
+    assert intensity.shape == img_size, "Intensity shape is incorrect"
+    assert output.shape == img_size, "Output shape is incorrect"
+    assert backward.shape == img_size, "Deconvolution shape is incorrect"
+    
+
+@pytest.fixture
 def modulo_config():
     img_size = [1, 3, 32, 32]
     return img_size
@@ -135,3 +169,4 @@ def test_modulo_forward(modulo_config):
     assert torch.all(y >= 0), "Modulo forward output is negative"
     assert torch.all(y <= 1), "Modulo forward output is greater than 1"
     
+
